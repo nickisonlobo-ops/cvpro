@@ -406,6 +406,28 @@
           </div>
         </div>
 
+        <!-- Antecedência mínima -->
+        <div class="space-y-2">
+          <div class="space-y-0.5">
+            <label class="text-sm font-semibold text-gray-700">Antecedência mínima para agendamento</label>
+            <p class="text-xs text-gray-400">Tempo mínimo de antecedência que a cliente precisa ter para marcar um horário hoje.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="min in [0, 30, 60, 120, 180, 240]" :key="min"
+              type="button"
+              class="px-3 py-1.5 rounded-xl text-sm font-bold border-2 transition-colors"
+              :class="horarios.antecedencia === min
+                ? 'border-transparent text-white'
+                : 'border-gray-200 text-gray-400 bg-white hover:border-gray-300'"
+              :style="horarios.antecedencia === min ? { background: form.cor_primaria, color: form.cor_primaria_texto } : {}"
+              @click="horarios.antecedencia = min"
+            >
+              {{ min === 0 ? 'Sem limite' : min < 60 ? `${min}min` : `${min / 60}h` }}
+            </button>
+          </div>
+        </div>
+
         <!-- Ações -->
         <div class="flex items-center justify-end gap-3 pt-1">
           <span v-if="savedHorariosFeedback" class="text-sm text-green-600 font-medium">✓ Salvo!</span>
@@ -535,13 +557,14 @@ const DIAS_SEMANA = [
   { value: 6, label: 'Sáb' },
 ]
 const horarios = reactive({
-  abertura:      '08:00',
-  fechamento:    '18:00',
-  intervalo:     30,
-  dias:          [1, 2, 3, 4, 5] as number[],
-  almoco_ativo:  false,
-  almoco_inicio: '12:00',
-  almoco_fim:    '13:00',
+  abertura:        '08:00',
+  fechamento:      '18:00',
+  intervalo:       30,
+  antecedencia:    60,
+  dias:            [1, 2, 3, 4, 5] as number[],
+  almoco_ativo:    false,
+  almoco_inicio:   '12:00',
+  almoco_fim:      '13:00',
 })
 const savingHorarios = ref(false)
 const savedHorariosFeedback = ref(false)
@@ -554,7 +577,7 @@ async function loadHorarios() {
   const [configRes, diasRes] = await Promise.all([
     supabase
       .from('empresa_personalizacao')
-      .select('horario_abertura, horario_fechamento, intervalo_min, almoco_inicio, almoco_fim')
+      .select('horario_abertura, horario_fechamento, intervalo_min, almoco_inicio, almoco_fim, antecedencia_min')
       .eq('empresa_id', empresaId.value)
       .maybeSingle(),
     supabase
@@ -564,10 +587,11 @@ async function loadHorarios() {
   ])
 
   if (configRes.data) {
-    const d = configRes.data as { horario_abertura?: string | null; horario_fechamento?: string | null; intervalo_min?: number | null; almoco_inicio?: string | null; almoco_fim?: string | null }
+    const d = configRes.data as { horario_abertura?: string | null; horario_fechamento?: string | null; intervalo_min?: number | null; almoco_inicio?: string | null; almoco_fim?: string | null; antecedencia_min?: number | null }
     horarios.abertura      = d.horario_abertura   ?? '08:00'
     horarios.fechamento    = d.horario_fechamento ?? '18:00'
     horarios.intervalo     = d.intervalo_min      ?? 30
+    horarios.antecedencia  = d.antecedencia_min   ?? 60
     horarios.almoco_inicio = d.almoco_inicio      ?? '12:00'
     horarios.almoco_fim    = d.almoco_fim         ?? '13:00'
     horarios.almoco_ativo  = !!d.almoco_inicio
@@ -590,6 +614,7 @@ async function saveHorarios() {
       horario_abertura:   horarios.abertura,
       horario_fechamento: horarios.fechamento,
       intervalo_min:      horarios.intervalo,
+      antecedencia_min:   horarios.antecedencia,
       almoco_inicio:      horarios.almoco_ativo ? horarios.almoco_inicio : null,
       almoco_fim:         horarios.almoco_ativo ? horarios.almoco_fim    : null,
     })

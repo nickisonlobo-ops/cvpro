@@ -852,6 +852,22 @@
                 </div>
               </div>
 
+              <!-- Antecedência mínima -->
+              <div class="space-y-2">
+                <label class="text-xs font-black text-gray-500 uppercase tracking-widest">Antecedência mínima</label>
+                <p class="text-[11px] text-gray-400">Tempo mínimo para agendar no dia de hoje.</p>
+                <div class="flex flex-wrap gap-2">
+                  <button
+                    v-for="min in [0, 30, 60, 120, 180, 240]" :key="min"
+                    type="button"
+                    class="px-4 py-2 rounded-xl text-sm font-black border-2 transition-all"
+                    :class="horarios.antecedencia === min ? 'shadow-md' : 'bg-white border-gray-200 text-gray-400 hover:border-gray-300'"
+                    :style="horarios.antecedencia === min ? { background: tema.cor_primaria, borderColor: tema.cor_primaria, color: tema.cor_primaria_texto } : {}"
+                    @click="horarios.antecedencia = min"
+                  >{{ min === 0 ? 'Sem limite' : min < 60 ? `${min}min` : `${min / 60}h` }}</button>
+                </div>
+              </div>
+
               <!-- Botões -->
               <div class="flex items-center gap-3 pt-1">
                 <span v-if="savedHorariosFeedback" class="text-sm text-emerald-600 font-bold flex items-center gap-1">
@@ -958,6 +974,7 @@ const horarios = reactive({
   abertura:    '08:00',
   fechamento:  '18:00',
   intervalo:   30,
+  antecedencia: 60,
   dias:        [1, 2, 3, 4, 5] as number[],
   almoco_ativo:  false,
   almoco_inicio: '12:00',
@@ -968,14 +985,15 @@ async function loadHorarios() {
   await loadEmpresa()
   if (!empresaId.value) return
   const [cfgRes, diasRes] = await Promise.all([
-    supabase.from('empresa_personalizacao').select('horario_abertura, horario_fechamento, intervalo_min, almoco_inicio, almoco_fim').eq('empresa_id', empresaId.value).maybeSingle(),
+    supabase.from('empresa_personalizacao').select('horario_abertura, horario_fechamento, intervalo_min, almoco_inicio, almoco_fim, antecedencia_min').eq('empresa_id', empresaId.value).maybeSingle(),
     supabase.from('empresa_dias_funcionamento').select('dia_semana, ativo').eq('empresa_id', empresaId.value),
   ])
   if (cfgRes.data) {
-    const d = cfgRes.data as { horario_abertura?: string | null; horario_fechamento?: string | null; intervalo_min?: number | null; almoco_inicio?: string | null; almoco_fim?: string | null }
+    const d = cfgRes.data as { horario_abertura?: string | null; horario_fechamento?: string | null; intervalo_min?: number | null; almoco_inicio?: string | null; almoco_fim?: string | null; antecedencia_min?: number | null }
     horarios.abertura      = d.horario_abertura   ?? '08:00'
     horarios.fechamento    = d.horario_fechamento ?? '18:00'
     horarios.intervalo     = d.intervalo_min      ?? 30
+    horarios.antecedencia  = d.antecedencia_min   ?? 60
     horarios.almoco_inicio = d.almoco_inicio      ?? '12:00'
     horarios.almoco_fim    = d.almoco_fim         ?? '13:00'
     horarios.almoco_ativo  = !!d.almoco_inicio
@@ -992,6 +1010,7 @@ async function saveHorarios() {
     horario_abertura:  horarios.abertura,
     horario_fechamento: horarios.fechamento,
     intervalo_min:     horarios.intervalo,
+    antecedencia_min:  horarios.antecedencia,
     almoco_inicio:     horarios.almoco_ativo ? horarios.almoco_inicio : null,
     almoco_fim:        horarios.almoco_ativo ? horarios.almoco_fim    : null,
   }).eq('empresa_id', empresaId.value)
@@ -1280,26 +1299,27 @@ function statusBadge(s: string) {
 
 onMounted(async () => {
   await loadEmpresa()
-  // fetchFuncionarios deve terminar ANTES de fetchServicos para que profile_id seja resolvido
-  await Promise.all([fetchAgendamentos(), fetchClientes(), fetchFuncionarios(), loadHorarios()])
+  // fetchFuncionarios deve terminar ANTES dos outros para que profile_id e nomes sejam resolvidos
+  await fetchFuncionarios()
+  await Promise.all([fetchAgendamentos(), fetchClientes(), loadHorarios()])
   await fetchServicos()
 })
 
 async function fetchAgendamentos() {
   loading.value = true
 
-  // Fetch agendamentos
+  // Fetch agendamentos — join profiles pelo FK para pegar o email do profissional
   const { data: rows, error: fetchError } = await supabase
     .from('agendamentos')
-    .select('*, clientes(nome, telefone)')
+    .select('*, clientes(nome, telefone), profiles!agendamentos_funcionario_id_fkey(email)')
     .eq('empresa_id', empresaId.value!)
     .order('data_hora', { ascending: false })
 
   if (fetchError) { error.value = fetchError.message; loading.value = false; return }
 
-  // Mapa uuid → nome vindo direto do cadastro de funcionários
-  const funcNomeByUuid: Record<string, string> = {}
-  funcionarios.value.forEach(f => { if (f.profile_id) funcNomeByUuid[f.profile_id] = f.nome })
+  // Mapa email → nome usando funcionarios já carregados
+  const funcNomeByEmail: Record<string, string> = {}
+  funcionarios.value.forEach(f => { if (f.email) funcNomeByEmail[f.email.toLowerCase()] = f.nome ?? '' })
 
   // Fetch servicos vinculados
   const ids = (rows ?? []).map(r => r.id)
@@ -1318,10 +1338,12 @@ async function fetchAgendamentos() {
 
   agendamentos.value = (rows ?? []).map((r: any) => ({
     ...r,
-    cliente_nome: r.clientes?.nome ?? null,
+    cliente_nome:     r.clientes?.nome ?? null,
     cliente_telefone: r.clientes?.telefone ?? null,
-    funcionario_nome: funcNomeByUuid[r.funcionario_id] ?? null,
-    servicos_nomes: (servicosMap[r.id] ?? []).join(', ') || null,
+    funcionario_nome: r.profiles?.email
+      ? (funcNomeByEmail[r.profiles.email.toLowerCase()] ?? null)
+      : null,
+    servicos_nomes:   (servicosMap[r.id] ?? []).join(', ') || null,
     nome_solicitante: r.nome_solicitante ?? null,
     telefone_solicitante: r.telefone_solicitante ?? null,
   }))
@@ -1347,27 +1369,13 @@ async function fetchFuncionarios() {
     .eq('ativo', true)
     .order('nome')
   if (funcErr) { console.error('[fetchFuncionarios]', funcErr.message); return }
-  console.log('[fetchFuncionarios] funcionarios:', (data ?? []).map((f: any) => ({ id: f.id, email: f.email })))
-
-  // Busca TODOS os profiles sem filtrar por empresa_id (a RLS controla o acesso)
-  // para garantir que o match por email funcione independente do campo empresa_id
-  let profileMap: Record<string, string> = {}
-  const { data: profs, error: profErr } = await supabase
-    .from('profiles')
-    .select('id, email')
-  if (profErr) console.error('[fetchFuncionarios profiles]', profErr.message)
-  console.log('[fetchFuncionarios] profiles encontrados:', (profs ?? []).map((p: any) => ({ id: p.id, email: p.email })))
-  ;(profs ?? []).forEach((p: any) => {
-    if (p.email) profileMap[p.email.toLowerCase()] = p.id
-  })
 
   funcionarios.value = (data ?? []).map((f: any) => ({
     id:         f.id,
     nome:       f.nome,
     email:      f.email,
-    profile_id: f.email ? (profileMap[f.email.toLowerCase()] ?? null) : null,
+    profile_id: null, // resolvido sob demanda se necessário
   })) as FuncionarioOption[]
-  console.log('[fetchFuncionarios] resultado final:', funcionarios.value.map(f => ({ id: f.id, nome: f.nome, profile_id: f.profile_id })))
 }
 
 async function fetchServicos() {
@@ -1473,7 +1481,8 @@ function validateForm(): boolean {
 }
 
 function buildDataHora() {
-  return `${form.data}T${form.hora}:00`
+  // Salva com offset SP explícito para o Supabase não interpretar como UTC
+  return `${form.data}T${form.hora}:00-03:00`
 }
 
 const horasOpcoes = (() => {

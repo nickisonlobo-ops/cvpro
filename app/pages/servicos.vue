@@ -104,36 +104,58 @@
     </div>
 
     <!-- LISTA DE SERVIÇOS -->
-    <div v-else-if="servicosFiltrados.length" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div v-else-if="servicosFiltrados.length" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
       <div
         v-for="s in servicosFiltrados"
         :key="s.id"
-        class="bg-white rounded-2xl border border-gray-200/80 shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+        class="group bg-white rounded-3xl border border-gray-100 shadow-md hover:shadow-xl hover:shadow-pink-100/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col"
       >
-        <!-- Faixa de categoria -->
-        <div class="h-1.5 w-full" :class="categoriaCor(s.categoria)" />
-
-        <div class="p-5">
-          <div class="flex items-start justify-between gap-2 mb-3">
-            <div class="flex-1">
-              <h3 class="font-bold text-gray-900 text-base leading-tight">{{ s.nome }}</h3>
-              <p v-if="s.descricao" class="text-xs text-gray-500 mt-1 line-clamp-2">{{ s.descricao }}</p>
-            </div>
+        <!-- Photo / Gradient fallback -->
+        <div class="relative h-44 overflow-hidden flex-shrink-0">
+          <img
+            v-if="s.foto_url"
+            :src="s.foto_url"
+            :alt="s.nome"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          <div
+            v-else
+            class="w-full h-full flex items-center justify-center"
+            :class="categoriaGradient(s.categoria)"
+          >
+            <AppNavIcon name="sparkles" class="w-12 h-12 text-white/30" />
+          </div>
+          <!-- Category badge -->
+          <div class="absolute top-3 left-3">
             <span
-              class="shrink-0 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
-              :class="s.ativo ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'"
+              class="inline-flex items-center text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm"
+              :class="categoriaBadgeOverlay(s.categoria)"
+            >{{ categoriaLabel(s.categoria) }}</span>
+          </div>
+          <!-- Status badge -->
+          <div class="absolute top-3 right-3">
+            <span
+              class="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full backdrop-blur-sm shadow-sm"
+              :class="s.ativo ? 'bg-emerald-500/90 text-white' : 'bg-gray-500/70 text-white'"
             >{{ s.ativo ? 'Ativo' : 'Inativo' }}</span>
           </div>
+        </div>
 
-          <div class="flex items-center gap-3 flex-wrap">
-            <span class="inline-flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-lg" :class="categoriaBadge(s.categoria)">
-              {{ categoriaLabel(s.categoria) }}
-            </span>
-            <span class="inline-flex items-center gap-1 text-xs text-gray-500">
+        <div class="p-5 flex flex-col flex-1">
+          <div class="flex-1">
+            <h3 class="font-black text-gray-900 text-base leading-tight mb-1">{{ s.nome }}</h3>
+            <p v-if="s.descricao" class="text-xs text-gray-500 line-clamp-2 leading-relaxed">{{ s.descricao }}</p>
+          </div>
+
+          <div class="flex items-center gap-2 mt-3 pt-3 border-t border-gray-100">
+            <span class="inline-flex items-center gap-1.5 text-xs text-gray-400 font-medium">
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z"/></svg>
               {{ s.duracao_min }}min
             </span>
-            <span class="ml-auto text-lg font-black text-gray-900">{{ formatPreco(s.preco) }}</span>
+            <span
+              class="ml-auto text-xl font-black"
+              style="background: linear-gradient(135deg, #ec4899, #c026d3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"
+            >{{ formatPreco(s.preco) }}</span>
           </div>
 
           <!-- Funcionários vinculados -->
@@ -151,12 +173,12 @@
           <div v-if="isAdminOrGerente" class="flex gap-2 mt-4 pt-4 border-t border-gray-100">
             <button
               type="button"
-              class="flex-1 text-xs font-semibold py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+              class="flex-1 text-xs font-bold py-2.5 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
               @click="editServico(s)"
             >Editar</button>
             <button
               type="button"
-              class="flex-1 text-xs font-semibold py-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+              class="flex-1 text-xs font-bold py-2.5 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
               @click="confirmarExclusao(s)"
             >Excluir</button>
           </div>
@@ -186,6 +208,32 @@
 
           <form class="px-6 py-5 flex flex-col gap-4" @submit.prevent="editando ? salvarEdicao() : salvarAdicao()">
             <div v-if="modalError" class="bg-red-50 border border-red-200 text-red-600 rounded-xl px-4 py-3 text-sm">{{ modalError }}</div>
+
+            <!-- Foto do Serviço -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 uppercase tracking-widest mb-2">Foto do Serviço</label>
+              <!-- Preview -->
+              <div v-if="fotoPreview" class="relative mb-3 rounded-2xl overflow-hidden h-44 bg-gray-100">
+                <img :src="fotoPreview" alt="Preview" class="w-full h-full object-cover" />
+                <button
+                  type="button"
+                  class="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition-colors"
+                  @click="removerFoto"
+                >
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+              </div>
+              <!-- Upload area -->
+              <label
+                v-else
+                class="flex flex-col items-center justify-center h-32 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-pink-50 hover:border-pink-300 cursor-pointer transition-colors group"
+              >
+                <svg class="w-8 h-8 text-gray-300 group-hover:text-pink-400 transition-colors mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                <span class="text-xs text-gray-400 group-hover:text-pink-500 font-medium">Clique para adicionar foto</span>
+                <span class="text-xs text-gray-300 mt-0.5">JPG, PNG ou WebP · Máx. 5 MB</span>
+                <input type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="handleFotoChange" />
+              </label>
+            </div>
 
             <div>
               <label class="block text-xs font-semibold text-gray-600 uppercase tracking-widest mb-1.5">Nome <span class="text-red-500">*</span></label>
@@ -349,6 +397,7 @@ interface Servico {
   duracao_min: number
   preco: number
   ativo: boolean
+  foto_url: string | null
   created_at: string | null
   servico_funcionarios?: FuncionarioVinculado[]
 }
@@ -374,6 +423,9 @@ const deleteError = ref<string | null>(null)
 const filtroAberto = ref(false)
 const filtro = reactive({ busca: '', categoria: '', ativo: '' })
 
+const fotoFile = ref<File | null>(null)
+const fotoPreview = ref<string | null>(null)
+
 const form = reactive({
   nome: '',
   descricao: '',
@@ -381,6 +433,7 @@ const form = reactive({
   duracao_min: 60,
   preco: 0,
   ativo: true,
+  foto_url: null as string | null,
   funcionarioIds: [] as number[],
 })
 
@@ -417,6 +470,24 @@ function categoriaBadge(cat: string) {
   }[cat] ?? 'bg-gray-100 text-gray-600'
 }
 
+function categoriaGradient(cat: string) {
+  return {
+    cilios: 'bg-gradient-to-br from-pink-400 to-rose-500',
+    unhas: 'bg-gradient-to-br from-purple-400 to-violet-500',
+    combo: 'bg-gradient-to-br from-indigo-400 to-blue-500',
+    outro: 'bg-gradient-to-br from-gray-400 to-slate-500',
+  }[cat] ?? 'bg-gradient-to-br from-gray-400 to-slate-500'
+}
+
+function categoriaBadgeOverlay(cat: string) {
+  return {
+    cilios: 'bg-pink-500/80 text-white',
+    unhas: 'bg-purple-500/80 text-white',
+    combo: 'bg-indigo-500/80 text-white',
+    outro: 'bg-gray-500/80 text-white',
+  }[cat] ?? 'bg-gray-500/80 text-white'
+}
+
 onMounted(async () => {
   await loadEmpresa()
   await Promise.all([fetchServicos(), fetchFuncionarios()])
@@ -448,7 +519,10 @@ async function fetchFuncionarios() {
 function resetForm() {
   form.nome = ''; form.descricao = ''; form.categoria = ''
   form.duracao_min = 60; form.preco = 0; form.ativo = true
+  form.foto_url = null
   form.funcionarioIds = []
+  fotoFile.value = null
+  fotoPreview.value = null
   formErrors.nome = ''; formErrors.duracao_min = ''; formErrors.preco = ''
 }
 
@@ -475,6 +549,9 @@ function editServico(s: Servico) {
   form.duracao_min = s.duracao_min
   form.preco = s.preco
   form.ativo = s.ativo
+  form.foto_url = s.foto_url ?? null
+  fotoFile.value = null
+  fotoPreview.value = s.foto_url ?? null
   form.funcionarioIds = (s.servico_funcionarios ?? []).map(sf => sf.funcionario_id)
 }
 
@@ -495,8 +572,35 @@ function buildPayload() {
     duracao_min: form.duracao_min,
     preco: form.preco,
     ativo: form.ativo,
+    foto_url: form.foto_url,
     empresa_id: empresaId.value!,
   }
+}
+
+function handleFotoChange(e: Event) {
+  const input = e.target as HTMLInputElement
+  const file = input.files?.[0]
+  if (!file) return
+  fotoFile.value = file
+  fotoPreview.value = URL.createObjectURL(file)
+}
+
+function removerFoto() {
+  fotoFile.value = null
+  fotoPreview.value = null
+  form.foto_url = null
+}
+
+async function uploadFotoServico(servicoId: number): Promise<string | null> {
+  if (!fotoFile.value) return form.foto_url
+  const ext = fotoFile.value.name.split('.').pop() ?? 'jpg'
+  const path = `${empresaId.value}/${servicoId}/foto.${ext}`
+  const { error: upErr } = await supabase.storage
+    .from('servicos-fotos')
+    .upload(path, fotoFile.value, { upsert: true })
+  if (upErr) throw new Error(upErr.message)
+  const { data } = supabase.storage.from('servicos-fotos').getPublicUrl(path)
+  return data.publicUrl
 }
 
 async function syncFuncionarios(servicoId: number) {
@@ -514,6 +618,14 @@ async function salvarEdicao() {
   if (!editando.value || !validateForm()) return
   saving.value = true
   modalError.value = null
+
+  try {
+    form.foto_url = await uploadFotoServico(editando.value.id)
+  } catch (e: any) {
+    saving.value = false
+    modalError.value = 'Erro ao enviar foto: ' + e.message
+    return
+  }
 
   const { error: updateError } = await supabase
     .from('servicos')
@@ -542,8 +654,16 @@ async function salvarAdicao() {
 
   if (insertError) { saving.value = false; modalError.value = insertError.message; return }
 
-  await syncFuncionarios(inserted.id)
+  try {
+    const fotoUrl = await uploadFotoServico(inserted.id)
+    if (fotoUrl) {
+      await supabase.from('servicos').update({ foto_url: fotoUrl }).eq('id', inserted.id)
+    }
+  } catch (e: any) {
+    console.warn('Foto não enviada:', e.message)
+  }
 
+  await syncFuncionarios(inserted.id)
   saving.value = false
   adicionando.value = false
   await fetchServicos()
