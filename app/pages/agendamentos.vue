@@ -1455,8 +1455,9 @@ function editAgendamento(ag: AgendamentoRow) {
   form.funcionario_id = ag.funcionario_id
   // Reverse-lookup: achar o bigint id a partir do profile_id salvo
   form.funcionario_bigint_id = funcionarios.value.find(f => f.profile_id === ag.funcionario_id)?.id ?? null
-  form.data = ag.data_hora.slice(0, 10)
-  form.hora = ag.data_hora.slice(11, 16)
+  const _dtSP = new Date(ag.data_hora)
+  form.data = _dtSP.toLocaleDateString('sv-SE', { timeZone: 'America/Sao_Paulo' })
+  form.hora = _dtSP.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'America/Sao_Paulo' })
   form.status = ag.status
   form.observacoes = ag.observacoes ?? ''
   form.servico_ids = []
