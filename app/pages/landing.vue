@@ -358,7 +358,7 @@
         <div class="text-center mb-12">
           <p class="section-label">Planos</p>
           <h2 class="text-4xl sm:text-5xl font-black mb-3" style="background: linear-gradient(135deg, #ec4899, #c026d3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Investimento que cabe no seu orçamento</h2>
-          <p class="text-rose-900/50 max-w-sm mx-auto">Planos a partir de R$47,90/mês. Cancele quando quiser.</p>
+          <p class="text-rose-900/50 max-w-sm mx-auto">Planos a partir de R$47/mês. Cancele quando quiser.</p>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-start">
           <div v-for="plan in plans" :key="plan.name"
@@ -558,19 +558,19 @@ const reviews = [
 
 const plans = [
   {
-    name: 'Essencial', price: 'R$47,90', period: '/mês', featured: false,
+    name: 'Essencial', price: 'R$47', period: '/mês', featured: false,
     desc: 'Para quem está começando',
     cta: 'Começar agora',
     items: ['Até 1 usuária', 'Agendamentos ilimitados', 'Até 50 clientes', 'Atividades da equipe', 'Suporte WhatsApp'],
   },
   {
-    name: 'Pro', price: 'R$97,90', period: '/mês', featured: true,
+    name: 'Pro', price: 'R$97', period: '/mês', featured: true,
     desc: 'Para studios em crescimento',
     cta: 'Assinar Pro',
     items: ['Usuárias ilimitadas', 'Clientes ilimitados', 'Todos os módulos', 'Personalização de marca', 'Financeiro completo', 'Suporte WhatsApp'],
   },
   {
-    name: 'Elite', price: 'R$197,90', period: '/mês', featured: false,
+    name: 'Elite', price: 'R$197', period: '/mês', featured: false,
     desc: 'Para redes e franquias',
     cta: 'Falar com a gente',
     items: ['Multi-unidade', 'Relatórios avançados', 'Integrações via API', 'Gerente dedicada', 'Onboarding personalizado', 'SLA garantido'],
