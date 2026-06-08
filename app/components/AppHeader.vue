@@ -32,6 +32,43 @@
         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
       </button>
     </div>
+
+    <!-- Banner trial -->
+    <div
+      v-if="diasRestantesTrial !== null && diasRestantesTrial >= 0"
+      class="border-b px-4 py-2 flex items-center justify-between gap-4"
+      :style="diasRestantesTrial <= 2
+        ? 'background: linear-gradient(90deg,#fef3c7,#fde68a); border-color:#fcd34d; color:#92400e'
+        : 'background: linear-gradient(90deg,#f0fdfa,#ccfbf1); border-color:#99f6e4; color:#0f766e'"
+    >
+      <div class="flex items-center gap-3 min-w-0">
+        <!-- Barra de progresso -->
+        <div class="hidden sm:flex items-center gap-1.5 shrink-0">
+          <span class="text-xs font-bold">Teste grátis:</span>
+          <div class="w-28 h-2 rounded-full overflow-hidden" style="background: rgba(0,0,0,0.1)">
+            <div
+              class="h-full rounded-full transition-all"
+              :style="{
+                width: `${Math.max(4, ((7 - diasRestantesTrial) / 7) * 100)}%`,
+                background: diasRestantesTrial <= 2 ? '#d97706' : '#0d9488'
+              }"
+            ></div>
+          </div>
+        </div>
+        <span class="text-xs font-semibold truncate">
+          <template v-if="diasRestantesTrial === 0">⚠️ Último dia! Assine agora para não perder o acesso.</template>
+          <template v-else-if="diasRestantesTrial <= 2">⏳ {{ diasRestantesTrial }} dia{{ diasRestantesTrial > 1 ? 's' : '' }} restantes no teste. Assine para continuar.</template>
+          <template v-else>🎉 Você está no período de teste gratuito — {{ diasRestantesTrial }} dias restantes.</template>
+        </span>
+      </div>
+      <a
+        href="/landing#precos"
+        class="shrink-0 text-xs px-3 py-1 rounded-lg font-bold transition-all hover:scale-105 whitespace-nowrap"
+        :style="diasRestantesTrial <= 2 ? 'background:#92400e;color:#fff' : 'background:#0d9488;color:#fff'"
+      >
+        Ver planos
+      </a>
+    </div>
   </header>
 </template>
 
@@ -75,10 +112,32 @@ const headerHeight = computed(() => {
 })
 
 const userName = ref('')
+const diasRestantesTrial = ref<number | null>(null)
 
 onMounted(async () => {
   const { data: { user } } = await supabase.auth.getUser()
   userName.value = user?.user_metadata?.full_name ?? user?.email ?? ''
+
+  const perfil = user?.user_metadata?.perfil as string | undefined
+  if (perfil !== 'funcionario') {
+    let empresaId = (user?.user_metadata?.empresa_id as number | null) ?? null
+    if (!empresaId) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('empresa_id')
+        .eq('id', user!.id)
+        .maybeSingle()
+      empresaId = profile?.empresa_id ?? null
+    }
+    if (empresaId) {
+      const { data: rows } = await supabase.rpc('get_empresa_plano', { p_empresa_id: empresaId })
+      const info = rows?.[0]
+      if (info && info.plano === 'trial' && info.trial_end) {
+        const diffDias = Math.ceil((new Date(info.trial_end).getTime() - Date.now()) / 86400000)
+        if (diffDias >= 0) diasRestantesTrial.value = diffDias
+      }
+    }
+  }
 })
 
 const displayName = computed(() => {

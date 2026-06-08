@@ -100,6 +100,12 @@ const allNavSections = [
     ],
   },
   {
+    title: 'Inteligência',
+    items: [
+      { to: '/consultor', icon: 'brain', label: 'Consultor de Negócios', minPerfil: 'manager' },
+    ],
+  },
+  {
     title: 'Sistema',
     items: [
       { to: '/configuracoes', icon: 'settings', label: 'Configurações', minPerfil: 'manager' },

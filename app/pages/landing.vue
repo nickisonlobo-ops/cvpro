@@ -384,7 +384,7 @@
                 {{ item }}
               </li>
             </ul>
-            <a href="https://wa.me/5511940527609" target="_blank" rel="noopener noreferrer"
+            <a :href="plan.url" target="_blank" rel="noopener noreferrer"
               class="mt-2 w-full py-3.5 rounded-full text-sm font-black text-center transition-all duration-200 hover:scale-[1.02] block"
               :class="plan.featured ? 'text-white shadow-lg hover:shadow-pink-300/60' : 'border-2 border-pink-200 text-pink-500 hover:border-pink-400 hover:bg-pink-50'"
               :style="plan.featured ? 'background: linear-gradient(135deg, #f472b6, #c026d3)' : ''">
@@ -392,7 +392,7 @@
             </a>
           </div>
         </div>
-        <p class="text-center text-xs text-rose-900/35 mt-8">Suporte via WhatsApp em todos os planos. Sem fidelidade. Cancele quando quiser.</p>
+        <p class="text-center text-xs text-rose-900/35 mt-8">✅ 7 dias grátis em todos os planos · Sem cartão de crédito · Sem fidelidade · Cancele quando quiser</p>
       </div>
     </section>
 
@@ -558,22 +558,44 @@ const reviews = [
 
 const plans = [
   {
-    name: 'Essencial', price: 'R$47', period: '/mês', featured: false,
+    name: '💅 Essencial', price: 'R$57', period: '/mês', featured: false,
     desc: 'Para quem está começando',
-    cta: 'Começar agora',
-    items: ['Até 1 usuária', 'Agendamentos ilimitados', 'Até 50 clientes', 'Atividades da equipe', 'Suporte WhatsApp'],
+    cta: 'Testar 7 dias grátis',
+    url: 'https://wa.me/5511940527609?text=Quero+assinar+o+plano+Essencial+do+Glow+Up+Studio',
+    items: [
+      '1 conta de acesso',
+      'Até 100 clientes',
+      'Até 100 agendamentos/mês',
+      'Todas as funcionalidades',
+      'Suporte por e-mail',
+    ],
   },
   {
-    name: 'Pro', price: 'R$97', period: '/mês', featured: true,
+    name: '✨ Pro', price: 'R$97', period: '/mês', featured: true,
     desc: 'Para studios em crescimento',
-    cta: 'Assinar Pro',
-    items: ['Usuárias ilimitadas', 'Clientes ilimitados', 'Todos os módulos', 'Personalização de marca', 'Financeiro completo', 'Suporte WhatsApp'],
+    cta: 'Testar 7 dias grátis',
+    url: 'https://wa.me/5511940527609?text=Quero+assinar+o+plano+Pro+do+Glow+Up+Studio',
+    items: [
+      'Até 200 clientes',
+      'Até 3 funcionárias',
+      'Até 200 agendamentos/mês',
+      'Todas as funcionalidades',
+      'Suporte e-mail + chat',
+    ],
   },
   {
-    name: 'Elite', price: 'R$197', period: '/mês', featured: false,
+    name: '🏆 Elite', price: 'R$197', period: '/mês', featured: false,
     desc: 'Para redes e franquias',
     cta: 'Falar com a gente',
-    items: ['Multi-unidade', 'Relatórios avançados', 'Integrações via API', 'Gerente dedicada', 'Onboarding personalizado', 'SLA garantido'],
+    url: 'https://wa.me/5511940527609?text=Quero+assinar+o+plano+Elite+do+Glow+Up+Studio',
+    items: [
+      'Clientes ilimitados',
+      'Funcionárias ilimitadas',
+      'Agendamentos ilimitados',
+      'Todas as funcionalidades',
+      'Suporte prioritário via WhatsApp',
+      'Onboarding personalizado',
+    ],
   },
 ]
 
@@ -581,7 +603,7 @@ const faqs = [
   { q: 'Preciso instalar alguma coisa?',         a: 'Nao! O Glow Up Studio e 100% online, funciona em qualquer celular ou computador, sem instalacao.' },
   { q: 'Meus dados ficam seguros?',              a: 'Sim. Cada studio tem seus dados completamente isolados. Usamos criptografia e backups automaticos.' },
   { q: 'Posso cancelar quando quiser?',          a: 'Sim, sem fidelidade e sem multa. Cancele quando quiser pelo painel ou pelo WhatsApp de suporte.' },
-  { q: 'Quantas funcionárias posso adicionar?',  a: 'No plano Essencial o acesso é para 1 usuária. No Pro e Elite, adicione toda a equipe sem limite.' },
+  { q: 'Quantas funcionárias posso adicionar?',  a: 'No plano Essencial até 3 funcionárias. No Pro até 10 funcionárias. No Elite, ilimitadas.' },
   { q: 'Funciona para mais de um serviço?',      a: 'Sim! Cadastre lash, unhas, sobrancelha e outros serviços no mesmo sistema com preços individuais.' },
   { q: 'Tem app para celular?',                  a: 'A plataforma é totalmente responsiva no celular pelo navegador. Um app nativo está a caminho!' },
 ]

@@ -37,6 +37,7 @@ const allNavItems = [
   { to: '/atividades',    icon: 'clipboard',      label: 'Atividades',  minPerfil: 'all' },
   { to: '/contas-pagar',  icon: 'wallet',         label: 'Contas',      minPerfil: 'manager' },
   { to: '/configuracoes', icon: 'settings',       label: 'Config',      minPerfil: 'manager' },
+  { to: '/consultor',    icon: 'brain',           label: 'Consultor',   minPerfil: 'manager' },
 ]
 
 const navItems = computed(() =>
