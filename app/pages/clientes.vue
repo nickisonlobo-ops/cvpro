@@ -132,8 +132,29 @@
       </div>
     </Transition>
 
-    <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� LOADING �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
-    <div v-if="loading" class="flex flex-col items-center justify-center gap-4 py-32">
+    <!-- ═══ Toggle Lista / Kanban ═══ -->
+    <div class="flex items-center justify-end mb-4">
+      <div class="flex rounded-lg border border-gray-200 overflow-hidden flex-shrink-0">
+        <button type="button" class="px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5"
+          :class="viewMode === 'list' ? 'text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
+          :style="viewMode === 'list' ? { background: 'var(--color-primary, #059669)' } : {}"
+          @click="viewMode = 'list'">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg>
+          Lista
+        </button>
+        <button type="button" class="px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5"
+          :class="viewMode === 'kanban' ? 'text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
+          :style="viewMode === 'kanban' ? { background: 'var(--color-primary, #059669)' } : {}"
+          @click="viewMode = 'kanban'">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125z" /></svg>
+          Kanban
+        </button>
+      </div>
+    </div>
+
+    <!-- ═══ MODO LISTA ═══ -->
+    <div v-if="viewMode === 'list'">
+      <div v-if="loading" class="flex flex-col items-center justify-center gap-4 py-32">
       <span class="inline-block w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
       <span class="text-sm text-gray-400 font-medium">Carregando clientes...</span>
     </div>
@@ -261,6 +282,12 @@
           </tbody>
         </table>
       </div>
+    </div>
+    </div>
+
+    <!-- ═══ MODO KANBAN ═══ -->
+    <div v-else-if="viewMode === 'kanban'">
+      <KanbanBoard pipeline-tipo="crm" @card-click="onKanbanCardClick" />
     </div>
 
     <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� MODAL ADICIONAR / EDITAR �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
@@ -620,6 +647,8 @@ import { useAdmin } from '~/composables/useAdmin'
 import { useEmpresa } from '~/composables/useEmpresa'
 import AppInput from '~/components/AppInput.vue'
 import AppButton from '~/components/AppButton.vue'
+import KanbanBoard from '~/components/kanban/KanbanBoard.vue'
+import type { KanbanCard } from '~/composables/useKanban'
 
 interface Cliente {
   id: number
@@ -646,6 +675,7 @@ const { isAdminOrGerente } = useAdmin()
 const clientes = ref<Cliente[]>([])
 const loading = ref(true)
 const error = ref<string | null>(null)
+const viewMode = ref<'list' | 'kanban'>('kanban')
 
 const editando = ref<Cliente | null>(null)
 const adicionando = ref(false)
@@ -749,6 +779,22 @@ async function abrirDetalhesCliente(cliente: Cliente) {
   clienteSelecionado.value = cliente
   modalDetalhesAberto.value = true
   await fetchAtendimentosCliente(cliente.id)
+}
+
+async function onKanbanCardClick(card: KanbanCard) {
+  // Fetch full client data and open details modal
+  const { data, error: fetchError } = await supabase
+    .from('clientes')
+    .select('*')
+    .eq('id', card.id)
+    .single()
+
+  if (fetchError || !data) {
+    console.error('Erro ao carregar cliente do kanban:', fetchError?.message)
+    return
+  }
+
+  await abrirDetalhesCliente(data as Cliente)
 }
 
 function fecharDetalhes() {

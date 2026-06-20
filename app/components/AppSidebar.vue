@@ -100,6 +100,16 @@ const allNavSections = [
     ],
   },
   {
+    title: 'Produção',
+    items: [
+      { to: '/adesivos-orcamentos', icon: 'document', label: 'Orçamentos', minPerfil: 'all' },
+      { to: '/adesivos-ordens-servico', icon: 'clipboard', label: 'Ordens de Serviço', minPerfil: 'all' },
+      { to: '/adesivos-catalogo', icon: 'catalog', label: 'Catálogo', minPerfil: 'all' },
+      { to: '/adesivos-materiais', icon: 'layers', label: 'Materiais', minPerfil: 'all' },
+      { to: '/adesivos-estoque', icon: 'cube', label: 'Estoque', minPerfil: 'all' },
+    ],
+  },
+  {
     title: 'Inteligência',
     items: [
       { to: '/consultor', icon: 'brain', label: 'Consultor de Negócios', minPerfil: 'manager' },
@@ -126,16 +136,38 @@ const navSections = computed(() =>
 <style scoped>
 .nav-link {
   color: var(--color-primary-text, #ffffff);
-  opacity: 0.65;
+  opacity: 0.6;
+  position: relative;
 }
 .nav-link:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
   opacity: 1;
 }
 .nav-link-active {
-  background: rgba(255, 255, 255, 0.18) !important;
+  background: rgba(255, 255, 255, 0.12) !important;
   opacity: 1 !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  box-shadow: inset 3px 0 0 var(--color-primary, #6366f1);
+}
+.nav-link-active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  border-radius: 0 4px 4px 0;
+  background: var(--color-primary, #6366f1);
+}
+aside::-webkit-scrollbar {
+  width: 3px;
+}
+aside::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.15);
+  border-radius: 4px;
+}
+aside::-webkit-scrollbar-track {
+  background: transparent;
 }
 </style>
 

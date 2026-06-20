@@ -575,6 +575,15 @@ interface Agendamento {
   valor_total: number | null
 }
 
+interface OrdemServicoFinanceiro {
+  id: number
+  valor_total: number | null
+  status: string
+  data_entrega: string | null
+  data_aprovacao: string | null
+  forma_pagamento: string | null
+}
+
 // ── Estado ────────────────────────────────────────────────────────────────────
 const supabase = createSupabaseClient()
 const { empresaId, loadEmpresa } = useEmpresa()
@@ -583,6 +592,7 @@ const { isAdminOrGerente } = useAdmin()
 const vendas = ref<Venda[]>([])
 const contas = ref<ContaPagar[]>([])
 const agendamentos = ref<Agendamento[]>([])
+const ordensServico = ref<OrdemServicoFinanceiro[]>([])
 const loading = ref(true)
 
 // ── Constantes visuais ────────────────────────────────────────────────────────
@@ -653,7 +663,15 @@ const monthlyData = computed(() => {
       })
       .reduce((s, a) => s + (a.valor_total ?? 0), 0)
 
-    const receita = receitaVendas + receitaAgendamentos
+    const receitaOS = ordensServico.value
+      .filter(os => {
+        if (os.status !== 'entregue' || !os.data_entrega || !os.valor_total) return false
+        const de = new Date(os.data_entrega)
+        return de.getFullYear() === year && de.getMonth() + 1 === month
+      })
+      .reduce((s, os) => s + (os.valor_total ?? 0), 0)
+
+    const receita = receitaVendas + receitaAgendamentos + receitaOS
 
     const despesas = contas.value
       .filter(c => {
@@ -693,7 +711,12 @@ const vendasMes = computed(() => {
     const d = new Date(a.data_hora)
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
   }).length
-  return vendaMesCount + agendMesCount
+  const osMesCount = ordensServico.value.filter(os => {
+    if (os.status !== 'entregue' || !os.data_entrega) return false
+    const d = new Date(os.data_entrega)
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+  }).length
+  return vendaMesCount + agendMesCount + osMesCount
 })
 
 const contasMes = computed(() => {
@@ -787,6 +810,11 @@ const donutData = computed(() => {
     const d = new Date(a.data_hora)
     return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
   })
+  const osMes = ordensServico.value.filter(os => {
+    if (os.status !== 'entregue' || !os.data_entrega) return false
+    const d = new Date(os.data_entrega)
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth()
+  })
   const map: Record<string, number> = {}
   for (const v of vendaMes) {
     const fp = v.forma_pagamento ?? 'Não informado'
@@ -795,6 +823,11 @@ const donutData = computed(() => {
   const agendTotal = agendMes.reduce((s, a) => s + (a.valor_total ?? 0), 0)
   if (agendTotal > 0) {
     map['Consultas/Serviços'] = (map['Consultas/Serviços'] ?? 0) + agendTotal
+  }
+  // Receita de Ordens de Serviço
+  for (const os of osMes) {
+    const fp = os.forma_pagamento ?? 'Produção (OS)'
+    map[fp] = (map[fp] ?? 0) + (os.valor_total ?? 0)
   }
   const total = Object.values(map).reduce((s, v) => s + v, 0)
   return Object.entries(map)
@@ -929,7 +962,7 @@ const insights = computed(() => {
 // ── Fetch ─────────────────────────────────────────────────────────────────────
 async function fetchAll() {
   loading.value = true
-  await Promise.all([fetchVendas(), fetchContas(), fetchAgendamentos()])
+  await Promise.all([fetchVendas(), fetchContas(), fetchAgendamentos(), fetchOrdensServico()])
   loading.value = false
 }
 
@@ -963,6 +996,16 @@ async function fetchAgendamentos() {
     .not('valor_total', 'is', null)
     .gt('valor_total', 0)
   agendamentos.value = (data ?? []) as Agendamento[]
+}
+
+async function fetchOrdensServico() {
+  if (!empresaId.value) return
+  const { data } = await supabase
+    .from('ordens_servico_adesivo')
+    .select('id, valor_total, status, data_entrega, data_aprovacao, forma_pagamento')
+    .not('valor_total', 'is', null)
+    .gt('valor_total', 0)
+  ordensServico.value = (data ?? []) as OrdemServicoFinanceiro[]
 }
 
 onMounted(async () => {
