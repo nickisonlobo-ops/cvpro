@@ -169,18 +169,14 @@ export function useAdesivos() {
       errors.material_id = 'Material é obrigatório'
     }
 
-    // largura_cm: obrigatória, entre 0.1 e 500
-    if (data.largura_cm === null || data.largura_cm === undefined) {
-      errors.largura_cm = 'Largura é obrigatória'
-    } else if (data.largura_cm < 0.1 || data.largura_cm > 500) {
-      errors.largura_cm = 'Largura deve estar entre 0.1 e 500 cm'
+    // largura_cm: opcional, se informada entre 0.1 e 9999
+    if (data.largura_cm != null && (data.largura_cm < 0.1 || data.largura_cm > 9999)) {
+      errors.largura_cm = 'Largura deve estar entre 0.1 e 9999 cm'
     }
 
-    // altura_cm: obrigatória, entre 0.1 e 500
-    if (data.altura_cm === null || data.altura_cm === undefined) {
-      errors.altura_cm = 'Altura é obrigatória'
-    } else if (data.altura_cm < 0.1 || data.altura_cm > 500) {
-      errors.altura_cm = 'Altura deve estar entre 0.1 e 500 cm'
+    // altura_cm: opcional, se informada entre 0.1 e 9999
+    if (data.altura_cm != null && (data.altura_cm < 0.1 || data.altura_cm > 9999)) {
+      errors.altura_cm = 'Altura deve estar entre 0.1 e 9999 cm'
     }
 
     // preco_venda: obrigatório, entre 0.01 e 999999.99

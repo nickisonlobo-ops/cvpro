@@ -296,7 +296,8 @@
         <div v-else class="flex gap-3">
           <button
             type="button"
-            class="flex-1 py-4 rounded-xl text-base font-bold bg-green-500 text-white hover:bg-green-600 shadow-lg shadow-green-500/25 transition-all disabled:opacity-50"
+            class="flex-1 py-4 rounded-xl text-base font-bold text-white shadow-lg transition-all disabled:opacity-50"
+            :style="{ background: 'var(--color-primary, #10b981)', boxShadow: '0 10px 25px -5px var(--color-primary, rgba(16,185,129,0.25))' }"
             :disabled="actionLoading"
             @click="handleApprove"
           >
@@ -625,12 +626,35 @@ async function loadEmpresaInfo(empresaId: number) {
   if (!empresaId) return
 
   const [personalRes, empresaRes] = await Promise.all([
-    supabase.from('empresa_personalizacao').select('nome_empresa, logo_url').eq('empresa_id', empresaId).maybeSingle(),
+    supabase.from('empresa_personalizacao').select('*').eq('empresa_id', empresaId).maybeSingle(),
     supabase.from('empresas').select('nome').eq('id', empresaId).maybeSingle(),
   ])
+
+  const data = personalRes.data
   empresa.value = {
-    nome: personalRes.data?.nome_empresa || empresaRes.data?.nome || '',
-    logo_url: personalRes.data?.logo_url || null,
+    nome: data?.nome_empresa || empresaRes.data?.nome || '',
+    logo_url: data?.logo_url || null,
+  }
+
+  // Aplicar tema da empresa na página de aprovação
+  if (data && typeof document !== 'undefined') {
+    const root = document.documentElement.style
+    const cor = data.cor_primaria || '#4f46e5'
+    const corTexto = data.cor_primaria_texto || '#ffffff'
+    const dir = data.grad_direction || '135deg'
+    const corGrad = data.cor_primaria_grad || null
+
+    const primaryBg = corGrad
+      ? `linear-gradient(${dir}, ${cor}, ${corGrad})`
+      : cor
+
+    root.setProperty('--color-primary', cor)
+    root.setProperty('--color-primary-text', corTexto)
+    root.setProperty('--color-primary-bg', primaryBg)
+
+    // Botão e accent
+    root.setProperty('--color-btn', primaryBg)
+    root.setProperty('--color-btn-text', corTexto)
   }
 }
 

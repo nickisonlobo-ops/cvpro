@@ -80,10 +80,10 @@
         <div class="h-px bg-white/10 my-4 sm:my-6" />
 
         <!-- Stats -->
-        <div v-if="!loading" class="grid grid-cols-3 sm:grid-cols-6 gap-3">
+        <div v-if="!loading" class="grid grid-cols-3 sm:grid-cols-6 gap-3 header-stats">
           <div v-for="stat in stats" :key="stat.label" class="flex flex-col gap-1 bg-white/10 backdrop-blur-sm rounded-2xl px-4 py-3 border border-white/10">
-            <span class="text-xs font-semibold text-white/70 uppercase tracking-widest">{{ stat.label }}</span>
-            <span class="text-2xl font-black" :class="stat.color">{{ stat.value }}</span>
+            <span class="stat-label">{{ stat.label }}</span>
+            <span class="stat-value">{{ stat.value }}</span>
           </div>
         </div>
       </div>
@@ -2262,5 +2262,20 @@ async function executarExclusao() {
 .quick-card-enter-active { transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1); }
 .quick-card-leave-active { transition: all 0.15s ease-in; }
 .quick-card-enter-from, .quick-card-leave-to { opacity: 0; transform: scale(0.93) translateY(10px); }
+
+/* Header stats — usar primary-text, imune aos overrides do tema */
+.header-stats .stat-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primary-text, #ffffff) !important;
+  opacity: 0.7;
+}
+.header-stats .stat-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--color-primary-text, #ffffff) !important;
+}
 </style>
 

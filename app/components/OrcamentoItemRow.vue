@@ -59,7 +59,7 @@
       </div>
 
       <!-- Dimensões + Quantidade -->
-      <div class="grid grid-cols-3 gap-2">
+      <div class="grid grid-cols-4 gap-2">
         <div class="flex flex-col gap-1">
           <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Larg. (cm)</label>
           <input :value="item.largura_cm" type="number" step="0.1" min="0.1" placeholder="0"
@@ -73,6 +73,12 @@
             class="w-full rounded-lg border px-2.5 py-2 text-sm font-medium text-gray-800 bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all"
             :class="errors.altura_cm ? 'border-red-300' : 'border-gray-200'"
             @input="onFieldInput('altura_cm', $event)" />
+        </div>
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Esp. (cm)</label>
+          <input :value="item.espessura_cm" type="number" step="0.1" min="0" placeholder="0"
+            class="w-full rounded-lg border px-2.5 py-2 text-sm font-medium text-gray-800 bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all border-gray-200"
+            @input="onFieldInput('espessura_cm', $event)" />
         </div>
         <div class="flex flex-col gap-1">
           <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Qtd</label>
@@ -235,7 +241,7 @@ function formatCurrency(val: number | null | undefined): string {
 }
 
 function validateField(field: string, value: number | null | undefined): string {
-  if (field === 'largura_cm' || field === 'altura_cm') {
+  if (field === 'largura_cm' || field === 'altura_cm' || field === 'espessura_cm') {
     if (value == null || isNaN(value) || value < 0.1) return 'Mín: 0.1'
     if (value > 9999.9) return 'Máx: 9999.9'
   } else if (field === 'quantidade') {
@@ -258,7 +264,7 @@ function onMaterialSelected(mat: { id: number; nome: string; preco_m2?: number }
   emitUpdate({ material_id: mat.id, material_nome: mat.nome, preco_m2: mat.preco_m2 ?? 0 })
 }
 
-function onFieldInput(field: 'largura_cm' | 'altura_cm' | 'quantidade', event: Event) {
+function onFieldInput(field: 'largura_cm' | 'altura_cm' | 'espessura_cm' | 'quantidade', event: Event) {
   const value = (event.target as HTMLInputElement).value === '' ? 0 : parseFloat((event.target as HTMLInputElement).value)
   const error = validateField(field, value)
   if (error) { errors.value[field] = error } else { delete errors.value[field] }

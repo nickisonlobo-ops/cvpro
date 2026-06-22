@@ -70,8 +70,10 @@
           <thead>
             <tr class="bg-gray-50 border-b border-gray-100">
               <th class="text-left px-6 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Nome</th>
+              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Tipo</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Descrição</th>
-              <th class="text-right px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Preço/m²</th>
+              <th class="text-right px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Preço</th>
+              <th class="text-center px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Unidade</th>
               <th class="text-right px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Estoque Mín.</th>
               <th class="text-center px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Status</th>
               <th class="px-6 py-4 text-right text-xs font-extrabold text-gray-400 uppercase tracking-widest w-28">Ações</th>
@@ -79,7 +81,7 @@
           </thead>
           <tbody class="divide-y divide-gray-50">
             <tr v-if="materiais.length === 0">
-              <td colspan="6" class="text-center py-20">
+              <td colspan="8" class="text-center py-20">
                 <div class="flex flex-col items-center gap-3">
                   <svg class="w-14 h-14 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z" />
@@ -98,13 +100,21 @@
                 <span class="font-semibold text-gray-800">{{ mat.nome }}</span>
               </td>
               <td class="px-5 py-4">
+                <span v-if="mat.tipo" class="inline-flex items-center text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-600">{{ mat.tipo }}</span>
+                <span v-else class="text-gray-300">—</span>
+              </td>
+              <td class="px-5 py-4">
                 <span class="text-gray-500 max-w-[200px] block truncate">{{ mat.descricao || '—' }}</span>
               </td>
               <td class="px-5 py-4 text-right">
-                <span class="font-bold text-gray-800 whitespace-nowrap">{{ formatCurrency(mat.preco_m2) }}</span>
+                <span class="font-bold text-gray-800 whitespace-nowrap">{{ formatCurrency(mat.preco_m2) }}/{{ mat.unidade_medida || 'm²' }}</span>
+              </td>
+              <td class="px-5 py-4 text-center">
+                <span v-if="mat.unidade_medida" class="text-xs font-semibold text-gray-600">{{ mat.unidade_medida }}</span>
+                <span v-else class="text-gray-300">m²</span>
               </td>
               <td class="px-5 py-4 text-right">
-                <span class="text-gray-600">{{ mat.estoque_minimo ?? 0 }} m²</span>
+                <span class="text-gray-600">{{ mat.estoque_minimo ?? 0 }} {{ mat.unidade_medida || 'm²' }}</span>
               </td>
               <td class="px-5 py-4 text-center">
                 <span
@@ -204,9 +214,9 @@
                 />
               </div>
 
-              <!-- Preço/m² -->
+              <!-- Preço por unidade -->
               <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Preço por m² (R$) *</label>
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Preço por {{ form.unidade_medida || 'm²' }} (R$) *</label>
                 <input
                   v-model.number="form.preco_m2"
                   type="number"
@@ -225,7 +235,7 @@
 
               <!-- Estoque Mínimo -->
               <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Estoque Mínimo (m²)</label>
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Estoque Mínimo ({{ form.unidade_medida || 'm²' }})</label>
                 <input
                   v-model.number="form.estoque_minimo"
                   type="number"
@@ -234,6 +244,36 @@
                   placeholder="0"
                   class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 focus:border-indigo-400 transition-all"
                 />
+              </div>
+
+              <!-- Tipo -->
+              <div class="flex flex-col gap-1.5">
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Tipo</label>
+                <input
+                  v-model="form.tipo"
+                  type="text"
+                  maxlength="50"
+                  placeholder="Ex: Vinil, Lona, ACM, Papel..."
+                  class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 focus:border-indigo-400 transition-all placeholder:text-gray-300"
+                />
+              </div>
+
+              <!-- Unidade de Medida -->
+              <div class="flex flex-col gap-1.5">
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Unidade de Medida</label>
+                <select
+                  v-model="form.unidade_medida"
+                  class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 focus:border-indigo-400 transition-all"
+                >
+                  <option value="">m² (padrão)</option>
+                  <option value="m²">m²</option>
+                  <option value="m">metro linear</option>
+                  <option value="un">unidade</option>
+                  <option value="kg">kg</option>
+                  <option value="L">litro</option>
+                  <option value="rolo">rolo</option>
+                  <option value="chapa">chapa</option>
+                </select>
               </div>
 
               <!-- Status (apenas na edição) -->
@@ -357,6 +397,8 @@ interface Material {
   estoque_minimo: number
   ativo: boolean
   created_at: string | null
+  tipo: string | null
+  unidade_medida: string | null
 }
 
 // ─── Composables ─────────────────────────────────────────────────────────────
@@ -384,6 +426,8 @@ const form = reactive({
   preco_m2: null as number | null,
   estoque_minimo: 0,
   ativo: true,
+  tipo: '',
+  unidade_medida: '',
 })
 const formErrors = reactive({ nome: '', preco_m2: '' })
 
@@ -410,7 +454,7 @@ async function fetchMateriais() {
 
   const { data, error: fetchError } = await supabase
     .from('materiais_adesivo')
-    .select('id, nome, descricao, preco_m2, estoque_minimo, ativo, created_at')
+    .select('id, nome, descricao, preco_m2, estoque_minimo, ativo, created_at, tipo, unidade_medida')
     .eq('empresa_id', empresaId.value!)
     .order('nome', { ascending: true })
 
@@ -426,6 +470,8 @@ function resetForm() {
   form.preco_m2 = null
   form.estoque_minimo = 0
   form.ativo = true
+  form.tipo = ''
+  form.unidade_medida = ''
   formErrors.nome = ''
   formErrors.preco_m2 = ''
   modalError.value = null
@@ -445,6 +491,8 @@ function abrirEditar(mat: Material) {
   form.preco_m2 = mat.preco_m2
   form.estoque_minimo = mat.estoque_minimo
   form.ativo = mat.ativo
+  form.tipo = mat.tipo ?? ''
+  form.unidade_medida = mat.unidade_medida ?? ''
   modalAberto.value = true
 }
 
@@ -498,6 +546,8 @@ async function salvar() {
         preco_m2: form.preco_m2!,
         estoque_minimo: form.estoque_minimo,
         ativo: form.ativo,
+        tipo: form.tipo.trim() || null,
+        unidade_medida: form.unidade_medida.trim() || null,
       })
       .eq('id', editandoMaterial.value.id)
 
@@ -514,6 +564,8 @@ async function salvar() {
         preco_m2: form.preco_m2!,
         estoque_minimo: form.estoque_minimo,
         ativo: form.ativo,
+        tipo: form.tipo.trim() || null,
+        unidade_medida: form.unidade_medida.trim() || null,
       }
       // Re-sort alphabetically
       materiais.value.sort((a, b) => a.nome.localeCompare(b.nome))
@@ -531,8 +583,10 @@ async function salvar() {
         preco_m2: form.preco_m2!,
         estoque_minimo: form.estoque_minimo,
         ativo: true,
+        tipo: form.tipo.trim() || null,
+        unidade_medida: form.unidade_medida.trim() || null,
       })
-      .select('id, nome, descricao, preco_m2, estoque_minimo, ativo, created_at')
+      .select('id, nome, descricao, preco_m2, estoque_minimo, ativo, created_at, tipo, unidade_medida')
       .single()
 
     saving.value = false

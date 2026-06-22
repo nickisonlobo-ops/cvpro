@@ -449,6 +449,20 @@ export function usePersonalizacao() {
       .font-semibold, .font-bold, .font-black {
         color: inherit;
       }
+      /* Proteger textos brancos em headers/overlays — nunca sobrescrever */
+      .text-white { color: #ffffff !important; }
+      .text-white\\/70 { color: rgba(255,255,255,0.7) !important; }
+      .text-white\\/80 { color: rgba(255,255,255,0.8) !important; }
+      .text-white\\/60 { color: rgba(255,255,255,0.6) !important; }
+      .text-white\\/50 { color: rgba(255,255,255,0.5) !important; }
+      .text-white\\/40 { color: rgba(255,255,255,0.4) !important; }
+      /* Stats no header — texto sempre segue primary-text */
+      .header-stats * {
+        color: var(--color-primary-text, #ffffff) !important;
+      }
+      .header-stats .stat-label {
+        opacity: 0.7 !important;
+      }
       /* Badges/tags que usam bg-gray-100 text-gray-600 */
       .bg-gray-100.text-gray-600 {
         background-color: rgba(255,255,255,0.08) !important;
@@ -468,9 +482,24 @@ export function usePersonalizacao() {
         background-color: rgba(255,255,255,0.03) !important;
       }
       /* Modals e dropdowns */
-      .bg-white.rounded-2xl, .bg-white.rounded-xl {
+      .bg-white.rounded-2xl, .bg-white.rounded-xl, .bg-white.rounded-3xl {
         background-color: ${cfg.cor_card} !important;
         color: ${cfg.cor_card_texto} !important;
+      }
+      /* Todas as seções bg-white dentro de modais (fixed overlays) */
+      .fixed .bg-white, [class*="fixed"] .bg-white {
+        background-color: ${cfg.cor_card} !important;
+        color: ${cfg.cor_card_texto} !important;
+      }
+      /* Footer e sub-seções de modais */
+      .bg-gray-50\\/50, .bg-gray-50\\/70 {
+        background-color: rgba(255,255,255,0.03) !important;
+        color: ${cfg.cor_card_texto} !important;
+      }
+      /* Labels de formulário em modais */
+      label {
+        color: ${cfg.cor_card_texto} !important;
+        opacity: 0.7;
       }
       ` : ''}
 

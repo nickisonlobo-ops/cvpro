@@ -122,7 +122,7 @@
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest w-16">Img</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Nome</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Categoria</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Material</th>
+              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Materiais</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Dimensões</th>
               <th class="text-right px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Preço</th>
               <th class="text-center px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Status</th>
@@ -141,62 +141,95 @@
                 </div>
               </td>
             </tr>
-            <tr
-              v-for="produto in produtos"
-              :key="produto.id"
-              class="hover:bg-teal-50/30 transition-colors duration-150 group"
-            >
-              <!-- Img -->
-              <td class="px-5 py-3">
-                <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 shrink-0">
-                  <img v-if="produto.imagem_url" :src="produto.imagem_url" :alt="produto.nome" class="w-full h-full object-cover" loading="lazy" />
-                  <div v-else class="w-full h-full flex items-center justify-center">
-                    <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+            <template v-for="produto in produtos" :key="produto.id">
+              <tr
+                class="hover:bg-teal-50/30 transition-colors duration-150 group cursor-pointer"
+                @click="toggleExpand(produto.id)"
+              >
+                <!-- Img -->
+                <td class="px-5 py-3">
+                  <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 shrink-0">
+                    <img v-if="produto.imagem_url" :src="produto.imagem_url" :alt="produto.nome" class="w-full h-full object-cover" loading="lazy" />
+                    <div v-else class="w-full h-full flex items-center justify-center">
+                      <svg class="w-5 h-5 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5z"/></svg>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <!-- Nome -->
-              <td class="px-5 py-3">
-                <span class="font-semibold text-gray-800">{{ produto.nome }}</span>
-              </td>
-              <!-- Categoria -->
-              <td class="px-5 py-3">
-                <span class="text-sm text-gray-600">{{ produto.categoria }}</span>
-              </td>
-              <!-- Material -->
-              <td class="px-5 py-3">
-                <span class="text-sm text-gray-600">{{ produto.materiais_adesivo?.nome ?? '—' }}</span>
-              </td>
-              <!-- Dimensões -->
-              <td class="px-5 py-3">
-                <span class="text-sm text-gray-500">{{ produto.largura_cm }} × {{ produto.altura_cm }} cm</span>
-              </td>
-              <!-- Preço -->
-              <td class="px-5 py-3 text-right">
-                <span class="font-bold text-gray-800">{{ formatCurrency(produto.preco_venda) }}</span>
-              </td>
-              <!-- Status -->
-              <td class="px-5 py-3 text-center">
-                <button
-                  type="button"
-                  class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full cursor-pointer transition-colors"
-                  :class="produto.ativo ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'"
-                  :title="produto.ativo ? 'Clique para desativar' : 'Clique para ativar'"
-                  @click="toggleAtivo(produto)"
-                >
-                  <span class="w-1.5 h-1.5 rounded-full" :class="produto.ativo ? 'bg-green-500' : 'bg-red-500'" />
-                  {{ produto.ativo ? 'Ativo' : 'Inativo' }}
-                </button>
-              </td>
-              <!-- Ações -->
-              <td class="px-6 py-3 text-right">
-                <div class="flex items-center justify-end gap-1">
-                  <button type="button" class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-teal-500 hover:bg-teal-100 transition-colors" title="Editar" @click="abrirEditar(produto)">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+                </td>
+                <!-- Nome -->
+                <td class="px-5 py-3">
+                  <span class="font-semibold text-gray-800">{{ produto.nome }}</span>
+                </td>
+                <!-- Categoria -->
+                <td class="px-5 py-3">
+                  <span class="text-sm text-gray-600">{{ produto.categoria }}</span>
+                </td>
+                <!-- Materiais (badge count) -->
+                <td class="px-5 py-3">
+                  <span class="inline-flex items-center gap-1 text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                    {{ (produto.composicoes?.length ?? 0) }} mat.
+                  </span>
+                </td>
+                <!-- Dimensões -->
+                <td class="px-5 py-3">
+                  <span class="text-sm text-gray-500">{{ produto.largura_cm }} × {{ produto.altura_cm }} cm</span>
+                </td>
+                <!-- Preço -->
+                <td class="px-5 py-3 text-right">
+                  <span class="font-bold text-gray-800">{{ formatCurrency(produto.preco_venda) }}</span>
+                </td>
+                <!-- Status -->
+                <td class="px-5 py-3 text-center">
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1.5 text-xs font-bold px-2.5 py-1 rounded-full cursor-pointer transition-colors"
+                    :class="produto.ativo ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-red-100 text-red-700 hover:bg-red-200'"
+                    :title="produto.ativo ? 'Clique para desativar' : 'Clique para ativar'"
+                    @click.stop="toggleAtivo(produto)"
+                  >
+                    <span class="w-1.5 h-1.5 rounded-full" :class="produto.ativo ? 'bg-green-500' : 'bg-red-500'" />
+                    {{ produto.ativo ? 'Ativo' : 'Inativo' }}
                   </button>
-                </div>
-              </td>
-            </tr>
+                </td>
+                <!-- Ações -->
+                <td class="px-6 py-3 text-right">
+                  <div class="flex items-center justify-end gap-1">
+                    <button type="button" class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-teal-500 hover:bg-teal-100 transition-colors" title="Editar" @click.stop="abrirEditar(produto)">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931z"/></svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              <!-- Expandable cost breakdown row -->
+              <tr v-if="expandedRows.has(produto.id) && produto.composicoes?.length">
+                <td colspan="8" class="px-5 py-0">
+                  <div class="bg-gray-50/80 rounded-xl border border-gray-100 my-2 overflow-hidden">
+                    <div class="px-4 py-2.5 border-b border-gray-100 flex items-center gap-2">
+                      <svg class="w-3.5 h-3.5 text-indigo-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19 14.5M14.25 3.104c.251.023.501.05.75.082M19 14.5l-1.902 1.902a2.25 2.25 0 01-2.387.541l-.819-.328a2.25 2.25 0 00-2.384.541L9.5 19.06a2.25 2.25 0 01-2.387.541l-.819-.328a2.25 2.25 0 00-2.384.541L2 21.75"/></svg>
+                      <span class="text-xs font-bold text-gray-600 uppercase tracking-wider">Composição de Custo</span>
+                    </div>
+                    <table class="w-full text-xs">
+                      <thead>
+                        <tr class="text-gray-400">
+                          <th class="text-left px-4 py-2 font-bold uppercase tracking-wider">Material</th>
+                          <th class="text-left px-4 py-2 font-bold uppercase tracking-wider">Fórmula</th>
+                          <th class="text-right px-4 py-2 font-bold uppercase tracking-wider">Preço Unit.</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-100">
+                        <tr v-for="comp in produto.composicoes" :key="comp.id">
+                          <td class="px-4 py-2 font-semibold text-gray-700">{{ comp.material_nome }}</td>
+                          <td class="px-4 py-2">
+                            <code class="text-[11px] bg-white px-1.5 py-0.5 rounded border border-gray-200 text-indigo-600 font-mono">{{ comp.formula_consumo }}</code>
+                          </td>
+                          <td class="px-4 py-2 text-right font-semibold text-gray-600">{{ formatCurrency(comp.preco_unitario) }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </td>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>
@@ -274,61 +307,134 @@
               </div>
 
               <!-- Categoria -->
+              <!-- Categoria -->
               <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Categoria *</label>
-                <input
-                  v-model="form.categoria"
-                  type="text"
-                  placeholder="Ex: Decorativo, Automotivo, Personalizado..."
+                <div class="flex items-center justify-between">
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Categoria *</label>
+                  <button
+                    type="button"
+                    class="text-[10px] font-bold text-teal-600 hover:text-teal-800 transition-colors"
+                    @click="showCategoriasModal = true"
+                  >
+                    + Gerenciar
+                  </button>
+                </div>
+                <select
+                  v-model="form.categoria_id"
                   class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
                   :class="formErrors.categoria ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
-                />
+                >
+                  <option :value="null">Selecione uma categoria...</option>
+                  <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.nome }}</option>
+                </select>
                 <p v-if="formErrors.categoria" class="text-xs text-red-500 font-semibold">{{ formErrors.categoria }}</p>
               </div>
 
-              <!-- Material -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Material *</label>
-                <select
-                  v-model="form.material_id"
-                  class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
-                  :class="formErrors.material_id ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
-                >
-                  <option :value="null">Selecione o material...</option>
-                  <option v-for="m in materiaisAtivos" :key="m.id" :value="m.id">{{ m.nome }}</option>
-                </select>
-                <p v-if="formErrors.material_id" class="text-xs text-red-500 font-semibold">{{ formErrors.material_id }}</p>
-              </div>
+              <!-- ═══ Composição de Materiais ═══ -->
+              <div class="flex flex-col gap-3">
+                <div class="flex items-center justify-between">
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Composição de Materiais *</label>
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-1 text-xs font-bold text-teal-600 hover:text-teal-800 transition-colors"
+                    @click="adicionarComposicao"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                    Adicionar Material
+                  </button>
+                </div>
 
-              <!-- Dimensões -->
+                <p v-if="formErrors.composicoes" class="text-xs text-red-500 font-semibold -mt-1">{{ formErrors.composicoes }}</p>
+
+                <!-- Empty state -->
+                <div v-if="form.composicoes.length === 0" class="border-2 border-dashed border-gray-200 rounded-xl px-4 py-6 text-center">
+                  <p class="text-sm text-gray-400">Nenhum material adicionado. Clique em "Adicionar Material" acima.</p>
+                </div>
+
+                <!-- Composition rows -->
+                <div
+                  v-for="(comp, idx) in form.composicoes"
+                  :key="idx"
+                  class="relative border border-gray-200 rounded-xl p-4 bg-gray-50/50 space-y-3"
+                >
+                  <!-- Delete button -->
+                  <button
+                    type="button"
+                    class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                    title="Remover material"
+                    @click="removerComposicao(idx)"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+
+                  <!-- Material select -->
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Material {{ idx + 1 }}</label>
+                    <select
+                      v-model="comp.material_id"
+                      class="w-full rounded-lg border px-3 py-2 text-sm font-semibold text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-teal-400 transition-all"
+                      :class="comp.errors?.material_id ? 'border-red-400 bg-red-50' : 'border-gray-200'"
+                    >
+                      <option :value="null">Selecione o material...</option>
+                      <option v-for="m in materiaisAtivos" :key="m.id" :value="m.id">{{ m.nome }}</option>
+                    </select>
+                    <p v-if="comp.errors?.material_id" class="text-[10px] text-red-500 font-semibold">{{ comp.errors.material_id }}</p>
+                  </div>
+
+                  <!-- Formula input -->
+                  <div class="flex flex-col gap-1">
+                    <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Fórmula de Consumo</label>
+                    <input
+                      v-model="comp.formula_consumo"
+                      type="text"
+                      placeholder="Ex: largura * altura / 10000"
+                      class="w-full rounded-lg border px-3 py-2 text-sm font-mono text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-teal-400 transition-all"
+                      :class="comp.errors?.formula ? 'border-red-400 bg-red-50' : 'border-gray-200'"
+                      @input="validarFormulaRow(idx)"
+                    />
+                    <p v-if="comp.errors?.formula" class="text-[10px] text-red-500 font-semibold">{{ comp.errors.formula }}</p>
+
+                    <!-- Variable badges -->
+                    <div v-if="comp.detectedVars.length > 0" class="flex flex-wrap gap-1 mt-0.5">
+                      <span
+                        v-for="v in comp.detectedVars"
+                        :key="v"
+                        class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-md"
+                        :class="VARIAVEIS_PERMITIDAS.includes(v as any) ? 'bg-teal-100 text-teal-700' : 'bg-red-100 text-red-600'"
+                      >
+                        {{ v }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- ═══ Fim Composição ═══ -->
+
+              <!-- Dimensões (opcionais - medidas padrão para exibição) -->
               <div class="grid grid-cols-2 gap-4">
                 <div class="flex flex-col gap-1.5">
-                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Largura (cm) *</label>
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Largura (cm)</label>
                   <input
                     v-model.number="form.largura_cm"
                     type="number"
                     step="0.1"
-                    min="0.1"
-                    max="500"
-                    placeholder="0.0"
-                    class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
-                    :class="formErrors.largura_cm ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
+                    min="0"
+                    max="9999"
+                    placeholder="Opcional"
+                    class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all border-gray-200 focus:border-teal-400"
                   />
-                  <p v-if="formErrors.largura_cm" class="text-xs text-red-500 font-semibold">{{ formErrors.largura_cm }}</p>
                 </div>
                 <div class="flex flex-col gap-1.5">
-                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Altura (cm) *</label>
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Altura (cm)</label>
                   <input
                     v-model.number="form.altura_cm"
                     type="number"
                     step="0.1"
-                    min="0.1"
-                    max="500"
-                    placeholder="0.0"
-                    class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
-                    :class="formErrors.altura_cm ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
+                    min="0"
+                    max="9999"
+                    placeholder="Opcional"
+                    class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all border-gray-200 focus:border-teal-400"
                   />
-                  <p v-if="formErrors.altura_cm" class="text-xs text-red-500 font-semibold">{{ formErrors.altura_cm }}</p>
                 </div>
               </div>
 
@@ -364,7 +470,7 @@
 
               <!-- Upload Imagem -->
               <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Imagem de Referência *</label>
+                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Imagem de Referência</label>
                 <div class="flex items-center gap-4">
                   <!-- Preview -->
                   <div v-if="imagemPreview || form.imagem_url" class="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 border-2 border-gray-200 shrink-0">
@@ -407,6 +513,65 @@
       </Transition>
     </Teleport>
 
+    <!-- MODAL GERENCIAR CATEGORIAS -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div
+          v-if="showCategoriasModal"
+          class="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          @click.self="showCategoriasModal = false"
+        >
+          <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+              <h3 class="text-base font-bold text-gray-800">Gerenciar Categorias</h3>
+              <button type="button" class="w-7 h-7 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-200 transition-colors" @click="showCategoriasModal = false">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+            <div class="p-6 space-y-4">
+              <!-- Criar nova -->
+              <form class="flex gap-2" @submit.prevent="criarCategoria">
+                <input
+                  v-model="novaCategoriaInput"
+                  type="text"
+                  placeholder="Nova categoria..."
+                  maxlength="50"
+                  class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-teal-400 focus:border-teal-400"
+                />
+                <button
+                  type="submit"
+                  :disabled="!novaCategoriaInput.trim()"
+                  class="px-4 py-2 rounded-lg text-sm font-bold text-white bg-teal-500 hover:bg-teal-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  Criar
+                </button>
+              </form>
+
+              <!-- Lista -->
+              <div class="max-h-[300px] overflow-y-auto space-y-1.5">
+                <div
+                  v-for="cat in categorias"
+                  :key="cat.id"
+                  class="flex items-center justify-between px-3 py-2.5 rounded-xl bg-gray-50 border border-gray-100 hover:bg-gray-100 transition-colors"
+                >
+                  <span class="text-sm font-semibold text-gray-700">{{ cat.nome }}</span>
+                  <button
+                    type="button"
+                    class="w-6 h-6 flex items-center justify-center rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                    title="Desativar"
+                    @click="excluirCategoria(cat.id)"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                  </button>
+                </div>
+                <p v-if="categorias.length === 0" class="text-sm text-gray-400 text-center py-4">Nenhuma categoria cadastrada</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
     <!-- TOAST DE SUCESSO -->
     <Transition name="slide-fade">
       <div v-if="toastMsg" class="fixed bottom-6 right-6 z-[100] bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg text-sm font-semibold flex items-center gap-2">
@@ -422,21 +587,39 @@ import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { createSupabaseClient } from '~/lib/supabase'
 import { useEmpresa } from '~/composables/useEmpresa'
 import { useAdesivos } from '~/composables/useAdesivos'
+import { useFormulaParser, VARIAVEIS_PERMITIDAS } from '~/composables/useFormulaParser'
 import AppButton from '~/components/AppButton.vue'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
+interface ComposicaoRow {
+  material_id: number | null
+  formula_consumo: string
+  detectedVars: string[]
+  errors?: {
+    material_id?: string
+    formula?: string
+  }
+}
+
+interface ComposicaoLoaded {
+  id: number
+  material_id: number
+  material_nome: string
+  preco_unitario: number
+  formula_consumo: string
+}
+
 interface Produto {
   id: number
   nome: string
   descricao: string | null
   categoria: string
-  material_id: number
   largura_cm: number
   altura_cm: number
   preco_venda: number
   imagem_url: string | null
   ativo: boolean
-  materiais_adesivo?: { nome: string } | null
+  composicoes?: ComposicaoLoaded[]
 }
 
 interface Material {
@@ -449,13 +632,18 @@ interface Material {
 const supabase = createSupabaseClient()
 const { empresaId, loadEmpresa } = useEmpresa()
 const { validarProdutoCatalogo, validarImagemProduto } = useAdesivos()
+const { validarFormula } = useFormulaParser()
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const produtos = ref<Produto[]>([])
 const materiaisLista = ref<Material[]>([])
+const categorias = ref<{ id: number; nome: string; cor: string | null; ativo: boolean }[]>([])
+const showCategoriasModal = ref(false)
+const novaCategoriaInput = ref('')
 const loading = ref(true)
 const error = ref<string | null>(null)
 const toastMsg = ref('')
+const expandedRows = ref<Set<number>>(new Set())
 
 // Paginação
 const PAGE_SIZE = 20
@@ -479,34 +667,36 @@ const imagemPreview = ref<string | null>(null)
 
 const form = reactive({
   nome: '',
-  categoria: '',
-  material_id: null as number | null,
+  categoria_id: null as number | null,
+  categoria: '', // kept for backwards compat with validation
   largura_cm: null as number | null,
   altura_cm: null as number | null,
   preco_venda: null as number | null,
   descricao: '',
   imagem_url: null as string | null,
+  composicoes: [] as ComposicaoRow[],
 })
 
 const formErrors = reactive({
   nome: '',
   categoria: '',
-  material_id: '',
   largura_cm: '',
   altura_cm: '',
   preco_venda: '',
   descricao: '',
   imagem_url: '',
+  composicoes: '',
 })
 
 // ─── Computed ─────────────────────────────────────────────────────────────────
 const materiaisAtivos = computed(() => materiaisLista.value.filter(m => m.ativo))
+const categoriaNomeSelecionada = computed(() => {
+  if (!form.categoria_id) return ''
+  return categorias.value.find(c => c.id === form.categoria_id)?.nome ?? ''
+})
 
 const categoriasUnicas = computed(() => {
-  const cats = new Set<string>()
-  // Use all known categories from the full dataset context
-  produtos.value.forEach(p => cats.add(p.categoria))
-  return Array.from(cats).sort()
+  return categorias.value.map(c => c.nome).sort()
 })
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -526,6 +716,81 @@ function limparFiltros() {
   filtroStatus.value = ''
 }
 
+function toggleExpand(produtoId: number) {
+  if (expandedRows.value.has(produtoId)) {
+    expandedRows.value.delete(produtoId)
+  } else {
+    expandedRows.value.add(produtoId)
+  }
+}
+
+// ─── Composição helpers ───────────────────────────────────────────────────────
+function adicionarComposicao() {
+  form.composicoes.push({
+    material_id: null,
+    formula_consumo: 'largura * altura',
+    detectedVars: ['largura', 'altura'],
+    errors: {},
+  })
+  formErrors.composicoes = ''
+}
+
+function removerComposicao(idx: number) {
+  form.composicoes.splice(idx, 1)
+}
+
+function validarFormulaRow(idx: number) {
+  const comp = form.composicoes[idx]
+  if (!comp.formula_consumo.trim()) {
+    comp.detectedVars = []
+    comp.errors = { ...comp.errors, formula: 'Fórmula é obrigatória' }
+    return
+  }
+  const result = validarFormula(comp.formula_consumo)
+  comp.detectedVars = result.variables
+  if (!result.valid) {
+    comp.errors = { ...comp.errors, formula: result.error ?? 'Fórmula inválida' }
+  } else {
+    comp.errors = { ...comp.errors, formula: undefined }
+  }
+}
+
+function validarTodasComposicoes(): boolean {
+  let valid = true
+
+  if (form.composicoes.length === 0) {
+    formErrors.composicoes = 'Adicione pelo menos um material à composição'
+    return false
+  }
+
+  formErrors.composicoes = ''
+
+  for (let i = 0; i < form.composicoes.length; i++) {
+    const comp = form.composicoes[i]
+    const errors: ComposicaoRow['errors'] = {}
+
+    if (!comp.material_id) {
+      errors.material_id = 'Selecione um material'
+      valid = false
+    }
+
+    if (!comp.formula_consumo.trim()) {
+      errors.formula = 'Fórmula é obrigatória'
+      valid = false
+    } else {
+      const result = validarFormula(comp.formula_consumo)
+      if (!result.valid) {
+        errors.formula = result.error ?? 'Fórmula inválida'
+        valid = false
+      }
+    }
+
+    comp.errors = errors
+  }
+
+  return valid
+}
+
 // ─── Fetch ────────────────────────────────────────────────────────────────────
 async function fetchProdutos() {
   if (!empresaId.value) return
@@ -535,16 +800,13 @@ async function fetchProdutos() {
   try {
     let query = supabase
       .from('catalogo_adesivos')
-      .select('*, materiais_adesivo(nome)', { count: 'exact' })
+      .select('*', { count: 'exact' })
       .eq('empresa_id', empresaId.value)
       .order('nome', { ascending: true })
 
     // Filtros
     if (filtroCategoria.value) {
       query = query.eq('categoria', filtroCategoria.value)
-    }
-    if (filtroMaterial.value) {
-      query = query.eq('material_id', filtroMaterial.value)
     }
     if (filtroStatus.value === 'ativo') {
       query = query.eq('ativo', true)
@@ -561,8 +823,48 @@ async function fetchProdutos() {
 
     if (fetchErr) throw fetchErr
 
-    produtos.value = (data ?? []) as Produto[]
-    totalItems.value = count ?? 0
+    const produtosRaw = (data ?? []) as Omit<Produto, 'composicoes'>[]
+    const produtoIds = produtosRaw.map(p => p.id)
+
+    // Fetch compositions for all products in this page
+    let composicoesMap: Record<number, ComposicaoLoaded[]> = {}
+    if (produtoIds.length > 0) {
+      const { data: comps } = await supabase
+        .from('catalogo_produto_materiais')
+        .select('id, produto_id, material_id, formula_consumo, ordem, materiais_adesivo(nome, preco_m2)')
+        .in('produto_id', produtoIds)
+        .order('ordem', { ascending: true })
+
+      if (comps) {
+        for (const c of comps as any[]) {
+          const prodId = c.produto_id as number
+          if (!composicoesMap[prodId]) composicoesMap[prodId] = []
+          composicoesMap[prodId].push({
+            id: c.id,
+            material_id: c.material_id,
+            material_nome: c.materiais_adesivo?.nome ?? '—',
+            preco_unitario: c.materiais_adesivo?.preco_m2 ?? 0,
+            formula_consumo: c.formula_consumo,
+          })
+        }
+      }
+    }
+
+    // Filter by material if set (client-side since column is now in junction table)
+    let filtered = produtosRaw.map(p => ({
+      ...p,
+      composicoes: composicoesMap[p.id] ?? [],
+    })) as Produto[]
+
+    if (filtroMaterial.value) {
+      const matId = Number(filtroMaterial.value)
+      filtered = filtered.filter(p =>
+        p.composicoes?.some(c => c.material_id === matId)
+      )
+    }
+
+    produtos.value = filtered
+    totalItems.value = filtroMaterial.value ? filtered.length : (count ?? 0)
   } catch (e: any) {
     error.value = e.message || 'Erro ao carregar produtos'
     console.error('[adesivos-catalogo] fetchProdutos error:', e)
@@ -581,6 +883,44 @@ async function fetchMateriais() {
     .order('nome', { ascending: true })
 
   materiaisLista.value = (data ?? []) as Material[]
+}
+
+async function fetchCategorias() {
+  if (!empresaId.value) return
+
+  const { data } = await supabase
+    .from('catalogo_categorias')
+    .select('id, nome, cor, ativo')
+    .eq('empresa_id', empresaId.value)
+    .eq('ativo', true)
+    .order('nome', { ascending: true })
+
+  categorias.value = (data ?? []) as typeof categorias.value
+}
+
+async function criarCategoria() {
+  const nome = novaCategoriaInput.value.trim()
+  if (!nome || !empresaId.value) return
+
+  const { data, error: insertErr } = await supabase
+    .from('catalogo_categorias')
+    .insert({ empresa_id: empresaId.value, nome })
+    .select('id, nome, cor, ativo')
+    .single()
+
+  if (insertErr) {
+    console.error('Erro ao criar categoria:', insertErr.message)
+    return
+  }
+
+  categorias.value.push(data as any)
+  categorias.value.sort((a, b) => a.nome.localeCompare(b.nome))
+  novaCategoriaInput.value = ''
+}
+
+async function excluirCategoria(catId: number) {
+  await supabase.from('catalogo_categorias').update({ ativo: false }).eq('id', catId)
+  categorias.value = categorias.value.filter(c => c.id !== catId)
 }
 
 // ─── Pagination ───────────────────────────────────────────────────────────────
@@ -617,13 +957,14 @@ async function toggleAtivo(produto: Produto) {
 // ─── Modal ────────────────────────────────────────────────────────────────────
 function resetForm() {
   form.nome = ''
+  form.categoria_id = null
   form.categoria = ''
-  form.material_id = null
   form.largura_cm = null
   form.altura_cm = null
   form.preco_venda = null
   form.descricao = ''
   form.imagem_url = null
+  form.composicoes = []
   imagemArquivo.value = null
   imagemPreview.value = null
   modalError.value = null
@@ -636,17 +977,37 @@ function abrirCriar() {
   modalAberto.value = true
 }
 
-function abrirEditar(produto: Produto) {
+async function abrirEditar(produto: Produto) {
   resetForm()
   editandoProduto.value = produto
   form.nome = produto.nome
+  form.categoria_id = (produto as any).categoria_id ?? null
   form.categoria = produto.categoria
-  form.material_id = produto.material_id
   form.largura_cm = produto.largura_cm
   form.altura_cm = produto.altura_cm
   form.preco_venda = produto.preco_venda
   form.descricao = produto.descricao ?? ''
   form.imagem_url = produto.imagem_url
+
+  // Load compositions for this product
+  const { data: comps } = await supabase
+    .from('catalogo_produto_materiais')
+    .select('id, material_id, formula_consumo, ordem, materiais_adesivo(nome, preco_m2)')
+    .eq('produto_id', produto.id)
+    .order('ordem', { ascending: true })
+
+  if (comps && comps.length > 0) {
+    form.composicoes = (comps as any[]).map(c => {
+      const result = validarFormula(c.formula_consumo)
+      return {
+        material_id: c.material_id,
+        formula_consumo: c.formula_consumo,
+        detectedVars: result.variables,
+        errors: {},
+      } as ComposicaoRow
+    })
+  }
+
   modalAberto.value = true
 }
 
@@ -704,11 +1065,11 @@ async function salvar() {
   Object.keys(formErrors).forEach(k => (formErrors as any)[k] = '')
   modalError.value = null
 
-  // Validate with composable
+  // Validate base fields with composable (pass dummy material_id since it's removed)
   const validation = validarProdutoCatalogo({
     nome: form.nome,
-    categoria: form.categoria,
-    material_id: form.material_id,
+    categoria: categoriaNomeSelecionada.value || '',
+    material_id: 1, // dummy — no longer validated, composicoes replace this
     largura_cm: form.largura_cm,
     altura_cm: form.altura_cm,
     preco_venda: form.preco_venda,
@@ -716,19 +1077,24 @@ async function salvar() {
     imagem_url: form.imagem_url,
   })
 
-  // Check image requirement (must have image for new products)
-  if (!editandoProduto.value && !imagemArquivo.value && !form.imagem_url) {
-    validation.valid = false
-    validation.errors.imagem_url = 'Imagem é obrigatória'
-  }
+  // Remove material_id error from validation since we use composicoes now
+  delete validation.errors.material_id
 
-  if (!validation.valid) {
+  // Image is optional — no validation needed
+
+  // Validate compositions
+  const composicoesValid = validarTodasComposicoes()
+
+  if (!validation.valid || Object.keys(validation.errors).length > 0) {
     // Map errors to formErrors
     Object.entries(validation.errors).forEach(([key, msg]) => {
       if (key in formErrors) (formErrors as any)[key] = msg
     })
+    if (!composicoesValid) return
     return
   }
+
+  if (!composicoesValid) return
 
   saving.value = true
 
@@ -741,35 +1107,64 @@ async function salvar() {
 
     const payload = {
       nome: form.nome.trim(),
-      categoria: form.categoria.trim(),
-      material_id: form.material_id!,
-      largura_cm: form.largura_cm!,
-      altura_cm: form.altura_cm!,
+      categoria: categoriaNomeSelecionada.value || '',
+      categoria_id: form.categoria_id,
+      largura_cm: form.largura_cm || null,
+      altura_cm: form.altura_cm || null,
       preco_venda: form.preco_venda!,
       descricao: form.descricao?.trim() || null,
       imagem_url: imagemUrl,
       empresa_id: empresaId.value!,
     }
 
+    let produtoId: number
+
     if (editandoProduto.value) {
-      // UPDATE
+      // UPDATE product
       const { error: updateErr } = await supabase
         .from('catalogo_adesivos')
         .update(payload)
         .eq('id', editandoProduto.value.id)
 
       if (updateErr) throw updateErr
-      showToast('Produto atualizado com sucesso')
+      produtoId = editandoProduto.value.id
     } else {
-      // INSERT
-      const { error: insertErr } = await supabase
+      // INSERT product
+      const { data: inserted, error: insertErr } = await supabase
         .from('catalogo_adesivos')
         .insert(payload)
+        .select('id')
+        .single()
 
       if (insertErr) throw insertErr
-      showToast('Produto cadastrado com sucesso')
+      produtoId = inserted.id
     }
 
+    // ─── Save compositions ────────────────────────────────────────
+    // Delete old compositions
+    await supabase
+      .from('catalogo_produto_materiais')
+      .delete()
+      .eq('produto_id', produtoId)
+
+    // Insert new compositions
+    const composicoesPayload = form.composicoes.map((comp, idx) => ({
+      empresa_id: empresaId.value!,
+      produto_id: produtoId,
+      material_id: comp.material_id!,
+      formula_consumo: comp.formula_consumo.trim(),
+      ordem: idx,
+    }))
+
+    if (composicoesPayload.length > 0) {
+      const { error: compErr } = await supabase
+        .from('catalogo_produto_materiais')
+        .insert(composicoesPayload)
+
+      if (compErr) throw compErr
+    }
+
+    showToast(editandoProduto.value ? 'Produto atualizado com sucesso' : 'Produto cadastrado com sucesso')
     fecharModal()
     await fetchProdutos()
   } catch (e: any) {
@@ -783,7 +1178,7 @@ async function salvar() {
 // ─── Lifecycle ────────────────────────────────────────────────────────────────
 onMounted(async () => {
   await loadEmpresa()
-  await Promise.all([fetchProdutos(), fetchMateriais()])
+  await Promise.all([fetchProdutos(), fetchMateriais(), fetchCategorias()])
 })
 </script>
 
@@ -806,5 +1201,3 @@ onMounted(async () => {
   opacity: 0;
 }
 </style>
-
-

@@ -9,12 +9,12 @@
         <div class="relative z-10 flex flex-col w-full h-full sm:h-auto sm:max-h-[92vh] sm:max-w-2xl sm:mx-auto sm:my-auto sm:rounded-2xl bg-white overflow-hidden shadow-2xl">
 
           <!-- Sticky Header -->
-          <div class="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 py-3.5 border-b border-gray-100 bg-white/95 backdrop-blur-sm">
+          <div class="flex-shrink-0 flex items-center justify-between px-4 sm:px-6 py-3.5 border-b" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #1e40af, #4f46e5))', borderColor: 'var(--color-primary-border, rgba(255,255,255,0.1))' }">
             <div>
-              <h2 class="text-base sm:text-lg font-bold text-gray-900">{{ modalTitle }}</h2>
-              <p class="text-[11px] text-gray-400 mt-0.5">{{ isEditMode ? 'Editando orçamento existente' : 'Novo orçamento multi-itens' }}</p>
+              <h2 class="text-base sm:text-lg font-bold" style="color: var(--color-primary-text, #ffffff)">{{ modalTitle }}</h2>
+              <p class="text-[11px] mt-0.5" style="color: var(--color-primary-text, #ffffff); opacity: 0.7">{{ isEditMode ? 'Editando orçamento existente' : 'Novo orçamento multi-itens' }}</p>
             </div>
-            <button type="button" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-400 hover:text-gray-600 transition-colors" @click="fechar">
+            <button type="button" class="w-8 h-8 flex items-center justify-center rounded-full transition-colors" style="color: var(--color-primary-text, #ffffff); opacity: 0.7" @click="fechar">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
           </div>
@@ -135,7 +135,7 @@
                     <span class="text-xs font-bold text-gray-700 uppercase tracking-wide">Itens</span>
                     <span class="text-[10px] text-gray-400">({{ form.itens.length }})</span>
                   </div>
-                  <button type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 text-white text-[11px] font-bold hover:bg-indigo-500 active:scale-95 transition-all shadow-sm" @click="adicionarItem">
+                  <button type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-white text-[11px] font-bold active:scale-95 transition-all shadow-sm" :style="{ background: 'var(--color-btn, #4f46e5)' }" @click="adicionarItem">
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
                     Adicionar
                   </button>
@@ -170,16 +170,16 @@
                   <span class="text-xs font-bold text-gray-700 uppercase tracking-wide">Desconto</span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <div class="flex rounded-lg border border-gray-200 overflow-hidden">
-                    <button type="button" class="px-3 py-1.5 text-[11px] font-bold transition-all" :class="descontoTipo === 'percentual' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-500'" @click="descontoTipo = 'percentual'">%</button>
-                    <button type="button" class="px-3 py-1.5 text-[11px] font-bold transition-all" :class="descontoTipo === 'valor' ? 'bg-indigo-600 text-white' : 'bg-white text-gray-500'" @click="descontoTipo = 'valor'">R$</button>
+                  <div class="flex rounded-lg border overflow-hidden" style="border-color: var(--color-card-border, rgba(0,0,0,0.1))">
+                    <button type="button" class="px-3 py-1.5 text-[11px] font-bold transition-all" :style="descontoTipo === 'percentual' ? { background: 'var(--color-primary, #4f46e5)', color: '#ffffff' } : { background: 'transparent', color: 'var(--color-card-texto, #6b7280)' }" @click="descontoTipo = 'percentual'">%</button>
+                    <button type="button" class="px-3 py-1.5 text-[11px] font-bold transition-all" :style="descontoTipo === 'valor' ? { background: 'var(--color-primary, #4f46e5)', color: '#ffffff' } : { background: 'transparent', color: 'var(--color-card-texto, #6b7280)' }" @click="descontoTipo = 'valor'">R$</button>
                   </div>
                   <input v-model.number="descontoManualInput" type="number" step="0.01" min="0" :max="descontoTipo === 'percentual' ? 99.99 : 999999" placeholder="0" class="flex-1 rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all" />
                 </div>
               </div>
 
               <!-- ═══ RESUMO ═══ -->
-              <div class="rounded-xl bg-gradient-to-br from-indigo-50 to-violet-50 border border-indigo-100 p-4">
+              <div class="rounded-xl p-4" :style="{ background: 'var(--color-card, #eef2ff)', border: '1px solid var(--color-card-border, rgba(99,102,241,0.2))' }">
                 <OrcamentoResumoValores
                   :subtotal-itens="subtotalItens"
                   :desconto-volume-percentual="descontoVolumePercentual"
@@ -192,10 +192,10 @@
           </div>
 
           <!-- Sticky Footer -->
-          <div class="flex-shrink-0 flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-t border-gray-100 bg-white/95 backdrop-blur-sm">
-            <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-all" :disabled="salvando" @click="fechar">Cancelar</button>
-            <button type="submit" form="orcamento-form" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white text-sm font-bold hover:bg-indigo-500 active:scale-[0.97] shadow-lg shadow-indigo-600/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed" :disabled="salvando">
-              <span v-if="salvando" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+          <div class="flex-shrink-0 flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-t" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #1e40af, #4f46e5))', borderColor: 'var(--color-primary-border, rgba(255,255,255,0.1))' }">
+            <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-semibold transition-all" style="color: var(--color-primary-text, #ffffff); opacity: 0.7" :disabled="salvando" @click="fechar">Cancelar</button>
+            <button type="submit" form="orcamento-form" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold active:scale-[0.97] shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed" :style="{ background: 'var(--color-btn, #ffffff)', color: 'var(--color-btn-text, #1e40af)' }" :disabled="salvando">
+              <span v-if="salvando" class="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
               <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
               {{ actionButtonLabel }}
             </button>
