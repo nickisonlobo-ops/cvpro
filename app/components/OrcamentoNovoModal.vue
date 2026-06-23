@@ -385,8 +385,8 @@ function removerItem(index: number) {
 }
 
 function onItemUpdate(index: number, updatedItem: ItemOrcamento) {
-  // Update description from material name if empty
-  if (!form.value.itens[index].descricao && updatedItem.material_nome) {
+  // Sempre atualizar descrição quando o material mudar
+  if (updatedItem.material_nome && updatedItem.material_id !== form.value.itens[index].material_id) {
     updatedItem.descricao = updatedItem.material_nome
   }
   form.value.itens[index] = updatedItem

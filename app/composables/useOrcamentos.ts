@@ -289,7 +289,7 @@ export function useOrcamentos() {
     }
 
     // Validar validade
-    if (!dados.validade_dias || dados.validade_dias <= 0) {
+    if (!dados.validade_dias || Number(dados.validade_dias) <= 0) {
       errors.validade_dias = 'Validade deve ser maior que zero'
     }
 
@@ -306,16 +306,20 @@ export function useOrcamentos() {
         if (!item.material_id || item.material_id <= 0) {
           errors[`itens[${i}].material_id`] = `Item ${i + 1}: material é obrigatório`
         }
-        if (item.largura_cm < 0.1 || item.largura_cm > 9999.9) {
+        const largura = Number(item.largura_cm) || 0
+        if (largura < 0.1 || largura > 9999.9) {
           errors[`itens[${i}].largura_cm`] = `Item ${i + 1}: largura deve estar entre 0.1 e 9999.9 cm`
         }
-        if (item.altura_cm < 0.1 || item.altura_cm > 9999.9) {
+        const altura = Number(item.altura_cm) || 0
+        if (altura < 0.1 || altura > 9999.9) {
           errors[`itens[${i}].altura_cm`] = `Item ${i + 1}: altura deve estar entre 0.1 e 9999.9 cm`
         }
-        if (item.quantidade < 1 || item.quantidade > 99999) {
+        const qtd = Number(item.quantidade) || 0
+        if (qtd < 1 || qtd > 99999) {
           errors[`itens[${i}].quantidade`] = `Item ${i + 1}: quantidade deve estar entre 1 e 99999`
         }
-        if (item.valor_item <= 0) {
+        const valor = Number(item.valor_item) || 0
+        if (valor <= 0) {
           errors[`itens[${i}].valor_item`] = `Item ${i + 1}: valor deve ser maior que zero`
         }
       }
@@ -323,10 +327,10 @@ export function useOrcamentos() {
 
     // Validar valor total > 0
     if (dados.itens && dados.itens.length > 0 && Object.keys(errors).length === 0) {
-      const somaItens = dados.itens.reduce((sum, item) => sum + item.valor_item, 0)
-      const maoObra = dados.valor_mao_obra ?? 0
-      const descontoPerc = dados.desconto_percentual ?? 0
-      const descontoVal = dados.desconto_valor ?? 0
+      const somaItens = dados.itens.reduce((sum, item) => sum + (Number(item.valor_item) || 0), 0)
+      const maoObra = Number(dados.valor_mao_obra) || 0
+      const descontoPerc = Number(dados.desconto_percentual) || 0
+      const descontoVal = Number(dados.desconto_valor) || 0
       const subtotal = somaItens + maoObra
       const totalAposDescontos = subtotal - (subtotal * descontoPerc / 100) - descontoVal
 
@@ -409,7 +413,7 @@ export function useOrcamentos() {
 
   // ─── Status editável (edição de orçamento) ───────────────
   function isStatusEditavel(status: string): boolean {
-    return status === 'rascunho' || status === 'enviado'
+    return status === 'rascunho' || status === 'enviado' || status === 'aprovado'
   }
 
   // ─── Diff de itens para sincronização ───────────────────

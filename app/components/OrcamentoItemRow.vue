@@ -187,6 +187,7 @@
 import type { ItemOrcamento } from '~/composables/useOrcamentos'
 import FotoUpload from '~/components/FotoUpload.vue'
 import MaterialSelectorModal from '~/components/MaterialSelectorModal.vue'
+import { createSupabaseClient } from '~/lib/supabase'
 
 const props = defineProps<{
   item: ItemOrcamento
@@ -255,10 +256,22 @@ function validateField(field: string, value: number | null | undefined): string 
 }
 
 // ─── Handlers ────────────────────────────────────────────────────────────────
-function onMaterialSelected(product: { id: number; nome: string; preco_venda: number }) {
+async function onMaterialSelected(product: { id: number; nome: string; preco_venda: number }) {
   delete errors.value.material_id
   delete errors.value.preco_m2
-  emitUpdate({ material_id: product.id, material_nome: product.nome, preco_m2: product.preco_venda ?? 0 })
+
+  // Buscar o material_id real via catalogo_produto_materiais
+  const supabase = createSupabaseClient()
+  const { data: matLink } = await supabase
+    .from('catalogo_produto_materiais')
+    .select('material_id')
+    .eq('produto_id', product.id)
+    .order('ordem', { ascending: true })
+    .limit(1)
+    .maybeSingle()
+
+  const materialId = matLink?.material_id ?? product.id
+  emitUpdate({ material_id: materialId, material_nome: product.nome, descricao: product.nome, preco_m2: product.preco_venda ?? 0 })
 }
 
 function onFieldInput(field: 'largura_cm' | 'altura_cm' | 'espessura_cm' | 'quantidade', event: Event) {

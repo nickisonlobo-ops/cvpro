@@ -803,7 +803,8 @@ async function fetchOrcamentoCompletoParaEdicao(id: number): Promise<OrcamentoCo
           valor_item,
           foto_arte_url,
           foto_local_url,
-          arquivo_url
+          arquivo_url,
+          materiais_adesivo(nome)
         )
       `)
       .eq('id', id)
@@ -818,6 +819,7 @@ async function fetchOrcamentoCompletoParaEdicao(id: number): Promise<OrcamentoCo
       id: item.id,
       descricao: item.descricao ?? '',
       material_id: item.material_id,
+      material_nome: item.materiais_adesivo?.nome ?? '',
       largura_cm: item.largura_cm,
       altura_cm: item.altura_cm,
       quantidade: item.quantidade,

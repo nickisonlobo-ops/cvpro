@@ -223,6 +223,12 @@
                 Abrir Link
               </button>
 
+              <!-- Voltar Etapa (para aprovados sem OS) -->
+              <button v-if="statusDisplay.status === 'aprovado'" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 hover:shadow-sm transition-colors disabled:opacity-50" :disabled="processando" @click="showVoltarEtapa = true">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" /></svg>
+                Voltar Etapa
+              </button>
+
               <!-- Baixar PDF -->
               <button type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm hover:shadow-md transition-all disabled:opacity-50 bg-emerald-600 hover:bg-emerald-700" :disabled="gerandoPdf" @click="gerarPdfOrcamento">
                 <span v-if="gerandoPdf" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
@@ -284,6 +290,18 @@
                   <span v-else>Confirmar Reprovação</span>
                 </button>
                 <button type="button" class="px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors" @click="showReprovar = false">Cancelar</button>
+              </div>
+            </div>
+
+            <!-- Confirmação Voltar Etapa (sem OS) -->
+            <div v-if="showVoltarEtapa && !orcamento.os_numero" class="mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-200">
+              <p class="text-sm text-gray-700 mb-3">Isso vai reverter o orçamento para <b>Enviado</b>.</p>
+              <div class="flex items-center gap-3">
+                <button type="button" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-600 text-white hover:bg-amber-700 transition-colors disabled:opacity-50 shadow-sm" :disabled="processando" @click="voltarEtapaSemOS">
+                  <span v-if="processando" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span v-else>Confirmar</span>
+                </button>
+                <button type="button" class="px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors" @click="showVoltarEtapa = false">Cancelar</button>
               </div>
             </div>
           </section>
@@ -693,6 +711,38 @@ async function voltarEtapa() {
 
     showVoltarEtapa.value = false
     showToast('Orçamento revertido para Enviado. OS excluída.')
+    emit('refresh')
+  } catch (err: any) {
+    showToast(`Erro: ${err?.message ?? 'Tente novamente.'}`, 'error')
+  } finally {
+    processando.value = false
+  }
+}
+
+async function voltarEtapaSemOS() {
+  if (!props.orcamento) return
+  processando.value = true
+  try {
+    const { data: etapaData } = await supabase
+      .from('pipeline_etapas')
+      .select('id')
+      .eq('pipeline_tipo', 'orcamentos')
+      .eq('nome', 'Enviado')
+      .limit(1)
+      .maybeSingle()
+
+    const updatePayload: Record<string, unknown> = { status: 'enviado' }
+    if (etapaData) updatePayload.etapa_id = etapaData.id
+
+    const { error } = await supabase
+      .from('orcamentos_adesivo')
+      .update(updatePayload)
+      .eq('id', props.orcamento.id)
+
+    if (error) { showToast(`Erro ao voltar etapa: ${error.message}`, 'error'); return }
+
+    showVoltarEtapa.value = false
+    showToast('Orçamento revertido para Enviado.')
     emit('refresh')
   } catch (err: any) {
     showToast(`Erro: ${err?.message ?? 'Tente novamente.'}`, 'error')
