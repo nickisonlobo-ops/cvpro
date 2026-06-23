@@ -22,7 +22,7 @@
                 <span class="w-1 h-1 rounded-full bg-white/40" />
                 <span class="text-xs text-white/70 hidden sm:inline">UpStudio</span>
               </div>
-              <h1 class="text-xl sm:text-3xl font-bold text-white tracking-tight leading-none">Contas a Pagar</h1>
+              <h1 class="text-xl sm:text-3xl font-bold text-white tracking-tight leading-none">Contas a Pagar / Receber</h1>
               <p class="text-sm text-white/80 mt-1.5">
                 {{ loading ? 'Carregando...' : `${contasFiltradas.length} de ${contas.length} conta(s) exibida(s)` }}
               </p>
@@ -94,7 +94,13 @@
       </div>
     </div>
 
-    <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� FILTROS �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
+    <!-- Tabs Pagar / Receber -->
+    <div class="flex items-center gap-1 bg-gray-100 rounded-xl p-1 max-w-sm">
+      <button type="button" class="flex-1 px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === '' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'" @click="filtros.tipo = ''">Todas</button>
+      <button type="button" class="flex-1 px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === 'pagar' ? 'bg-red-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'" @click="filtros.tipo = 'pagar'">A Pagar</button>
+      <button type="button" class="flex-1 px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === 'receber' ? 'bg-green-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'" @click="filtros.tipo = 'receber'">A Receber</button>
+    </div>
+
     <Transition name="slide-fade">
       <div v-show="filtrosAbertos" class="bg-white rounded-3xl border border-gray-100 shadow-md mb-6 overflow-hidden">
         <!-- Header do painel -->
@@ -537,6 +543,11 @@ interface ContaPagar {
   periodicidade: string | null
   origem: string | null
   comissao_id: number | null
+  tipo: string
+  orcamento_id: number | null
+  parcela_numero: number | null
+  total_parcelas: number | null
+  cliente_nome: string | null
   created_at: string | null
 }
 
@@ -571,6 +582,7 @@ const filtrosAbertos = ref(false)
 
 const filtros = reactive({
   busca: '',
+  tipo: '' as '' | 'pagar' | 'receber',
   status: [] as string[],
   periodicidade: [] as string[],
   vencimentoDe: '',
@@ -607,12 +619,14 @@ const filtrosAtivos = computed(() => {
 
 const contasFiltradas = computed(() => {
   return contas.value.filter(conta => {
+    if (filtros.tipo && (conta.tipo || 'pagar') !== filtros.tipo) return false
     if (filtros.busca) {
       const q = filtros.busca.toLowerCase()
       const match =
         conta.descricao.toLowerCase().includes(q) ||
         (conta.categoria ?? '').toLowerCase().includes(q) ||
-        (conta.observacao ?? '').toLowerCase().includes(q)
+        (conta.observacao ?? '').toLowerCase().includes(q) ||
+        (conta.cliente_nome ?? '').toLowerCase().includes(q)
       if (!match) return false
     }
     if (filtros.status.length > 0 && !filtros.status.includes(conta.status ?? 'pendente')) return false
@@ -872,6 +886,7 @@ function buildPayload(dataVencimento?: string) {
     observacao:      form.observacao || null,
     periodicidade:   form.periodicidade || 'avulsa',
     empresa_id:      empresaId.value!,
+    tipo:            'pagar',
   }
 }
 

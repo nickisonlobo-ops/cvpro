@@ -261,20 +261,30 @@
             </div>
 
             <!-- Modal Aprovação Interna -->
-            <div v-if="showAprovacaoInterna" class="mt-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-200">
-              <label class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.15em] mb-2 block">Forma de Pagamento</label>
-              <div class="flex items-end gap-3">
-                <select v-model="formaPagamentoAprovacao" class="flex-1 rounded-xl border border-emerald-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-400">
-                  <option value="" disabled>Selecione a forma de pagamento...</option>
+            <div v-if="showAprovacaoInterna" class="mt-4 p-4 bg-emerald-50 rounded-2xl border border-emerald-200 space-y-3">
+              <label class="text-[10px] font-black text-emerald-600 uppercase tracking-[0.15em] block">Forma de Pagamento e Parcelas</label>
+              <div class="grid grid-cols-2 gap-3">
+                <select v-model="formaPagamentoAprovacao" class="rounded-xl border border-emerald-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-400">
+                  <option value="" disabled>Forma de pagamento...</option>
                   <option value="dinheiro">Dinheiro</option>
                   <option value="pix">PIX</option>
                   <option value="cartao">Cartão</option>
                   <option value="boleto">Boleto</option>
+                  <option value="transferencia">Transferência</option>
                   <option value="parcelado">Parcelado</option>
                 </select>
+                <div class="flex items-center gap-2">
+                  <input v-model.number="parcelasAprovacao" type="number" min="1" max="24" class="w-full rounded-xl border border-emerald-200 bg-white px-3 py-2.5 text-sm focus:outline-none focus:border-emerald-400" />
+                  <span class="text-xs text-gray-500 whitespace-nowrap">parcela(s)</span>
+                </div>
+              </div>
+              <p v-if="parcelasAprovacao > 1 && orcamento" class="text-[11px] text-emerald-700 font-medium">
+                {{ parcelasAprovacao }}x de {{ formatCurrency(orcamento.valor_total / parcelasAprovacao) }}
+              </p>
+              <div class="flex items-center gap-3 pt-1">
                 <button type="button" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors disabled:opacity-50 shadow-sm" :disabled="!formaPagamentoAprovacao || processando" @click="aprovarInternamente">
                   <span v-if="processando" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span v-else>Confirmar</span>
+                  <span v-else>Confirmar Aprovação</span>
                 </button>
                 <button type="button" class="px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors" @click="showAprovacaoInterna = false">Cancelar</button>
               </div>
@@ -323,6 +333,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { createSupabaseClient } from '~/lib/supabase'
+import { useContasReceber } from '~/composables/useConciliacao'
 import type { StatusOS } from '~/composables/useOrdensServico'
 import OSIndicadorBadge from '~/components/OSIndicadorBadge.vue'
 
@@ -376,6 +387,7 @@ const emit = defineEmits<{
 }>()
 
 const supabase = createSupabaseClient()
+const { gerarRecebiveisOrcamento } = useContasReceber()
 const {
   comporMensagemWhatsAppMultiItens,
   comporLinkWhatsApp,
@@ -398,6 +410,7 @@ const showReprovar = ref(false)
 const showVoltarEtapa = ref(false)
 const showExcluirOS = ref(false)
 const formaPagamentoAprovacao = ref('')
+const parcelasAprovacao = ref(1)
 const toastMessage = ref('')
 const toastType = ref<'success' | 'error'>('success')
 const lightboxUrl = ref<string | null>(null)
@@ -633,8 +646,22 @@ async function aprovarInternamente() {
 
     if (error) { showToast(`Erro na aprovação: ${error.message}`, 'error'); console.error(error); return }
 
+    // Gerar contas a receber
+    const recResult = await gerarRecebiveisOrcamento({
+      orcamentoId: props.orcamento.id,
+      valorTotal: props.orcamento.valor_total,
+      clienteNome: props.orcamento.cliente_nome ?? 'Cliente',
+      descricao: `${props.orcamento.numero_orcamento ?? 'Orçamento'} - ${props.orcamento.cliente_nome ?? 'Cliente'}`,
+      formaPagamento: formaPagamentoAprovacao.value,
+      parcelas: parcelasAprovacao.value,
+    })
+
     showAprovacaoInterna.value = false
-    showToast('Orçamento aprovado! Ordem de Serviço gerada com sucesso.')
+    if (recResult.success) {
+      showToast('Orçamento aprovado! OS gerada e contas a receber criadas.')
+    } else {
+      showToast(`OS gerada, mas erro nas contas a receber: ${recResult.error}`, 'error')
+    }
     emit('refresh')
   } catch (err: any) {
     showToast(`Erro inesperado: ${err?.message ?? 'Tente novamente.'}`, 'error')
