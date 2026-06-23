@@ -92,10 +92,16 @@
     </div>
 
     <!-- Tabs Pagar / Receber -->
-    <div class="flex items-center gap-1 bg-gray-100 rounded-xl p-1 max-w-sm">
-      <button type="button" class="flex-1 px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === '' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'" @click="filtros.tipo = ''">Todas</button>
-      <button type="button" class="flex-1 px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === 'pagar' ? 'bg-red-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'" @click="filtros.tipo = 'pagar'">A Pagar</button>
-      <button type="button" class="flex-1 px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === 'receber' ? 'bg-green-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'" @click="filtros.tipo = 'receber'">A Receber</button>
+    <div class="flex items-center gap-1 bg-gray-100 rounded-xl p-1 max-w-md mb-4">
+      <button type="button" class="flex-1 px-4 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5" :class="filtros.tipo === '' ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'" @click="filtros.tipo = ''">
+        Todas <span class="text-[10px] opacity-60">({{ contas.length }})</span>
+      </button>
+      <button type="button" class="flex-1 px-4 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5" :class="filtros.tipo === 'pagar' ? 'bg-red-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'" @click="filtros.tipo = 'pagar'">
+        ↓ A Pagar <span class="text-[10px] opacity-60">({{ contasDespesas }})</span>
+      </button>
+      <button type="button" class="flex-1 px-4 py-2.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5" :class="filtros.tipo === 'receber' ? 'bg-emerald-500 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700'" @click="filtros.tipo = 'receber'">
+        ↑ A Receber <span class="text-[10px] opacity-60">({{ contasReceitas }})</span>
+      </button>
     </div>
 
     <Transition name="slide-fade">
@@ -315,7 +321,15 @@
                 </div>
               </td>
               <td class="px-5 py-4">
-                <span class="font-black text-gray-900 tabular-nums">{{ formatCurrency(conta.valor) }}</span>
+                <span class="font-black tabular-nums" :class="(conta.tipo ?? 'pagar') === 'receber' ? 'text-emerald-600' : 'text-gray-900'">
+                  {{ (conta.tipo ?? 'pagar') === 'receber' ? '+' : '' }}{{ formatCurrency(conta.valor) }}
+                </span>
+                <span v-if="conta.parcela_numero && conta.total_parcelas" class="block text-[10px] text-gray-400 font-medium mt-0.5">
+                  Parcela {{ conta.parcela_numero }}/{{ conta.total_parcelas }}
+                </span>
+                <span v-if="conta.cliente_nome" class="block text-[10px] text-gray-400 font-medium mt-0.5">
+                  {{ conta.cliente_nome }}
+                </span>
               </td>
               <td class="px-5 py-4 relative">
                 <button

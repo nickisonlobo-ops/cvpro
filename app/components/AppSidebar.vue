@@ -105,6 +105,8 @@ const allNavSections = [
     items: [
       { to: '/adesivos-orcamentos', icon: 'document', label: 'Orçamentos', minPerfil: 'all' },
       { to: '/adesivos-ordens-servico', icon: 'clipboard', label: 'Ordens de Serviço', minPerfil: 'all' },
+      { to: '/producao', icon: 'clipboard', label: 'Produção', minPerfil: 'all' },
+      { to: '/processos', icon: 'clipboard', label: 'Processos', minPerfil: 'all' },
       { to: '/adesivos-catalogo', icon: 'catalog', label: 'Catálogo', minPerfil: 'all' },
       { to: '/adesivos-materiais', icon: 'layers', label: 'Materiais', minPerfil: 'all' },
       { to: '/adesivos-estoque', icon: 'cube', label: 'Estoque', minPerfil: 'all' },

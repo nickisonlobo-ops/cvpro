@@ -2,69 +2,85 @@
   <Teleport to="body">
     <div
       v-if="show && orcamento"
-      class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-3 sm:p-4"
       @click.self="emit('close')"
     >
-      <div class="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative">
+      <div class="bg-white rounded-[2rem] max-w-4xl w-full max-h-[94vh] overflow-y-auto shadow-2xl relative ring-1 ring-black/5">
 
-        <!-- Header com gradiente -->
-        <div class="sticky top-0 z-10 bg-white/95 backdrop-blur-sm border-b border-gray-100 px-6 sm:px-8 py-4 flex items-center justify-between rounded-t-3xl">
-          <div class="flex items-center gap-3">
-            <h2 class="text-lg sm:text-xl font-black text-gray-900">
-              {{ orcamento.numero_orcamento ?? `#${orcamento.id}` }}
-            </h2>
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold" :class="statusBadgeClass">
-              {{ statusDisplay.label }}
-            </span>
-            <span v-if="orcamento.pedido_id" class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-gray-200 text-gray-500">Legado</span>
+        <!-- ═══ HEADER PREMIUM ═══ -->
+        <div class="relative overflow-hidden rounded-t-[2rem]">
+          <!-- Gradiente de fundo baseado no status -->
+          <div class="absolute inset-0" :style="{ background: headerGradient }"></div>
+          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]"></div>
+
+          <div class="relative px-6 sm:px-8 pt-5 pb-6">
+            <!-- Top row: número + status + close -->
+            <div class="flex items-center justify-between mb-4">
+              <div class="flex items-center gap-2.5">
+                <span class="text-sm font-black text-white/90">{{ orcamento.numero_orcamento ?? `#${orcamento.id}` }}</span>
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-white/20 text-white backdrop-blur-sm border border-white/10">
+                  {{ statusDisplay.label }}
+                </span>
+                <span v-if="orcamento.pedido_id" class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-white/10 text-white/60">Legado</span>
+              </div>
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white transition-all backdrop-blur-sm" @click="emit('close')">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <!-- Valor total destaque -->
+            <div class="text-center">
+              <p class="text-xs font-semibold text-white/60 uppercase tracking-widest mb-1">Valor Total</p>
+              <p class="text-3xl sm:text-4xl font-black text-white tracking-tight">{{ formatCurrency(orcamento.valor_total) }}</p>
+            </div>
+
+            <!-- Cliente inline -->
+            <div class="flex items-center justify-center gap-4 mt-4 text-white/70 text-xs">
+              <span class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0" /></svg>
+                <b class="text-white font-semibold">{{ orcamento.cliente_nome ?? '—' }}</b>
+              </span>
+              <span v-if="orcamento.cliente_telefone" class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>
+                {{ orcamento.cliente_telefone }}
+              </span>
+              <span class="flex items-center gap-1.5">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+                <span :class="isVencido ? 'text-red-300 font-bold' : ''">{{ formatDate(orcamento.data_validade) }}</span>
+              </span>
+            </div>
           </div>
-          <button type="button" class="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-red-50 text-gray-400 hover:text-red-500 transition-all" @click="emit('close')">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-          </button>
         </div>
 
         <div class="px-6 sm:px-8 py-6 space-y-6">
 
-          <!-- Dados do Cliente -->
-          <section>
-            <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-3">Dados do Cliente</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div class="bg-gray-50/80 rounded-2xl px-4 py-3.5 border border-gray-100">
-                <span class="text-[10px] font-bold text-gray-400 uppercase">Nome</span>
-                <p class="text-sm font-bold text-gray-900 mt-0.5">{{ orcamento.cliente_nome ?? '—' }}</p>
-              </div>
-              <div class="bg-gray-50/80 rounded-2xl px-4 py-3.5 border border-gray-100">
-                <span class="text-[10px] font-bold text-gray-400 uppercase">Telefone</span>
-                <p class="text-sm font-bold text-gray-900 mt-0.5">{{ orcamento.cliente_telefone ?? 'Não informado' }}</p>
-              </div>
-              <div class="bg-gray-50/80 rounded-2xl px-4 py-3.5 border border-gray-100">
-                <span class="text-[10px] font-bold text-gray-400 uppercase">Validade</span>
-                <p class="text-sm font-bold mt-0.5" :class="isVencido ? 'text-red-600' : 'text-gray-900'">{{ formatDate(orcamento.data_validade) }}</p>
-              </div>
-            </div>
-          </section>
-
           <!-- Itens do Orçamento -->
           <section>
-            <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-3">Itens do Orçamento</h3>
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em]">Itens do Orçamento</h3>
+              <span class="text-[10px] font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{{ itens.length }} item(s)</span>
+            </div>
             <div v-if="loadingItens" class="flex items-center justify-center py-10">
               <span class="inline-block w-7 h-7 border-[3px] rounded-full animate-spin" style="border-color: rgba(0,0,0,0.08); border-top-color: var(--color-primary, #f97316)" />
             </div>
             <div v-else class="space-y-3">
-              <div v-for="(item, idx) in itens" :key="item.id" class="rounded-2xl border border-gray-100 bg-white hover:border-gray-200 hover:shadow-sm transition-all overflow-hidden">
+              <div v-for="(item, idx) in itens" :key="item.id" class="rounded-2xl border border-gray-100 bg-gradient-to-br from-white to-gray-50/30 hover:border-gray-200 hover:shadow-md transition-all overflow-hidden group">
                 <!-- Item header -->
-                <div class="flex items-center justify-between px-4 py-3 bg-gray-50/50">
-                  <div class="flex items-center gap-2">
-                    <span class="text-xs font-black text-gray-900">{{ item.descricao }}</span>
-                    <span class="text-[10px] text-gray-400 font-medium">{{ item.material_nome ?? `#${item.material_id}` }}</span>
+                <div class="flex items-center justify-between px-5 py-3.5">
+                  <div class="flex items-center gap-3 min-w-0">
+                    <span class="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-black text-white flex-shrink-0" style="background: var(--color-primary, #f97316)">{{ idx + 1 }}</span>
+                    <div class="min-w-0">
+                      <p class="text-sm font-bold text-gray-900 truncate">{{ item.descricao }}</p>
+                      <p class="text-[10px] text-gray-400 font-medium">{{ item.material_nome ?? '' }}</p>
+                    </div>
                   </div>
-                  <span class="text-sm font-black text-gray-900">{{ formatCurrency(item.valor_item) }}</span>
+                  <span class="text-base font-black text-gray-900 flex-shrink-0 ml-3">{{ formatCurrency(item.valor_item) }}</span>
                 </div>
-                <!-- Item details -->
-                <div class="px-4 py-3 flex flex-wrap items-center gap-4 text-xs text-gray-500">
-                  <span><b class="text-gray-700">{{ item.largura_cm }} × {{ item.altura_cm }}</b> cm</span>
-                  <span>Qtd: <b class="text-gray-700">{{ item.quantidade }}</b></span>
-                  <span v-if="item.area_m2">Área: <b class="text-gray-700">{{ item.area_m2.toFixed(2) }}</b> m²</span>
+                <!-- Item metrics -->
+                <div class="px-5 pb-3 flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center gap-1 text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md font-medium">{{ item.largura_cm }} × {{ item.altura_cm }} cm</span>
+                  <span class="inline-flex items-center text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md font-medium">Qtd: {{ item.quantidade }}</span>
+                  <span v-if="item.area_m2" class="inline-flex items-center text-[11px] text-gray-500 bg-gray-100 px-2 py-0.5 rounded-md font-medium">{{ item.area_m2.toFixed(2) }} m²</span>
                 </div>
                 <!-- Fotos grandes com clique para ampliar -->
                 <div v-if="item.foto_arte_url || item.foto_local_url" class="px-4 pb-4 flex flex-wrap gap-3">
@@ -143,41 +159,42 @@
 
             <!-- Ações para orçamento aprovado com OS -->
             <div class="mt-4 pt-4 border-t border-gray-100">
-              <div v-if="toastMessage" class="mb-3 p-3 rounded-xl text-sm font-semibold" :class="toastType === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'">
+              <div v-if="toastMessage" class="mb-3 p-3.5 rounded-2xl text-sm font-semibold" :class="toastType === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'">
                 {{ toastMessage }}
               </div>
-              <div class="flex flex-wrap gap-3">
-                <button type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 hover:shadow-sm transition-colors disabled:opacity-50" :disabled="processando" @click="showVoltarEtapa = true">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" /></svg>
+
+              <div class="grid grid-cols-2 gap-3">
+                <button type="button" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold bg-white text-amber-700 border-2 border-amber-200 hover:bg-amber-50 hover:border-amber-300 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50" :disabled="processando" @click="showVoltarEtapa = true">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" /></svg>
                   Voltar Etapa
                 </button>
-                <button type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 hover:shadow-sm transition-colors disabled:opacity-50" :disabled="processando" @click="showExcluirOS = true">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                <button type="button" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold bg-white text-red-600 border-2 border-red-200 hover:bg-red-50 hover:border-red-300 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50" :disabled="processando" @click="showExcluirOS = true">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
                   Excluir OS
                 </button>
               </div>
 
               <!-- Confirmação Voltar Etapa -->
-              <div v-if="showVoltarEtapa" class="mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-200">
-                <p class="text-sm text-gray-700 mb-3">Isso vai reverter o orçamento para <b>Enviado</b> e desvincular a OS. A OS será excluída.</p>
+              <div v-if="showVoltarEtapa" class="mt-4 p-5 bg-amber-50 rounded-2xl border border-amber-200">
+                <p class="text-sm text-gray-700 mb-4">Isso vai reverter o orçamento para <b>Enviado</b> e excluir a OS vinculada.</p>
                 <div class="flex items-center gap-3">
-                  <button type="button" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-amber-600 text-white hover:bg-amber-700 transition-colors disabled:opacity-50 shadow-sm" :disabled="processando" @click="voltarEtapa">
+                  <button type="button" class="flex-1 py-3 rounded-xl text-sm font-bold bg-amber-600 text-white hover:bg-amber-700 transition-all shadow-sm disabled:opacity-50" :disabled="processando" @click="voltarEtapa">
                     <span v-if="processando" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span v-else>Confirmar</span>
                   </button>
-                  <button type="button" class="px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors" @click="showVoltarEtapa = false">Cancelar</button>
+                  <button type="button" class="flex-1 py-3 rounded-xl text-sm font-bold text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-all" @click="showVoltarEtapa = false">Cancelar</button>
                 </div>
               </div>
 
               <!-- Confirmação Excluir OS -->
-              <div v-if="showExcluirOS" class="mt-4 p-4 bg-red-50 rounded-2xl border border-red-200">
-                <p class="text-sm text-gray-700 mb-3">Tem certeza? A Ordem de Serviço <b>{{ orcamento.os_numero }}</b> será excluída permanentemente.</p>
+              <div v-if="showExcluirOS" class="mt-4 p-5 bg-red-50 rounded-2xl border border-red-200">
+                <p class="text-sm text-gray-700 mb-4">Tem certeza? A OS <b>{{ orcamento.os_numero }}</b> será excluída permanentemente.</p>
                 <div class="flex items-center gap-3">
-                  <button type="button" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-red-600 text-white hover:bg-red-700 transition-colors disabled:opacity-50 shadow-sm" :disabled="processando" @click="excluirOS">
+                  <button type="button" class="flex-1 py-3 rounded-xl text-sm font-bold bg-red-600 text-white hover:bg-red-700 transition-all shadow-sm disabled:opacity-50" :disabled="processando" @click="excluirOS">
                     <span v-if="processando" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                     <span v-else>Excluir OS</span>
                   </button>
-                  <button type="button" class="px-3 py-2.5 rounded-xl text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors" @click="showExcluirOS = false">Cancelar</button>
+                  <button type="button" class="flex-1 py-3 rounded-xl text-sm font-bold text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 transition-all" @click="showExcluirOS = false">Cancelar</button>
                 </div>
               </div>
             </div>
@@ -185,55 +202,57 @@
 
           <!-- ═══ AÇÕES ═══ -->
           <section v-if="!orcamento.os_numero" class="border-t border-gray-100 pt-6">
-            <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mb-4">Ações</h3>
-
             <!-- Toast -->
-            <div v-if="toastMessage" class="mb-4 p-3.5 rounded-xl text-sm font-semibold" :class="toastType === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-700 border border-red-200'">
+            <div v-if="toastMessage" class="mb-4 p-3.5 rounded-2xl text-sm font-semibold" :class="toastType === 'success' ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-red-50 text-red-700 border border-red-200'">
               {{ toastMessage }}
             </div>
 
-            <div class="flex flex-wrap gap-3">
-              <!-- Gerar Link -->
-              <button type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold border transition-colors hover:shadow-sm disabled:opacity-50" style="background: var(--color-primary-5, rgba(249,115,22,0.05)); color: var(--color-primary, #f97316); border-color: var(--color-primary-20, rgba(249,115,22,0.2))" :disabled="processando" @click="gerarLinkAprovacao">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.06a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364L4.34 8.374" /></svg>
-                Gerar Link
+            <!-- Ações primárias (aprovar/reprovar) -->
+            <div v-if="statusDisplay.status !== 'rejeitado' && statusDisplay.status !== 'aprovado'" class="grid grid-cols-2 gap-3 mb-4">
+              <button type="button" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 shadow-lg shadow-emerald-600/20 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50" :disabled="processando" @click="showAprovacaoInterna = true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                Aprovar
               </button>
-
-              <!-- Enviar WhatsApp -->
-              <button type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-green-50 text-green-700 border border-green-200 hover:bg-green-100 hover:shadow-sm transition-colors disabled:opacity-50" :disabled="processando" @click="iniciarEnvioWhatsApp">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.634-1.215A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-2.168 0-4.19-.586-5.932-1.609l-.424-.255-4.398 1.154 1.174-4.293-.279-.443A9.785 9.785 0 012.182 12c0-5.423 4.395-9.818 9.818-9.818 5.423 0 9.818 4.395 9.818 9.818 0 5.423-4.395 9.818-9.818 9.818z"/></svg>
-                Enviar WhatsApp
-              </button>
-
-              <!-- Aprovar Internamente -->
-              <button v-if="statusDisplay.status !== 'rejeitado' && statusDisplay.status !== 'aprovado'" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-emerald-600 text-white hover:bg-emerald-700 hover:shadow-sm transition-colors shadow-sm disabled:opacity-50" :disabled="processando" @click="showAprovacaoInterna = true">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
-                Aprovar Internamente
-              </button>
-
-              <!-- Reprovar -->
-              <button v-if="statusDisplay.status !== 'rejeitado' && statusDisplay.status !== 'aprovado'" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 hover:shadow-sm transition-colors disabled:opacity-50" :disabled="processando" @click="showReprovar = true">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              <button type="button" class="flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold bg-white text-red-600 border-2 border-red-200 hover:bg-red-50 hover:border-red-300 transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50" :disabled="processando" @click="showReprovar = true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                 Reprovar
               </button>
+            </div>
 
-              <!-- Abrir link em nova aba -->
-              <button v-if="linkGerado || orcamento.token_aprovacao" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200 hover:shadow-sm transition-colors" @click="abrirLinkNovaPagina">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
-                Abrir Link
+            <!-- Voltar Etapa (aprovados) -->
+            <div v-if="statusDisplay.status === 'aprovado'" class="mb-4">
+              <button type="button" class="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl text-sm font-bold bg-amber-50 text-amber-700 border-2 border-amber-200 hover:bg-amber-100 transition-all disabled:opacity-50" :disabled="processando" @click="showVoltarEtapa = true">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" /></svg>
+                Voltar para Enviado
               </button>
+            </div>
 
-              <!-- Voltar Etapa (para aprovados sem OS) -->
-              <button v-if="statusDisplay.status === 'aprovado'" type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100 hover:shadow-sm transition-colors disabled:opacity-50" :disabled="processando" @click="showVoltarEtapa = true">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" /></svg>
-                Voltar Etapa
+            <!-- Ações secundárias (grid de ícones) -->
+            <div class="grid grid-cols-4 gap-2">
+              <button type="button" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 hover:border-gray-200 transition-all group disabled:opacity-50" :disabled="processando" @click="gerarLinkAprovacao">
+                <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center group-hover:border-gray-300 transition-colors shadow-sm">
+                  <svg class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.06a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364L4.34 8.374" /></svg>
+                </div>
+                <span class="text-[10px] font-bold text-gray-600">Link</span>
               </button>
-
-              <!-- Baixar PDF -->
-              <button type="button" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm hover:shadow-md transition-all disabled:opacity-50 bg-emerald-600 hover:bg-emerald-700" :disabled="gerandoPdf" @click="gerarPdfOrcamento">
-                <span v-if="gerandoPdf" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-                <svg v-else class="w-4.5 h-4.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
-                {{ gerandoPdf ? 'Gerando...' : 'Baixar PDF' }}
+              <button type="button" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl bg-gray-50 hover:bg-green-50 border border-gray-100 hover:border-green-200 transition-all group disabled:opacity-50" :disabled="processando" @click="iniciarEnvioWhatsApp">
+                <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center group-hover:border-green-300 transition-colors shadow-sm">
+                  <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.625.846 5.059 2.284 7.034L.789 23.492l4.634-1.215A11.95 11.95 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818c-2.168 0-4.19-.586-5.932-1.609l-.424-.255-4.398 1.154 1.174-4.293-.279-.443A9.785 9.785 0 012.182 12c0-5.423 4.395-9.818 9.818-9.818 5.423 0 9.818 4.395 9.818 9.818 0 5.423-4.395 9.818-9.818 9.818z"/></svg>
+                </div>
+                <span class="text-[10px] font-bold text-gray-600">WhatsApp</span>
+              </button>
+              <button v-if="linkGerado || orcamento.token_aprovacao" type="button" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl bg-gray-50 hover:bg-blue-50 border border-gray-100 hover:border-blue-200 transition-all group" @click="abrirLinkNovaPagina">
+                <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center group-hover:border-blue-300 transition-colors shadow-sm">
+                  <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
+                </div>
+                <span class="text-[10px] font-bold text-gray-600">Abrir</span>
+              </button>
+              <button type="button" class="flex flex-col items-center gap-1.5 py-3 px-2 rounded-2xl bg-gray-50 hover:bg-gray-100 border border-gray-100 hover:border-gray-200 transition-all group disabled:opacity-50" :disabled="gerandoPdf" @click="gerarPdfOrcamento">
+                <div class="w-9 h-9 rounded-xl bg-white border border-gray-200 flex items-center justify-center group-hover:border-gray-300 transition-colors shadow-sm">
+                  <span v-if="gerandoPdf" class="inline-block w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"></span>
+                  <svg v-else class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                </div>
+                <span class="text-[10px] font-bold text-gray-600">PDF</span>
               </button>
             </div>
 
@@ -334,6 +353,7 @@
 import { ref, computed, watch } from 'vue'
 import { createSupabaseClient } from '~/lib/supabase'
 import { useContasReceber } from '~/composables/useConciliacao'
+import { useProcessos } from '~/composables/useProcessos'
 import type { StatusOS } from '~/composables/useOrdensServico'
 import OSIndicadorBadge from '~/components/OSIndicadorBadge.vue'
 
@@ -388,6 +408,7 @@ const emit = defineEmits<{
 
 const supabase = createSupabaseClient()
 const { gerarRecebiveisOrcamento } = useContasReceber()
+const { gerarProcessosParaOS } = useProcessos()
 const {
   comporMensagemWhatsAppMultiItens,
   comporLinkWhatsApp,
@@ -420,6 +441,17 @@ const gerandoPdf = ref(false)
 const statusDisplay = computed(() => {
   if (!props.orcamento) return { status: 'rascunho', label: 'Rascunho', cor: 'gray' }
   return classificarStatusOrcamentoV2(props.orcamento.status as any, props.orcamento.data_validade)
+})
+
+const headerGradient = computed(() => {
+  const s = statusDisplay.value.status
+  switch (s) {
+    case 'aprovado': return 'linear-gradient(135deg, #059669, #10b981)'
+    case 'enviado': return 'linear-gradient(135deg, #1d4ed8, #3b82f6)'
+    case 'rejeitado': return 'linear-gradient(135deg, #dc2626, #ef4444)'
+    case 'vencido': return 'linear-gradient(135deg, #d97706, #f59e0b)'
+    default: return 'linear-gradient(135deg, #374151, #4b5563)'
+  }
 })
 
 const statusBadgeClass = computed(() => {
@@ -645,6 +677,20 @@ async function aprovarInternamente() {
     })
 
     if (error) { showToast(`Erro na aprovação: ${error.message}`, 'error'); console.error(error); return }
+
+    // Buscar OS gerada para este orçamento
+    const { data: osData } = await supabase
+      .from('ordens_servico_adesivo')
+      .select('id')
+      .eq('orcamento_id', props.orcamento.id)
+      .limit(1)
+      .single()
+
+    // Gerar processos de produção a partir dos itens
+    if (osData?.id && itens.value.length > 0) {
+      const procResult = await gerarProcessosParaOS(osData.id, itens.value.map(i => ({ descricao: i.descricao, material_id: i.material_id })))
+      console.log('[Aprovação] Processos criados:', procResult.criados)
+    }
 
     // Gerar contas a receber
     const recResult = await gerarRecebiveisOrcamento({
