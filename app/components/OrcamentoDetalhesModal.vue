@@ -693,7 +693,7 @@ async function voltarEtapa() {
     // 2. Excluir a OS vinculada
     if (props.orcamento.os_numero) {
       await supabase
-        .from('ordens_servico')
+        .from('ordens_servico_adesivo')
         .delete()
         .eq('numero_os', props.orcamento.os_numero)
     }
@@ -756,7 +756,7 @@ async function excluirOS() {
   processando.value = true
   try {
     const { error } = await supabase
-      .from('ordens_servico')
+      .from('ordens_servico_adesivo')
       .delete()
       .eq('numero_os', props.orcamento.os_numero)
 
