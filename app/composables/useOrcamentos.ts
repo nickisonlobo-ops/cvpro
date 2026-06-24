@@ -37,6 +37,7 @@ export interface OrcamentoCompleto {
   cliente_id: number
   validade_dias: number
   prazo_estimado_dias: number | null
+  data_entrega: string | null
   valor_mao_obra_global: number
   desconto_percentual: number
   desconto_valor: number
@@ -456,6 +457,7 @@ export function useOrcamentos() {
       cliente_id: number
       validade_dias: number
       prazo_estimado_dias?: number | null
+      data_entrega?: string | null
       valor_mao_obra_global?: number
       desconto_percentual?: number
       desconto_valor?: number
@@ -477,6 +479,7 @@ export function useOrcamentos() {
         cliente_id: dados.cliente_id,
         validade_dias: dados.validade_dias || 30,
         prazo_estimado_dias: dados.prazo_estimado_dias || null,
+        data_entrega: dados.data_entrega || null,
         valor_mao_obra_global: Number(dados.valor_mao_obra_global) || 0,
         desconto_percentual: Number(dados.desconto_percentual) || 0,
         desconto_valor: Number(dados.desconto_valor) || 0,

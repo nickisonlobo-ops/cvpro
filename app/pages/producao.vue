@@ -52,13 +52,17 @@
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" /></svg>
           Cronograma
         </button>
+        <button type="button" class="px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5" :class="viewMode === 'calendario' ? 'bg-gray-900 text-white' : 'bg-white text-gray-500 hover:bg-gray-50'" @click="viewMode = 'calendario'">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+          Entregas
+        </button>
       </div>
     </div>
 
-    <!-- Kanban por colunas -->
+    <!-- Kanban por colunas (grid com cards multi-dia) -->
     <div v-if="viewMode === 'kanban'" class="flex gap-3 overflow-x-auto pb-4">
       <!-- Coluna: Não Agendados -->
-      <div class="kanban-column flex flex-col min-w-[280px] max-w-[320px] rounded-2xl border" style="background: var(--color-card, #ffffff); border-color: var(--color-card-border, rgba(0,0,0,0.06))">
+      <div class="kanban-column flex flex-col min-w-[240px] max-w-[280px] rounded-2xl border flex-shrink-0" style="background: var(--color-card, #ffffff); border-color: var(--color-card-border, rgba(0,0,0,0.06))">
         <div class="flex items-center gap-2 px-4 py-3 border-b" style="border-color: var(--color-card-border, rgba(0,0,0,0.06))">
           <span class="w-2.5 h-2.5 rounded-full bg-amber-400 flex-shrink-0"></span>
           <h3 class="text-sm font-semibold truncate flex-1" style="color: var(--color-card-texto, #1e293b)">Não Agendados</h3>
@@ -72,7 +76,8 @@
             :style="{ background: inst.status === 'concluido' ? '#ecfdf5' : 'var(--color-card, #ffffff)', color: 'var(--color-card-texto, #1e293b)', borderColor: inst.status === 'concluido' ? '#6ee7b7' : 'var(--color-card-border, rgba(0,0,0,0.06))' }"
             draggable="true"
             @dragstart="onDragStart($event, inst)"
-            @click="abrirChecklist(inst)"
+            @dragend="onDragEnd"
+            @click="onKanbanCardClick(inst)"
           >
             <div v-if="isBloqueada(inst)" class="absolute top-2 right-2">
               <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
@@ -92,72 +97,120 @@
         </div>
       </div>
 
-      <!-- Colunas: Dias da semana -->
-      <div
-        v-for="dia in diasSemana" :key="dia.iso"
-        class="kanban-column flex flex-col min-w-[280px] max-w-[320px] rounded-2xl border transition-all duration-200"
-        :class="dragOverDia === dia.iso ? 'ring-2 ring-blue-400' : ''"
-        :style="{ background: 'var(--color-card, #ffffff)', borderColor: dia.isHoje ? 'var(--color-primary, #1f7f1f)' : 'var(--color-card-border, rgba(0,0,0,0.06))' }"
-        @dragover.prevent="dragOverDia = dia.iso"
-        @dragleave="dragOverDia = null"
-        @drop="onDrop($event, dia.iso)"
-      >
-        <div class="flex items-center gap-2 px-4 py-3 border-b" style="border-color: var(--color-card-border, rgba(0,0,0,0.06))">
-          <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" :class="dia.isHoje ? 'bg-gray-900' : 'bg-blue-400'"></span>
-          <h3 class="text-sm font-semibold truncate flex-1" style="color: var(--color-card-texto, #1e293b)">
-            {{ dia.label }} {{ dia.numero }}
-          </h3>
-          <span class="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-medium" style="background: var(--color-primary-5, rgba(55,65,81,0.05)); color: var(--color-card-texto, #64748b); border: 1px solid var(--color-card-border, rgba(0,0,0,0.06))">{{ contarPorDia(dia.iso) }}</span>
-        </div>
-        <div class="flex-1 overflow-y-auto p-2 space-y-2 min-h-[120px]">
+      <!-- Grid Dias da semana (CSS Grid: cards ocupam colunas conforme span) -->
+      <div class="flex-1 min-w-0 border border-gray-100 rounded-2xl overflow-hidden" style="background: var(--color-card, #ffffff)">
+        <!-- Header com dias -->
+        <div class="grid gap-0" :style="{ gridTemplateColumns: 'repeat(' + diasSemana.length + ', 1fr)' }">
           <div
-            v-for="inst in instanciasPorDia(dia.iso)" :key="inst.id"
-            class="group relative rounded-xl border p-3 shadow-sm transition-all duration-150 select-none cursor-grab hover:shadow-md active:scale-[0.98]"
-            :class="isBloqueada(inst) ? 'opacity-60' : ''"
-            style="background: var(--color-card, #ffffff); color: var(--color-card-texto, #1e293b); border-color: var(--color-card-border, rgba(0,0,0,0.06))"
-            draggable="true"
-            @dragstart="onDragStart($event, inst)"
-            @click="abrirChecklist(inst)"
+            v-for="dia in diasSemana" :key="'h-'+dia.iso"
+            class="px-3 py-2.5 flex items-center gap-2 border-b"
+            :class="dia.isHoje ? 'border-b-2 border-b-gray-900' : 'border-b border-b-gray-100'"
+            @dragover.prevent="dragOverDia = dia.iso"
+            @dragleave="dragOverDia = null"
+            @drop="onDrop($event, dia.iso)"
           >
-            <div v-if="isBloqueada(inst)" class="absolute top-2 right-2">
-              <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+            <span class="w-2.5 h-2.5 rounded-full flex-shrink-0" :class="dia.isHoje ? 'bg-gray-900' : 'bg-blue-400'"></span>
+            <h3 class="text-sm font-semibold truncate flex-1" style="color: var(--color-card-texto, #1e293b)">{{ dia.label }} {{ dia.numero }}</h3>
+            <span class="inline-flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full text-xs font-medium" style="background: var(--color-primary-5, rgba(55,65,81,0.05)); color: var(--color-card-texto, #64748b); border: 1px solid var(--color-card-border, rgba(0,0,0,0.06))">{{ contarPorDia(dia.iso) }}</span>
+          </div>
+        </div>
+
+        <!-- Cards grid com linhas separadoras -->
+        <div class="relative min-h-[200px]">
+          <!-- Linhas verticais suaves separando os dias -->
+          <div class="absolute inset-0 pointer-events-none grid" :style="{ gridTemplateColumns: 'repeat(' + diasSemana.length + ', 1fr)' }">
+            <div v-for="(dia, idx) in diasSemana" :key="'line-'+dia.iso" :class="idx < diasSemana.length - 1 ? 'border-r border-gray-100' : ''"></div>
+          </div>
+
+          <!-- Drop zones (full height por coluna) -->
+          <div class="absolute inset-0 grid" :style="{ gridTemplateColumns: 'repeat(' + diasSemana.length + ', 1fr)' }">
+            <div
+              v-for="dia in diasSemana" :key="'dz-'+dia.iso"
+              class="min-h-full transition-colors"
+              :class="dragOverDia === dia.iso ? 'bg-blue-50/60' : ''"
+              @dragover.prevent="dragOverDia = dia.iso"
+              @dragleave="dragOverDia = null"
+              @drop="onDrop($event, dia.iso)"
+            ></div>
+          </div>
+
+          <!-- Cards posicionados via grid -->
+          <div
+            ref="kanbanGridRef"
+            class="relative grid gap-2 auto-rows-auto p-2 overflow-hidden"
+            :style="{ gridTemplateColumns: 'repeat(' + diasSemana.length + ', 1fr)' }"
+            @dragover.prevent="onKanbanGridDragOver($event)"
+            @dragleave="dragOverDia = null"
+            @drop="onKanbanGridDrop($event)"
+          >
+            <div
+              v-for="card in kanbanGridCards" :key="'gc-'+card.inst.id"
+              class="group relative rounded-xl border p-3 shadow-sm transition-all duration-150 select-none cursor-grab hover:shadow-md active:scale-[0.98] overflow-hidden min-w-0"
+              :class="[isBloqueada(card.inst) ? 'opacity-60' : '', kanbanResizingId === card.inst.id ? 'z-30 ring-2 ring-blue-400' : 'z-10']"
+              :style="{ gridColumn: card.colStart + ' / span ' + card.span, gridRow: card.row, background: card.inst.status === 'concluido' ? '#ecfdf5' : 'var(--color-card, #ffffff)', color: 'var(--color-card-texto, #1e293b)', borderColor: card.inst.status === 'concluido' ? '#6ee7b7' : 'var(--color-card-border, rgba(0,0,0,0.06))' }"
+              draggable="true"
+              @dragstart="onDragStart($event, card.inst)"
+              @dragend="onDragEnd"
+              @click="onKanbanCardClick(card.inst)"
+            >
+            <!-- Badges top-right: cadeado + dias -->
+            <div class="absolute top-2 right-2 flex items-center gap-1.5">
+              <div v-if="card.span > 1" class="px-1.5 py-0.5 rounded-md bg-blue-100 text-blue-700 text-[9px] font-bold">
+                {{ card.span }}d
+              </div>
+              <svg v-if="isBloqueada(card.inst)" class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
             </div>
             <div class="space-y-1">
-              <p class="text-sm font-bold truncate" :class="inst.status === 'concluido' ? 'line-through text-emerald-700' : ''" style="color: var(--color-card-texto, #1e293b)">{{ inst.status === 'concluido' ? '&#10003; ' : '' }}{{ inst.template_nome }} - {{ inst.os_numero ?? '---' }}</p>
-              <p class="text-xs truncate" style="color: var(--color-card-texto, #64748b); opacity: 0.7">{{ inst.titulo }}</p>
-              <div v-if="inst.responsavel_nome" class="flex items-center gap-1.5 text-xs" style="color: var(--color-card-texto, #64748b); opacity: 0.7">
+              <p class="text-sm font-bold" :class="card.inst.status === 'concluido' ? 'line-through text-emerald-700' : ''" style="color: var(--color-card-texto, #1e293b)">{{ card.inst.status === 'concluido' ? '&#10003; ' : '' }}{{ card.inst.template_nome }} - {{ card.inst.os_numero ?? '---' }}</p>
+              <p class="text-xs" style="color: var(--color-card-texto, #64748b); opacity: 0.7">{{ card.inst.titulo }}</p>
+              <div v-if="card.inst.responsavel_nome" class="flex items-center gap-1.5 text-xs" style="color: var(--color-card-texto, #64748b); opacity: 0.7">
                 <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0" /></svg>
-                <span class="truncate">{{ inst.responsavel_nome }}</span>
+                <span class="truncate">{{ card.inst.responsavel_nome }}</span>
               </div>
               <div class="flex items-center gap-1.5 mt-1.5">
                 <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                  <div class="h-full rounded-full transition-all" :style="{ width: inst.progresso + '%', background: inst.progresso === 100 ? '#10b981' : 'var(--color-primary, #3b82f6)' }"></div>
+                  <div class="h-full rounded-full transition-all" :style="{ width: card.inst.progresso + '%', background: card.inst.progresso === 100 ? '#10b981' : 'var(--color-primary, #3b82f6)' }"></div>
                 </div>
-                <span class="text-[9px] font-bold text-gray-400">{{ inst.progresso }}%</span>
+                <span class="text-[9px] font-bold text-gray-400">{{ card.inst.progresso }}%</span>
               </div>
             </div>
+            <!-- Kanban resize handle (estender dias) -->
+            <div class="absolute right-0 top-0 bottom-0 w-3 cursor-col-resize opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-r-xl bg-blue-50/80" @mousedown.stop.prevent="iniciarKanbanResize($event, card.inst, card.colStart - 1)">
+              <div class="w-0.5 h-5 rounded-full bg-blue-400 opacity-60"></div>
+            </div>
           </div>
-          <div v-if="instanciasPorDia(dia.iso).length === 0" class="flex items-center justify-center h-full min-h-[80px] text-xs" style="color: var(--color-card-texto, #94a3b8); opacity: 0.5">Nenhum item</div>
+          </div>
         </div>
+
+        <!-- Mensagem vazia -->
+        <div v-if="kanbanGridCards.length === 0" class="flex items-center justify-center min-h-[120px] text-xs text-gray-400">Nenhum processo agendado nesta semana</div>
       </div>
     </div>
 
     <!-- ═══ CRONOGRAMA (Timeline por hora, agrupado por OS) ═══ -->
     <div v-if="viewMode === 'cronograma'" class="bg-white rounded-2xl border border-gray-100 overflow-x-auto">
-      <!-- Seletor de dia -->
-      <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-100">
-        <span class="text-xs font-bold text-gray-500">Dia:</span>
-        <button v-for="dia in diasSemana" :key="'sel-'+dia.iso" type="button" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all" :class="cronogramaDia === dia.iso ? 'bg-gray-900 text-white' : dia.isHoje ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'" @click="cronogramaDia = dia.iso">
+      <!-- Seletor de dias (multi-select) -->
+      <div class="flex items-center gap-2 px-4 py-3 border-b border-gray-100 flex-wrap">
+        <span class="text-xs font-bold text-gray-500">Dias:</span>
+        <button v-for="dia in diasSemana" :key="'sel-'+dia.iso" type="button" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all" :class="cronogramaDias.includes(dia.iso) ? 'bg-gray-900 text-white' : dia.isHoje ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'" @click="toggleDiaCronograma(dia.iso)">
           {{ dia.label }} {{ dia.numero }}
         </button>
+        <div class="h-4 w-px bg-gray-200 mx-1"></div>
+        <button type="button" class="px-2 py-1 rounded text-[10px] font-bold text-gray-400 hover:text-gray-700" @click="cronogramaDias = [new Date().toISOString().split('T')[0]]">Hoje</button>
+        <button type="button" class="px-2 py-1 rounded text-[10px] font-bold text-gray-400 hover:text-gray-700" @click="cronogramaDias = diasSemana.map(d => d.iso)">Semanal</button>
+        <button type="button" class="px-2 py-1 rounded text-[10px] font-bold text-gray-400 hover:text-gray-700" @click="selecionarQuinzenal()">Quinzenal</button>
+        <button type="button" class="px-2 py-1 rounded text-[10px] font-bold text-gray-400 hover:text-gray-700" @click="selecionarMensal()">Mensal</button>
       </div>
 
       <!-- Grid -->
-      <div class="min-w-[1100px]">
-        <!-- Header horas -->
-        <div class="grid border-b border-gray-100" :style="{ gridTemplateColumns: '140px repeat(' + horasVisiveis.length + ', 1fr)' }">
+      <div class="min-w-[1100px]" :style="{ minWidth: (cronogramaDias.length * 400 + 140) + 'px' }">
+        <!-- Header horas por dia -->
+        <div class="grid border-b border-gray-100" :style="{ gridTemplateColumns: '140px repeat(' + cronogramaSlots.length + ', 1fr)' }">
           <div class="px-3 py-2 border-r border-gray-100 text-[10px] font-bold text-gray-400">OS</div>
-          <div v-for="h in horasVisiveis" :key="h" class="px-1 py-2 text-center border-r border-gray-50 last:border-r-0 text-[10px] font-bold text-gray-400">{{ h }}:00</div>
+          <div v-for="slot in cronogramaSlots" :key="slot.key" class="px-0 py-2 text-center border-r border-gray-50 last:border-r-0" :class="slot.isFirstHour ? 'border-l border-gray-200' : ''">
+            <p v-if="slot.isFirstHour" class="text-[9px] font-black text-gray-600 -mt-0.5">{{ slot.diaLabel }}</p>
+            <p class="text-[9px] font-bold text-gray-400">{{ slot.hora }}:00</p>
+          </div>
         </div>
 
         <!-- Linhas por OS -->
@@ -169,10 +222,10 @@
               <p class="text-[10px] text-gray-400 truncate">{{ linha.produto }}</p>
             </div>
             <!-- Área de barras (cards) -->
-            <div class="relative py-2 px-1">
+            <div data-cronograma-area class="relative py-2 px-1">
               <!-- Grid background -->
-              <div class="absolute inset-0 grid" :style="{ gridTemplateColumns: 'repeat(' + horasVisiveis.length + ', 1fr)' }">
-                <div v-for="h in horasVisiveis" :key="'bg2-'+h" class="border-r border-gray-50 last:border-r-0"></div>
+              <div class="absolute inset-0 grid" :style="{ gridTemplateColumns: 'repeat(' + cronogramaSlots.length + ', 1fr)' }">
+                <div v-for="slot in cronogramaSlots" :key="'bg2-'+slot.key" class="border-r border-gray-50 last:border-r-0" :class="slot.isFirstHour ? 'border-l border-gray-200' : ''"></div>
               </div>
               <!-- Cards posicionados -->
               <div
@@ -197,8 +250,8 @@
                   </div>
                 </div>
                 <!-- Resize handle -->
-                <div data-resize class="absolute right-0 top-0 bottom-0 w-3 cursor-col-resize opacity-0 group-hover/bar:opacity-100 transition-opacity flex items-center justify-center rounded-r-xl" style="background: var(--color-primary-10, rgba(59,130,246,0.1))" @mousedown.stop.prevent="iniciarResizeHora($event, proc)">
-                  <div class="w-0.5 h-5 rounded-full" style="background: var(--color-primary, #3b82f6); opacity: 0.5"></div>
+                <div data-resize class="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize opacity-0 group-hover/bar:opacity-100 transition-opacity flex items-center justify-center rounded-r-xl" style="background: var(--color-primary-10, rgba(59,130,246,0.15))" @mousedown.stop.prevent="iniciarResizeHora($event, proc)">
+                  <div class="w-0.5 h-6 rounded-full" style="background: var(--color-primary, #3b82f6); opacity: 0.6"></div>
                 </div>
               </div>
             </div>
@@ -206,6 +259,60 @@
         </div>
 
         <div v-else class="p-12 text-center text-sm text-gray-400">Nenhum processo agendado neste dia.</div>
+      </div>
+    </div>
+
+    <!-- ═══ CALENDÁRIO DE ENTREGAS (OS por data_entrega) ═══ -->
+    <div v-if="viewMode === 'calendario'" class="bg-white rounded-2xl border border-gray-100 overflow-hidden">
+      <!-- Header mês -->
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <h3 class="text-sm font-bold text-gray-800">{{ calendarioMesLabel }}</h3>
+        <div class="flex items-center gap-2">
+          <button type="button" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-all" @click="calendarioMesOffset--">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" /></svg>
+          </button>
+          <button type="button" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-gray-900 text-white" @click="calendarioMesOffset = 0">Hoje</button>
+          <button type="button" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-600 transition-all" @click="calendarioMesOffset++">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dias da semana header -->
+      <div class="grid grid-cols-7 border-b border-gray-100">
+        <div v-for="d in ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab', 'Dom']" :key="d" class="px-2 py-2 text-center text-[10px] font-bold text-gray-400 uppercase">{{ d }}</div>
+      </div>
+
+      <!-- Grid de dias -->
+      <div class="grid grid-cols-7">
+        <div
+          v-for="dia in calendarioDias" :key="dia.iso"
+          class="min-h-[140px] border-r border-b border-gray-50 p-2 transition-colors"
+          :class="[dia.isHoje ? 'bg-blue-50/40' : '', !dia.isMesAtual ? 'bg-gray-50/50' : '', calDragOverDia === dia.iso ? 'bg-blue-100/60 ring-1 ring-blue-300' : '']"
+          @dragover.prevent="calDragOverDia = dia.iso"
+          @dragleave="calDragOverDia = null"
+          @drop="onCalDrop($event, dia.iso)"
+        >
+          <p class="text-[10px] font-bold mb-1.5" :class="dia.isHoje ? 'text-blue-700' : dia.isMesAtual ? 'text-gray-700' : 'text-gray-300'">{{ dia.numero }}</p>
+          <!-- OS cards para este dia -->
+          <div class="space-y-1.5">
+            <div
+              v-for="os in calendarioOsPorDia(dia.iso)" :key="os.id"
+              class="rounded-xl border p-2.5 cursor-grab hover:shadow-md transition-all select-none active:scale-[0.97]"
+              :class="os.status === 'entregue' ? 'bg-emerald-50 border-emerald-200' : os.atrasado ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100 hover:border-gray-200'"
+              draggable="true"
+              @dragstart="onCalDragStart($event, os)"
+              @dragend="onCalDragEnd"
+              @click="onCalCardClick(os)"
+            >
+              <p class="text-xs font-bold truncate" :class="os.status === 'entregue' ? 'text-emerald-700 line-through' : os.atrasado ? 'text-red-700' : 'text-gray-900'">{{ os.numero_os }} {{ os.nome_trabalho ? '- ' + os.nome_trabalho : '' }}</p>
+              <div v-if="os.cliente_nome" class="flex items-center gap-1 mt-1">
+                <svg class="w-3 h-3 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0" /></svg>
+                <span class="text-[10px] text-gray-500 truncate">{{ os.cliente_nome }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -299,6 +406,14 @@
         </button>
         <img :src="lightboxUrl!" alt="Imagem ampliada" class="max-w-[90vw] max-h-[90vh] rounded-2xl object-contain shadow-2xl" @click.stop />
       </div>
+
+      <!-- Modal detalhes da OS (calendário) -->
+      <OSDetalhesModal
+        :show="showOSModal"
+        :ordem-servico="osSelecionadaCalendario"
+        :itens-o-s="itensOSCalendario"
+        @close="showOSModal = false"
+      />
     </Teleport>
   </div>
 </template>
@@ -306,6 +421,8 @@
 <script setup lang="ts">
 import { useProcessos, type ProcessoInstancia, type ChecklistItem } from '~/composables/useProcessos'
 import { useRealtimeMulti } from '~/composables/useRealtime'
+import OSDetalhesModal from '~/components/OSDetalhesModal.vue'
+import type { OrdemServico, ItemOS } from '~/composables/useOrdensServico'
 
 definePageMeta({ layout: 'default' })
 
@@ -317,8 +434,8 @@ const checklistAtual = ref<ChecklistItem[]>([])
 const itensOS = ref<any[]>([])
 const lightboxUrl = ref<string | null>(null)
 const filtroProcesso = ref('')
-const viewMode = ref<'kanban' | 'cronograma'>('kanban')
-const cronogramaDia = ref(new Date().toISOString().split('T')[0])
+const viewMode = ref<'kanban' | 'cronograma' | 'calendario'>('kanban')
+const cronogramaDias = ref<string[]>([new Date().toISOString().split('T')[0]])
 const renderKey = ref(0)
 const widthOverrides = reactive<Record<number, string>>({})
 const leftOverrides = reactive<Record<number, number>>({})
@@ -347,22 +464,209 @@ const naoAgendados = computed(() => instancias.value.filter(i => !i.data_prazo &
 function instanciasPorDia(iso: string) { return instancias.value.filter(i => i.data_prazo === iso && i.status !== 'cancelado' && (!filtroProcesso.value || i.template_nome === filtroProcesso.value)).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0)) }
 function contarPorDia(iso: string) { return instanciasPorDia(iso).length }
 
+// Kanban Grid: calcula posicao de cada card no CSS Grid (sem sobreposicao)
+const kanbanGridCards = computed(() => {
+  const dias = diasSemana.value.map(d => d.iso)
+  // Filtrar instancias agendadas dentro da semana visivel
+  const agendadas = instancias.value.filter(i => {
+    if (i.status === 'cancelado') return false
+    if (filtroProcesso.value && i.template_nome !== filtroProcesso.value) return false
+    if (!i.data_prazo) return false
+    const inicio = i.data_prazo
+    const fim = (i as any).data_fim || i.data_prazo
+    // Toca a semana visivel
+    return inicio <= dias[dias.length - 1] && fim >= dias[0]
+  }).sort((a, b) => {
+    // Dentro da mesma OS: respeitar ordem de processo (predecessores primeiro/acima)
+    if (a.os_id && b.os_id && a.os_id === b.os_id) {
+      return (a.ordem ?? 0) - (b.ordem ?? 0)
+    }
+    // Entre OS diferentes: ordenar por ordem, depois data
+    const ordemDiff = (a.ordem ?? 0) - (b.ordem ?? 0)
+    if (ordemDiff !== 0) return ordemDiff
+    if (a.data_prazo! < b.data_prazo!) return -1
+    if (a.data_prazo! > b.data_prazo!) return 1
+    return 0
+  })
+
+  // Alocar rows (grid-row) evitando sobreposicoes
+  // Cada row eh um array de intervalos [colStart, colEnd] ja ocupados
+  const rows: Array<Array<[number, number]>> = []
+  // Track: para cada OS+ordem, qual row foi atribuida (para forcar sequencia)
+  const osRowMap = new Map<string, number>() // key: "osId-ordem" -> row
+
+  const result: Array<{ inst: any; colStart: number; span: number; row: number }> = []
+
+  for (const inst of agendadas) {
+    const colStart = Math.max(0, dias.indexOf(inst.data_prazo)) + 1 // CSS grid is 1-indexed
+    const dataFim = (inst as any).data_fim || inst.data_prazo
+    const colEnd = Math.min(dias.length, dias.indexOf(dataFim) >= 0 ? dias.indexOf(dataFim) + 1 : dias.length)
+
+    // Se data_prazo esta antes da semana, colStart = 1
+    const effectiveColStart = dias.indexOf(inst.data_prazo) >= 0 ? colStart : 1
+    const rawSpan = Math.max(1, colEnd - effectiveColStart + 1)
+    // Limitar span para nao ultrapassar o grid
+    const maxSpan = dias.length - effectiveColStart + 1
+    const span = Math.min(rawSpan, maxSpan)
+
+    // Se override de resize ativo
+    const overrideSpan = kanbanWidthOverrides[inst.id]
+    const finalSpan = overrideSpan ? Math.min(maxSpan, overrideSpan) : span
+
+    // Determinar row minima baseado no predecessor da mesma OS
+    let minRow = 0
+    if (inst.os_id && inst.ordem > 0) {
+      // Buscar a row do processo anterior na mesma OS
+      for (let prevOrdem = inst.ordem - 1; prevOrdem >= 0; prevOrdem--) {
+        const prevKey = `${inst.os_id}-${prevOrdem}`
+        const prevRow = osRowMap.get(prevKey)
+        if (prevRow !== undefined) {
+          minRow = prevRow + 1 // Deve ficar abaixo
+          break
+        }
+      }
+    }
+
+    // Encontrar a primeira row (>= minRow) que tem espaco para este card
+    let assignedRow = -1
+    for (let r = minRow; r < rows.length; r++) {
+      const intervals = rows[r]
+      const conflito = intervals.some(([s, e]) => {
+        return !(effectiveColStart > e || (effectiveColStart + finalSpan - 1) < s)
+      })
+      if (!conflito) {
+        assignedRow = r
+        break
+      }
+    }
+    if (assignedRow === -1) {
+      assignedRow = Math.max(minRow, rows.length)
+      while (rows.length <= assignedRow) rows.push([])
+    }
+    rows[assignedRow].push([effectiveColStart, effectiveColStart + finalSpan - 1])
+
+    // Registrar row para sequencia OS
+    if (inst.os_id !== null && inst.os_id !== undefined) {
+      osRowMap.set(`${inst.os_id}-${inst.ordem}`, assignedRow)
+    }
+
+    result.push({ inst, colStart: effectiveColStart, span: finalSpan, row: assignedRow + 2 }) // +2 porque row 1 eh reservada pro drop zone
+  }
+
+  return result
+})
+
 const templatesFiltro = computed(() => {
   return templates.value.filter(t => t.ativo).map(t => ({ id: t.id, nome: t.nome }))
 })
 
 // Cronograma: horas visíveis (7h às 17h)
-const horasVisiveis = computed(() => Array.from({ length: 11 }, (_, i) => i + 7))
+const HORA_INICIO_DIA = 7
+const HORA_FIM_DIA = 18 // 18:00 = fim do dia de trabalho
+const horasVisiveis = computed(() => Array.from({ length: HORA_FIM_DIA - HORA_INICIO_DIA }, (_, i) => i + HORA_INICIO_DIA))
 
-// Agrupar por OS no dia selecionado
+// Slots do cronograma (dia + hora)
+const cronogramaSlots = computed(() => {
+  const slots: { key: string; dia: string; diaLabel: string; hora: number; isFirstHour: boolean }[] = []
+  const dias = [...cronogramaDias.value].sort()
+  for (const diaIso of dias) {
+    const d = new Date(diaIso + 'T12:00:00')
+    const labels = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sab']
+    const diaLabel = `${labels[d.getDay()]} ${d.getDate()}`
+    for (const h of horasVisiveis.value) {
+      slots.push({ key: `${diaIso}-${h}`, dia: diaIso, diaLabel, hora: h, isFirstHour: h === horasVisiveis.value[0] })
+    }
+  }
+  return slots
+})
+
+const totalSlots = computed(() => cronogramaSlots.value.length)
+
+function toggleDiaCronograma(iso: string) {
+  const idx = cronogramaDias.value.indexOf(iso)
+  if (idx >= 0) {
+    if (cronogramaDias.value.length > 1) cronogramaDias.value.splice(idx, 1)
+  } else {
+    cronogramaDias.value.push(iso)
+    cronogramaDias.value.sort()
+  }
+}
+
+function selecionarQuinzenal() {
+  const hoje = new Date()
+  const inicio = new Date(hoje)
+  inicio.setDate(hoje.getDate() - hoje.getDay() + 1 + (semanaOffset.value * 7))
+  const dias: string[] = []
+  for (let i = 0; i < 14; i++) {
+    const d = new Date(inicio)
+    d.setDate(inicio.getDate() + i)
+    dias.push(d.toISOString().split('T')[0])
+  }
+  cronogramaDias.value = dias
+}
+
+function selecionarMensal() {
+  const hoje = new Date()
+  const inicio = new Date(hoje.getFullYear(), hoje.getMonth() + (semanaOffset.value > 0 ? 1 : 0), 1)
+  const fim = new Date(inicio.getFullYear(), inicio.getMonth() + 1, 0)
+  const dias: string[] = []
+  for (let d = new Date(inicio); d <= fim; d.setDate(d.getDate() + 1)) {
+    dias.push(d.toISOString().split('T')[0])
+  }
+  cronogramaDias.value = dias
+}
+
+// Helper: adicionar N dias a uma data ISO string
+function addDaysIso(isoDate: string, days: number): string {
+  const d = new Date(isoDate + 'T12:00:00')
+  d.setDate(d.getDate() + days)
+  return d.toISOString().split('T')[0]
+}
+
+// Helper: calcular posicao em slots a partir de data+hora
+function dateTimeToSlot(diaIso: string, hora: number, min: number): number {
+  const dias = [...cronogramaDias.value].sort()
+  const horasPerDia = horasVisiveis.value.length
+  const diaIdx = dias.indexOf(diaIso)
+  if (diaIdx < 0) {
+    // Dia fora do range visivel - calcular se antes ou depois
+    if (diaIso < dias[0]) return 0
+    return totalSlots.value
+  }
+  return diaIdx * horasPerDia + (hora - HORA_INICIO_DIA) + min / 60
+}
+
+// Helper: converter slot position de volta para data + hora
+function slotToDateTime(slotPos: number): { dia: string; hora: number; min: number } {
+  const dias = [...cronogramaDias.value].sort()
+  const horasPerDia = horasVisiveis.value.length
+  const clampedSlot = Math.max(0, Math.min(totalSlots.value, slotPos))
+  const diaIdx = Math.min(dias.length - 1, Math.max(0, Math.floor(clampedSlot / horasPerDia)))
+  const horaOffset = clampedSlot - (diaIdx * horasPerDia)
+  const hora = Math.max(HORA_INICIO_DIA, Math.min(HORA_FIM_DIA, Math.floor(HORA_INICIO_DIA + horaOffset)))
+  const min = Math.round(((HORA_INICIO_DIA + horaOffset) - hora) * 60 / 5) * 5
+  return { dia: dias[diaIdx], hora, min: Math.max(0, Math.min(55, min)) }
+}
+
+// Agrupar por OS nos dias selecionados (inclui processos que TOCAM o range)
 const cronogramaOSLinhas = computed(() => {
-  const doDia = instancias.value.filter(i =>
-    i.data_prazo === cronogramaDia.value && i.status !== 'cancelado' &&
-    (!filtroProcesso.value || i.template_nome === filtroProcesso.value)
-  ).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0))
+  const dias = [...cronogramaDias.value].sort()
+  if (dias.length === 0) return []
+  const primeiroIso = dias[0]
+  const ultimoIso = dias[dias.length - 1]
 
-  const porOS = new Map<number, typeof doDia>()
-  for (const inst of doDia) {
+  const doDias = instancias.value.filter(i => {
+    if (i.status === 'cancelado') return false
+    if (filtroProcesso.value && i.template_nome !== filtroProcesso.value) return false
+    if (!i.data_prazo) return false
+    const inicio = i.data_prazo
+    const fim = (i as any).data_fim || i.data_prazo
+    // Processo toca o range selecionado
+    return inicio <= ultimoIso && fim >= primeiroIso
+  }).sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0))
+
+  const porOS = new Map<number, typeof doDias>()
+  for (const inst of doDias) {
     if (!inst.os_id) continue
     const arr = porOS.get(inst.os_id) ?? []
     arr.push(inst)
@@ -378,27 +682,51 @@ const cronogramaOSLinhas = computed(() => {
 })
 
 function calcBarLeft(inst: any): number {
-  // Usar override reativo se existir (durante drag)
   if (leftOverrides[inst.id] !== undefined) return leftOverrides[inst.id]
   const h = inst.hora_inicio ? parseInt(inst.hora_inicio.split(':')[0]) : 8
   const m = inst.hora_inicio ? parseInt(inst.hora_inicio.split(':')[1] ?? '0') : 0
-  const horaDecimal = h + m / 60
-  const inicio = horasVisiveis.value[0]
-  const total = horasVisiveis.value.length
-  return Math.max(0, ((horaDecimal - inicio) / total) * 100)
+  const slotPos = dateTimeToSlot(inst.data_prazo, h, m)
+  return Math.max(0, (slotPos / totalSlots.value) * 100)
 }
 
 function calcBarWidth(inst: any): number {
-  // Usar override se existir (durante resize)
   const override = widthOverrides[inst.id]
-  const horaFim = override || inst.hora_fim
+
+  // Dados de inicio
   const hI = inst.hora_inicio ? parseInt(inst.hora_inicio.split(':')[0]) : 8
   const mI = inst.hora_inicio ? parseInt(inst.hora_inicio.split(':')[1] ?? '0') : 0
-  const hF = horaFim ? parseInt(horaFim.split(':')[0]) : hI + 1
-  const mF = horaFim ? parseInt(horaFim.split(':')[1] ?? '0') : 0
-  const duracao = (hF + mF / 60) - (hI + mI / 60)
-  const total = horasVisiveis.value.length
-  return Math.max(8, (duracao / total) * 100)
+  const dataInicio = inst.data_prazo
+
+  if (override) {
+    // Override armazena: "dataFim|horaFim" (ex: "2026-06-25|14:30") ou apenas "HH:MM" (mesmo dia)
+    let dataFimOvr: string
+    let hF: number
+    let mF: number
+    if (override.includes('|')) {
+      const parts = override.split('|')
+      dataFimOvr = parts[0]
+      hF = parseInt(parts[1].split(':')[0])
+      mF = parseInt(parts[1].split(':')[1] ?? '0')
+    } else {
+      dataFimOvr = dataInicio
+      hF = parseInt(override.split(':')[0])
+      mF = parseInt(override.split(':')[1] ?? '0')
+    }
+    const slotInicio = dateTimeToSlot(dataInicio, hI, mI)
+    const slotFim = dateTimeToSlot(dataFimOvr, hF, mF)
+    const duracao = Math.max(0.5, slotFim - slotInicio)
+    return Math.max(3, (duracao / totalSlots.value) * 100)
+  }
+
+  // Sem override - usar dados do banco
+  const dataFim = (inst as any).data_fim || dataInicio
+  const hF = inst.hora_fim ? parseInt(inst.hora_fim.split(':')[0]) : hI + 1
+  const mF = inst.hora_fim ? parseInt(inst.hora_fim.split(':')[1] ?? '0') : 0
+
+  const slotInicio = dateTimeToSlot(dataInicio, hI, mI)
+  const slotFim = dateTimeToSlot(dataFim, hF, mF)
+  const duracao = Math.max(0.5, slotFim - slotInicio)
+  return Math.max(3, (duracao / totalSlots.value) * 100)
 }
 
 const templates = ref<any[]>([])
@@ -421,6 +749,10 @@ function isBloqueada(inst: ProcessoInstancia): boolean {
 }
 
 let draggedId: number | null = null
+let lastDragEndTime = 0
+
+const kanbanGridRef = ref<HTMLElement | null>(null)
+
 function onDragStart(e: DragEvent, inst: ProcessoInstancia) {
   draggedId = inst.id
   e.dataTransfer?.setData('text/plain', String(inst.id))
@@ -431,10 +763,143 @@ async function onDrop(e: DragEvent, dataIso: string | null) {
   if (!draggedId) return
   const inst = instancias.value.find(i => i.id === draggedId)
   if (!inst) return
+
+  // Validar: nao permitir processos dependentes (sequenciais) antes do predecessor
+  if (dataIso && inst.sequencial && inst.ordem > 0) {
+    const predecessor = instancias.value.find(i =>
+      i.os_id === inst.os_id && i.ordem === inst.ordem - 1 && i.id !== inst.id
+    )
+    if (predecessor && predecessor.data_prazo && dataIso < predecessor.data_prazo) {
+      draggedId = null
+      return // Bloquear: nao pode ir antes do predecessor
+    }
+  }
+
+  // Calcular span atual (dias de duracao) para manter ao mover
+  const spanAtual = getKanbanDaysSpan(inst)
   inst.data_prazo = dataIso
+  // Manter o span: data_fim = data_prazo + (span - 1) dias
+  if (dataIso && spanAtual > 1) {
+    ;(inst as any).data_fim = addDaysIso(dataIso, spanAtual - 1)
+  } else {
+    ;(inst as any).data_fim = dataIso
+  }
   if (dataIso && inst.status === 'pendente') inst.status = 'em_andamento'
-  await atualizarInstancia(inst.id, { data_prazo: dataIso, status: inst.status })
+  // Manter hora_inicio e hora_fim (nao resetar)
+  await atualizarInstancia(inst.id, { data_prazo: dataIso, status: inst.status, data_fim: (inst as any).data_fim } as any)
   draggedId = null
+}
+
+function onKanbanCardClick(inst: ProcessoInstancia) {
+  // Ignorar clicks que acontecem logo apos um drag
+  if (Date.now() - lastDragEndTime < 400) return
+  abrirChecklist(inst)
+}
+
+function onDragEnd() {
+  lastDragEndTime = Date.now()
+  draggedId = null
+}
+
+// Determinar dia baseado na posicao X do mouse no grid
+function getDiaFromGridX(e: DragEvent): string | null {
+  const grid = kanbanGridRef.value
+  if (!grid) return null
+  const rect = grid.getBoundingClientRect()
+  const relX = e.clientX - rect.left
+  const colWidth = rect.width / diasSemana.value.length
+  const colIdx = Math.max(0, Math.min(diasSemana.value.length - 1, Math.floor(relX / colWidth)))
+  return diasSemana.value[colIdx]?.iso ?? null
+}
+
+function onKanbanGridDragOver(e: DragEvent) {
+  const dia = getDiaFromGridX(e)
+  if (dia) dragOverDia.value = dia
+}
+
+async function onKanbanGridDrop(e: DragEvent) {
+  e.preventDefault()
+  const dia = getDiaFromGridX(e)
+  dragOverDia.value = null
+  if (!draggedId) return
+  const inst = instancias.value.find(i => i.id === draggedId)
+  if (!inst) return
+
+  // Validar: nao permitir processos dependentes antes do predecessor
+  if (dia && inst.sequencial && inst.ordem > 0) {
+    const predecessor = instancias.value.find(i =>
+      i.os_id === inst.os_id && i.ordem === inst.ordem - 1 && i.id !== inst.id
+    )
+    if (predecessor && predecessor.data_prazo && dia < predecessor.data_prazo) {
+      draggedId = null
+      return
+    }
+  }
+
+  // Manter span de dias ao mover
+  const spanAtual = getKanbanDaysSpan(inst)
+  inst.data_prazo = dia
+  if (dia && spanAtual > 1) {
+    ;(inst as any).data_fim = addDaysIso(dia, spanAtual - 1)
+  } else {
+    ;(inst as any).data_fim = dia
+  }
+  if (dia && inst.status === 'pendente') inst.status = 'em_andamento'
+  await atualizarInstancia(inst.id, { data_prazo: dia, status: inst.status, data_fim: (inst as any).data_fim } as any)
+  draggedId = null
+}
+
+// ─── Kanban: multi-dia helpers ────────────────────────────────────────────────
+const KANBAN_COL_WIDTH = 200 // px estimativa por coluna no grid (para resize)
+const kanbanResizingId = ref<number | null>(null)
+const kanbanWidthOverrides = reactive<Record<number, number>>({}) // id -> dias span
+
+function getKanbanDaysSpan(inst: any): number {
+  if (kanbanWidthOverrides[inst.id]) return kanbanWidthOverrides[inst.id]
+  if (!inst.data_prazo) return 1
+  const dataFim = inst.data_fim || inst.data_prazo
+  if (dataFim <= inst.data_prazo) return 1
+  const diff = Math.round((new Date(dataFim + 'T12:00:00').getTime() - new Date(inst.data_prazo + 'T12:00:00').getTime()) / 86400000)
+  return Math.max(1, diff + 1)
+}
+
+// ─── Kanban resize: esticar card para mais dias ───────────────────────────────
+let kanbanResizeInst: any = null
+let kanbanResizeStartX = 0
+let kanbanResizeStartSpan = 1
+
+function iniciarKanbanResize(e: MouseEvent, inst: any, diaIndex: number) {
+  e.preventDefault()
+  e.stopPropagation()
+  kanbanResizeInst = inst
+  kanbanResizingId.value = inst.id
+  kanbanResizeStartX = e.clientX
+  kanbanResizeStartSpan = getKanbanDaysSpan(inst)
+  document.addEventListener('mousemove', onKanbanResizeMove)
+  document.addEventListener('mouseup', onKanbanResizeEnd)
+}
+
+function onKanbanResizeMove(e: MouseEvent) {
+  if (!kanbanResizeInst) return
+  const deltaX = e.clientX - kanbanResizeStartX
+  const deltaCols = Math.round(deltaX / KANBAN_COL_WIDTH)
+  const newSpan = Math.max(1, Math.min(7, kanbanResizeStartSpan + deltaCols))
+  kanbanWidthOverrides[kanbanResizeInst.id] = newSpan
+}
+
+async function onKanbanResizeEnd() {
+  document.removeEventListener('mousemove', onKanbanResizeMove)
+  document.removeEventListener('mouseup', onKanbanResizeEnd)
+  kanbanResizingId.value = null
+  if (!kanbanResizeInst) return
+  const span = kanbanWidthOverrides[kanbanResizeInst.id] ?? 1
+  const novaDataFim = addDaysIso(kanbanResizeInst.data_prazo, span - 1)
+  ;(kanbanResizeInst as any).data_fim = novaDataFim
+  delete kanbanWidthOverrides[kanbanResizeInst.id]
+
+  const supabase = (await import('~/lib/supabase')).createSupabaseClient()
+  await supabase.from('processos_instancia').update({ data_fim: novaDataFim }).eq('id', kanbanResizeInst.id)
+  kanbanResizeInst = null
 }
 
 async function abrirChecklist(inst: ProcessoInstancia) {
@@ -505,10 +970,11 @@ function onDragCardMove(e: MouseEvent) {
   if (!isDragging && Math.abs(e.clientX - dragStartX) < 5) return
   isDragging = true
   wasDragged = true
-  const containerWidth = window.innerWidth - 200
+  const actualContainer = document.querySelector('[data-cronograma-area]') as HTMLElement
+  const cw = actualContainer?.getBoundingClientRect().width || 800
   const deltaX = e.clientX - dragStartX
-  const deltaPct = (deltaX / containerWidth) * 100
-  const newLeft = Math.max(0, Math.min(92, dragStartLeft + deltaPct))
+  const deltaPct = (deltaX / cw) * 100
+  const newLeft = Math.max(0, Math.min(97, dragStartLeft + deltaPct))
   leftOverrides[dragCardInst.id] = newLeft
 }
 
@@ -517,43 +983,75 @@ async function onDragCardEnd() {
   document.removeEventListener('mouseup', onDragCardEnd)
   if (!dragCardInst || !isDragging) { dragCardInst = null; return }
 
-  // Converter left% para hora (snap 5min ao soltar)
+  // Converter left% para slot position, e de volta para dia + hora
   const left = leftOverrides[dragCardInst.id] ?? dragStartLeft
-  const total = horasVisiveis.value.length
-  const inicio = horasVisiveis.value[0]
-  const horaDecimal = inicio + (left / 100) * total
-  const h = Math.floor(horaDecimal)
-  const m = Math.round((horaDecimal - h) * 60 / 5) * 5 // snap 5min
-  const novaHoraInicio = `${String(h).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`
+  const slotPos = (left / 100) * totalSlots.value
+  const { dia: novaData, hora: h, min: m } = slotToDateTime(slotPos)
+  const novaHoraInicio = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
 
-  // Manter duração
+  // Manter duração original (em minutos) - considerar cross-day
   const hI_old = dragCardInst.hora_inicio ? parseInt(dragCardInst.hora_inicio.split(':')[0]) : 8
   const mI_old = dragCardInst.hora_inicio ? parseInt(dragCardInst.hora_inicio.split(':')[1] ?? '0') : 0
   const hF_old = dragCardInst.hora_fim ? parseInt(dragCardInst.hora_fim.split(':')[0]) : hI_old + 1
   const mF_old = dragCardInst.hora_fim ? parseInt(dragCardInst.hora_fim.split(':')[1] ?? '0') : 0
-  const durMin = ((hF_old * 60 + mF_old) - (hI_old * 60 + mI_old)) || 60
-  const fimMin = h * 60 + (m % 60) + durMin
-  const fH = Math.min(18, Math.floor(fimMin / 60))
-  const fM = fimMin % 60
-  const novaHoraFim = `${String(fH).padStart(2, '0')}:${String(fM).padStart(2, '0')}`
 
+  // Calcular duracao total em minutos (considerando data_fim cross-day)
+  const dataFimOld = (dragCardInst as any).data_fim || dragCardInst.data_prazo
+  const dataInicioOld = dragCardInst.data_prazo || novaData
+  const diasDiff = dataFimOld && dataInicioOld ? Math.round((new Date(dataFimOld + 'T12:00:00').getTime() - new Date(dataInicioOld + 'T12:00:00').getTime()) / 86400000) : 0
+  const horasTrabalhoPerDia = HORA_FIM_DIA - HORA_INICIO_DIA
+  const durMinTotal = diasDiff > 0
+    ? ((HORA_FIM_DIA * 60) - (hI_old * 60 + mI_old)) + ((diasDiff - 1) * horasTrabalhoPerDia * 60) + ((hF_old * 60 + mF_old) - (HORA_INICIO_DIA * 60))
+    : ((hF_old * 60 + mF_old) - (hI_old * 60 + mI_old)) || 60
+
+  // Calcular novo fim mantendo a mesma duracao
+  const inicioMin = h * 60 + m
+  const minRestanteHoje = HORA_FIM_DIA * 60 - inicioMin
+  let novaDataFim = novaData
+  let novaHoraFim: string
+
+  if (durMinTotal <= minRestanteHoje) {
+    // Cabe no mesmo dia
+    const fimMin = inicioMin + durMinTotal
+    novaHoraFim = `${String(Math.floor(fimMin / 60)).padStart(2, '0')}:${String(fimMin % 60).padStart(2, '0')}`
+  } else {
+    // Cruza dias
+    let minRestante = durMinTotal - minRestanteHoje
+    let diasExtra = 1
+    while (minRestante > horasTrabalhoPerDia * 60) {
+      minRestante -= horasTrabalhoPerDia * 60
+      diasExtra++
+    }
+    novaDataFim = addDaysIso(novaData, diasExtra)
+    const fimMin = HORA_INICIO_DIA * 60 + minRestante
+    novaHoraFim = `${String(Math.floor(fimMin / 60)).padStart(2, '0')}:${String(Math.round(fimMin % 60)).padStart(2, '0')}`
+  }
+
+  dragCardInst.data_prazo = novaData
   dragCardInst.hora_inicio = novaHoraInicio
   dragCardInst.hora_fim = novaHoraFim
+  ;(dragCardInst as any).data_fim = novaDataFim
   delete leftOverrides[dragCardInst.id]
 
   const supabase = (await import('~/lib/supabase')).createSupabaseClient()
-  await supabase.from('processos_instancia').update({ hora_inicio: novaHoraInicio, hora_fim: novaHoraFim }).eq('id', dragCardInst.id)
+  await supabase.from('processos_instancia').update({
+    data_prazo: novaData,
+    hora_inicio: novaHoraInicio,
+    hora_fim: novaHoraFim,
+    data_fim: novaDataFim,
+  }).eq('id', dragCardInst.id)
   dragCardInst = null
 }
 
-// ─── Resize por hora (tempo real) ─────────────────────────────────────────────
+// ─── Resize por hora (tempo real, suporta cross-day) ──────────────────────────
 let resizingInstHora: any = null
-let resizeHoraStartX = 0
+let resizeContainerEl: HTMLElement | null = null
+let resizeContainerRect: DOMRect | null = null
 
 function iniciarResizeHora(e: MouseEvent, inst: any) {
   e.preventDefault()
   e.stopPropagation()
-  // Definir hora_fim se não existir
+  // Definir hora_fim se nao existir
   if (!inst.hora_fim) {
     const hI = inst.hora_inicio ? parseInt(inst.hora_inicio.split(':')[0]) : 8
     inst.hora_fim = `${String(hI + 1).padStart(2, '0')}:00`
@@ -562,55 +1060,222 @@ function iniciarResizeHora(e: MouseEvent, inst: any) {
     inst.hora_inicio = '08:00'
   }
   resizingInstHora = inst
-  resizeHoraStartX = e.clientX
   wasDragged = true
+  // Capturar o container e seu rect uma vez (evita reflow durante mousemove)
+  const card = (e.target as HTMLElement).closest('[data-cronograma-area]') || document.querySelector('[data-cronograma-area]')
+  resizeContainerEl = card as HTMLElement
+  resizeContainerRect = resizeContainerEl?.getBoundingClientRect() || null
   document.addEventListener('mousemove', onResizeMoveHora)
   document.addEventListener('mouseup', onResizeEndHora)
 }
 
 function onResizeMoveHora(e: MouseEvent) {
-  if (!resizingInstHora) return
-  const containerWidth = window.innerWidth - 200
-  const deltaX = e.clientX - resizeHoraStartX
-  resizeHoraStartX = e.clientX
+  if (!resizingInstHora || !resizeContainerRect) return
 
-  // Sem snap durante arraste — suave
-  const deltaHoras = (deltaX / containerWidth) * horasVisiveis.value.length
-  if (Math.abs(deltaHoras) < 0.01) return
+  // Posicao absoluta do mouse dentro do container (0 a 1)
+  const mouseRelX = Math.max(0, Math.min(1, (e.clientX - resizeContainerRect.left) / resizeContainerRect.width))
 
-  const currentFim = widthOverrides[resizingInstHora.id] || resizingInstHora.hora_fim || '09:00'
-  const hF = parseInt(currentFim.split(':')[0])
-  const mF = parseInt(currentFim.split(':')[1] ?? '0')
-  const fimAtualMin = hF * 60 + mF
-  const deltaMin = deltaHoras * 60
-  const hIMin = resizingInstHora.hora_inicio ? parseInt(resizingInstHora.hora_inicio.split(':')[0]) * 60 + parseInt(resizingInstHora.hora_inicio.split(':')[1] ?? '0') : 480
-  const novoFimMin = Math.max(hIMin + 10, Math.min(1080, fimAtualMin + deltaMin))
-  const hFim = Math.floor(novoFimMin / 60)
-  const mFim = Math.round(novoFimMin % 60)
-  widthOverrides[resizingInstHora.id] = `${String(hFim).padStart(2, '0')}:${String(mFim).padStart(2, '0')}`
+  // Converter para slot position
+  const slotAtMouse = mouseRelX * totalSlots.value
+
+  // Garantir minimo (hora_inicio + 15min = 0.25 slot)
+  const hI = resizingInstHora.hora_inicio ? parseInt(resizingInstHora.hora_inicio.split(':')[0]) : 8
+  const mI = resizingInstHora.hora_inicio ? parseInt(resizingInstHora.hora_inicio.split(':')[1] ?? '0') : 0
+  const slotInicio = dateTimeToSlot(resizingInstHora.data_prazo, hI, mI)
+  const slotMinimo = slotInicio + 0.25 // minimo 15min
+
+  // Snap a cada 15min (0.25 slot)
+  const snapped = Math.round(slotAtMouse * 4) / 4
+  const clampedSlotFim = Math.max(slotMinimo, Math.min(totalSlots.value, snapped))
+
+  // Converter de volta para data + hora
+  const { dia: novaDataFim, hora: nHora, min: nMin } = slotToDateTime(clampedSlotFim)
+  const horaStr = `${String(nHora).padStart(2, '0')}:${String(nMin).padStart(2, '0')}`
+
+  // Armazenar como "data|hora" se cross-day, senao so "hora"
+  if (novaDataFim !== resizingInstHora.data_prazo) {
+    widthOverrides[resizingInstHora.id] = `${novaDataFim}|${horaStr}`
+  } else {
+    widthOverrides[resizingInstHora.id] = horaStr
+  }
 }
 
 async function onResizeEndHora() {
   document.removeEventListener('mousemove', onResizeMoveHora)
   document.removeEventListener('mouseup', onResizeEndHora)
+  resizeContainerEl = null
+  resizeContainerRect = null
   if (!resizingInstHora) return
-  const horaFim = widthOverrides[resizingInstHora.id]
-  if (horaFim) {
+  const override = widthOverrides[resizingInstHora.id]
+  if (override) {
+    let novaDataFim: string
+    let horaFim: string
+    if (override.includes('|')) {
+      const parts = override.split('|')
+      novaDataFim = parts[0]
+      horaFim = parts[1]
+    } else {
+      novaDataFim = resizingInstHora.data_prazo
+      horaFim = override
+    }
     resizingInstHora.hora_fim = horaFim
+    ;(resizingInstHora as any).data_fim = novaDataFim
+
     const supabase = (await import('~/lib/supabase')).createSupabaseClient()
-    await supabase.from('processos_instancia').update({ hora_fim: horaFim }).eq('id', resizingInstHora.id)
+    await supabase.from('processos_instancia').update({
+      hora_fim: horaFim,
+      data_fim: novaDataFim,
+    }).eq('id', resizingInstHora.id)
     delete widthOverrides[resizingInstHora.id]
   }
   resizingInstHora = null
 }
 
+// ─── Calendário de Entregas ───────────────────────────────────────────────────
+const calendarioMesOffset = ref(0)
+const osEntregas = ref<any[]>([])
+const showOSModal = ref(false)
+const osSelecionadaCalendario = ref<any>(null)
+const itensOSCalendario = ref<ItemOS[]>([])
+
+const calendarioMesLabel = computed(() => {
+  const hoje = new Date()
+  const d = new Date(hoje.getFullYear(), hoje.getMonth() + calendarioMesOffset.value, 1)
+  return d.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+})
+
+const calendarioDias = computed(() => {
+  const hoje = new Date()
+  const hojeIso = hoje.toISOString().split('T')[0]
+  const mesAtual = new Date(hoje.getFullYear(), hoje.getMonth() + calendarioMesOffset.value, 1)
+  const primeiroDia = new Date(mesAtual.getFullYear(), mesAtual.getMonth(), 1)
+  const ultimoDia = new Date(mesAtual.getFullYear(), mesAtual.getMonth() + 1, 0)
+
+  // Ajustar para comecar na segunda
+  const startDay = primeiroDia.getDay() === 0 ? 6 : primeiroDia.getDay() - 1
+  const inicioGrid = new Date(primeiroDia)
+  inicioGrid.setDate(primeiroDia.getDate() - startDay)
+
+  const dias: { iso: string; numero: number; isHoje: boolean; isMesAtual: boolean }[] = []
+  const totalCells = 42 // 6 semanas
+  for (let i = 0; i < totalCells; i++) {
+    const d = new Date(inicioGrid)
+    d.setDate(inicioGrid.getDate() + i)
+    const iso = d.toISOString().split('T')[0]
+    dias.push({
+      iso,
+      numero: d.getDate(),
+      isHoje: iso === hojeIso,
+      isMesAtual: d.getMonth() === mesAtual.getMonth(),
+    })
+  }
+  return dias
+})
+
+function calendarioOsPorDia(iso: string) {
+  return osEntregas.value.filter(os => {
+    if (!os.data_entrega) return false
+    // Normalizar: pode vir como "2026-07-04" ou "2026-07-04T00:00:00+00:00"
+    const entregaIso = os.data_entrega.includes('T') ? os.data_entrega.split('T')[0] : os.data_entrega
+    return entregaIso === iso
+  })
+}
+
+async function carregarOsEntregas() {
+  const supabase = (await import('~/lib/supabase')).createSupabaseClient()
+  const { data, error } = await supabase
+    .from('ordens_servico_adesivo')
+    .select('id, numero_os, nome_trabalho, status, data_entrega, clientes(nome)')
+    .not('data_entrega', 'is', null)
+    .not('status', 'eq', 'cancelado')
+    .order('data_entrega', { ascending: true })
+  if (error) { console.error('Erro ao carregar OS entregas:', error); return }
+  const hojeIso = new Date().toISOString().split('T')[0]
+  osEntregas.value = (data ?? []).map((os: any) => {
+    // Normalizar data_entrega para YYYY-MM-DD
+    const raw = os.data_entrega
+    const entrega = raw ? (raw.includes('T') ? raw.split('T')[0] : raw) : null
+    return {
+      id: os.id,
+      numero_os: os.numero_os,
+      nome_trabalho: os.nome_trabalho,
+      status: os.status,
+      data_entrega: entrega,
+      cliente_nome: os.clientes?.nome ?? null,
+      atrasado: entrega && entrega < hojeIso && os.status !== 'entregue' && os.status !== 'cancelado',
+    }
+  })
+}
+
+async function abrirOSCalendario(os: any) {
+  const supabase = (await import('~/lib/supabase')).createSupabaseClient()
+  const { data: osData } = await supabase
+    .from('ordens_servico_adesivo')
+    .select('*, clientes(nome, telefone)')
+    .eq('id', os.id)
+    .single()
+  if (!osData) return
+  const { data: itensData } = await supabase
+    .from('itens_ordem_servico')
+    .select('id, item_orcamento_id, descricao, material_id, largura_cm, altura_cm, quantidade, valor_item, foto_arte_url, foto_local_url, arquivo_url, foto_instalacao_url')
+    .eq('ordem_servico_id', os.id)
+    .order('id', { ascending: true })
+  osSelecionadaCalendario.value = {
+    ...osData,
+    cliente_nome: osData.clientes?.nome ?? null,
+    cliente_telefone: osData.clientes?.telefone ?? null,
+    endereco_instalacao: osData.endereco_instalacao ?? null,
+    nome_trabalho: osData.nome_trabalho ?? null,
+    data_entrega: osData.data_entrega ?? null,
+  }
+  itensOSCalendario.value = (itensData ?? []) as ItemOS[]
+  showOSModal.value = true
+}
+
+// ─── Calendário Drag & Drop ──────────────────────────────────────────────────
+const calDragOverDia = ref<string | null>(null)
+let calDraggedOs: any = null
+let calLastDragEnd = 0
+
+function onCalDragStart(e: DragEvent, os: any) {
+  calDraggedOs = os
+  e.dataTransfer?.setData('text/plain', String(os.id))
+}
+
+function onCalDragEnd() {
+  calLastDragEnd = Date.now()
+  calDragOverDia.value = null
+}
+
+function onCalCardClick(os: any) {
+  if (Date.now() - calLastDragEnd < 400) return
+  abrirOSCalendario(os)
+}
+
+async function onCalDrop(e: DragEvent, diaIso: string) {
+  e.preventDefault()
+  calDragOverDia.value = null
+  if (!calDraggedOs) return
+  const os = calDraggedOs
+  calDraggedOs = null
+
+  // Atualizar localmente
+  os.data_entrega = diaIso
+
+  // Salvar no banco
+  const supabase = (await import('~/lib/supabase')).createSupabaseClient()
+  await supabase.from('ordens_servico_adesivo').update({ data_entrega: diaIso }).eq('id', os.id)
+}
+
 onMounted(async () => {
   instancias.value = await carregarInstancias(['pendente', 'em_andamento', 'concluido'])
   templates.value = await carregarTemplates()
+  carregarOsEntregas()
 })
 
 // Realtime: atualiza ao vivo quando processos mudam
-useRealtimeMulti(['processos_instancia', 'processos_checklist'], async () => {
+useRealtimeMulti(['processos_instancia', 'processos_checklist', 'ordens_servico_adesivo'], async () => {
   instancias.value = await carregarInstancias(['pendente', 'em_andamento', 'concluido'])
+  carregarOsEntregas()
 })
 </script>

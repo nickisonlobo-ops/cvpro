@@ -741,6 +741,19 @@ async function handleApproveNewFlow() {
     return
   }
 
+  // Atualizar data_entrega na OS a partir do orçamento
+  if (orcamento.value.data_entrega) {
+    const { data: osData } = await supabase
+      .from('ordens_servico_adesivo')
+      .select('id')
+      .eq('orcamento_id', orcamento.value.id)
+      .limit(1)
+      .single()
+    if (osData?.id) {
+      await supabase.from('ordens_servico_adesivo').update({ data_entrega: orcamento.value.data_entrega }).eq('id', osData.id)
+    }
+  }
+
   actionDone.value = true
 }
 

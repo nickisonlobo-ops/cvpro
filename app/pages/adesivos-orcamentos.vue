@@ -731,6 +731,7 @@ async function fetchOrcamentoDetalhe(id: number) {
         data_validade,
         token_aprovacao,
         prazo_estimado_dias,
+        data_entrega,
         clientes(nome, telefone),
         ordens_servico_adesivo(id, numero_os, status)
       `)
@@ -764,6 +765,7 @@ async function fetchOrcamentoDetalhe(id: number) {
       status: data.status ?? 'rascunho',
       token_aprovacao: data.token_aprovacao ?? null,
       prazo_estimado_dias: data.prazo_estimado_dias ?? null,
+      data_entrega: (data as any).data_entrega ?? null,
       os_numero: os?.numero_os ?? null,
       os_status: os?.status ?? null,
     }
@@ -789,6 +791,7 @@ async function fetchOrcamentoCompletoParaEdicao(id: number): Promise<OrcamentoCo
         desconto_valor,
         validade_dias,
         prazo_estimado_dias,
+        data_entrega,
         data_validade,
         token_aprovacao,
         endereco_instalacao,
@@ -844,6 +847,7 @@ async function fetchOrcamentoCompletoParaEdicao(id: number): Promise<OrcamentoCo
       cliente_id: data.cliente_id,
       validade_dias: data.validade_dias ?? 30,
       prazo_estimado_dias: data.prazo_estimado_dias ?? null,
+      data_entrega: (data as any).data_entrega ?? null,
       valor_mao_obra_global: data.valor_mao_obra_global ?? 0,
       desconto_percentual: data.desconto_percentual ?? 0,
       desconto_valor: data.desconto_valor ?? 0,

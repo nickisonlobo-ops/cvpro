@@ -93,10 +93,9 @@
                     </div>
                   </div>
                   <div class="flex flex-col gap-1">
-                    <label class="text-[10px] font-bold text-gray-400">Prazo</label>
+                    <label class="text-[10px] font-bold text-gray-400">Data de Entrega</label>
                     <div class="relative">
-                      <input v-model.number="form.prazo_estimado_dias" type="number" min="1" max="365" placeholder="15" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all" />
-                      <span class="absolute right-2 top-1/2 -translate-y-1/2 text-[9px] text-gray-400">dias</span>
+                      <input v-model="form.data_entrega" type="date" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-800 bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all" />
                     </div>
                   </div>
                   <div class="flex flex-col gap-1">
@@ -271,6 +270,7 @@ const form = ref<{
   cliente_id: number | null
   validade_dias: number | null
   prazo_estimado_dias: number | null
+  data_entrega: string | null
   valor_mao_obra: number
   itens: ItemOrcamento[]
   endereco_instalacao: string
@@ -279,6 +279,7 @@ const form = ref<{
   cliente_id: null,
   validade_dias: 30,
   prazo_estimado_dias: null,
+  data_entrega: null,
   valor_mao_obra: 0,
   itens: [],
   endereco_instalacao: '',
@@ -490,6 +491,7 @@ async function salvarEdicao() {
       cliente_id: form.value.cliente_id!,
       validade_dias: Number(form.value.validade_dias) || 30,
       prazo_estimado_dias: Number(form.value.prazo_estimado_dias) || null,
+      data_entrega: form.value.data_entrega || null,
       valor_mao_obra_global: Number(form.value.valor_mao_obra) || 0,
       desconto_percentual: descontoManualPercentualCalc.value,
       desconto_valor: descontoManualValorCalc.value,
@@ -553,6 +555,7 @@ async function salvarNovo() {
       valor_total: valorTotal,
       quantidade_total_itens: quantidadeTotal.value,
       prazo_estimado_dias: Number(form.value.prazo_estimado_dias) || null,
+      data_entrega: form.value.data_entrega || null,
       validade_dias: Number(form.value.validade_dias) || 30,
       data_validade: dataValidade.toISOString(),
       endereco_instalacao: form.value.endereco_instalacao || null,
@@ -611,6 +614,7 @@ function preencherFormEdicao(orcamento: OrcamentoCompleto) {
   form.value.cliente_id = orcamento.cliente_id
   form.value.validade_dias = orcamento.validade_dias
   form.value.prazo_estimado_dias = orcamento.prazo_estimado_dias
+  form.value.data_entrega = (orcamento as any).data_entrega ?? null
   form.value.valor_mao_obra = orcamento.valor_mao_obra_global
   form.value.endereco_instalacao = orcamento.endereco_instalacao ?? ''
   form.value.nome_trabalho = orcamento.nome_trabalho ?? ''
@@ -645,6 +649,7 @@ function resetForm() {
     cliente_id: null,
     validade_dias: 30,
     prazo_estimado_dias: null,
+    data_entrega: null,
     valor_mao_obra: 0,
     itens: [],
     endereco_instalacao: '',

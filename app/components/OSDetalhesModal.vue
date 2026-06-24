@@ -40,6 +40,15 @@
               <p class="text-base sm:text-lg font-bold text-indigo-700">{{ ordemServico.nome_trabalho }}</p>
             </div>
 
+            <!-- DATA DE ENTREGA -->
+            <div v-if="ordemServico?.data_entrega" class="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 rounded-xl px-4 py-3 flex items-center gap-3">
+              <svg class="w-5 h-5 text-orange-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
+              <div>
+                <p class="text-[10px] font-bold text-orange-400 uppercase tracking-wider">Data de Entrega</p>
+                <p class="text-sm font-bold text-orange-700">{{ formatDataEntrega(ordemServico.data_entrega) }}</p>
+              </div>
+            </div>
+
             <!-- CLIENTE SECTION -->
             <div>
               <h3 class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em] mb-3">Cliente</h3>
@@ -283,7 +292,7 @@ import type { OrdemServico, ItemOS, StatusOS } from '~/composables/useOrdensServ
 // ─── Props ───────────────────────────────────────────────────────────────────
 const props = defineProps<{
   show: boolean
-  ordemServico: (OrdemServico & { cliente_nome?: string | null; cliente_telefone?: string | null; endereco_instalacao?: string | null; nome_trabalho?: string | null }) | null
+  ordemServico: (OrdemServico & { cliente_nome?: string | null; cliente_telefone?: string | null; endereco_instalacao?: string | null; nome_trabalho?: string | null; data_entrega?: string | null }) | null
   itensOS: ItemOS[]
 }>()
 
@@ -356,6 +365,14 @@ const statusDotClass = computed(() => {
   if (!props.ordemServico) return ''
   return statusConfig[props.ordemServico.status]?.dot ?? 'bg-gray-400'
 })
+
+function formatDataEntrega(val: string | null): string {
+  if (!val) return ''
+  // Suporta tanto "2026-07-15" quanto "2026-07-15T00:00:00+00:00"
+  const iso = val.includes('T') ? val.split('T')[0] : val
+  const [y, m, d] = iso.split('-')
+  return `${d}/${m}/${y}`
+}
 
 const whatsappLink = computed(() => {
   const tel = props.ordemServico?.cliente_telefone

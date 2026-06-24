@@ -121,6 +121,7 @@
               </div>
               <p v-if="os.nome_trabalho" class="text-xs font-semibold text-indigo-600 mt-0.5 truncate">{{ os.nome_trabalho }}</p>
               <p class="text-xs text-gray-400 mt-0.5 truncate">{{ os.cliente_nome ?? 'Cliente' }} · {{ formatDate(os.data_aprovacao) }}</p>
+              <p v-if="os.data_entrega" class="text-[10px] text-orange-600 font-semibold mt-0.5">Entrega: {{ formatDate(os.data_entrega) }}</p>
             </div>
           </div>
           <div class="text-right flex-shrink-0">
@@ -149,6 +150,7 @@ interface OSListItem {
   valor_total: number
   posicao_fila: number
   data_aprovacao: string
+  data_entrega: string | null
   cliente_nome: string | null
   cliente_telefone: string | null
   endereco_instalacao: string | null
@@ -223,7 +225,7 @@ async function fetchOS() {
   loading.value = true
   const { data } = await supabase
     .from('ordens_servico_adesivo')
-    .select('id, numero_os, nome_trabalho, status, etapa_id, valor_total, posicao_fila, data_aprovacao, endereco_instalacao, clientes(nome, telefone)')
+    .select('id, numero_os, nome_trabalho, status, etapa_id, valor_total, posicao_fila, data_aprovacao, data_entrega, endereco_instalacao, clientes(nome, telefone)')
     .order('posicao_fila', { ascending: true })
 
   ordensServico.value = (data ?? []).map((row: any) => ({
@@ -235,6 +237,7 @@ async function fetchOS() {
     valor_total: row.valor_total,
     posicao_fila: row.posicao_fila,
     data_aprovacao: row.data_aprovacao,
+    data_entrega: row.data_entrega ?? null,
     cliente_nome: row.clientes?.nome ?? null,
     cliente_telefone: row.clientes?.telefone ?? null,
     endereco_instalacao: row.endereco_instalacao ?? null,
@@ -264,6 +267,7 @@ async function abrirDetalhe(os: OSListItem) {
     cliente_telefone: osData?.clientes?.telefone ?? os.cliente_telefone ?? null,
     endereco_instalacao: osData?.endereco_instalacao ?? null,
     nome_trabalho: osData?.nome_trabalho ?? os.nome_trabalho ?? null,
+    data_entrega: osData?.data_entrega ?? os.data_entrega ?? null,
   }
 
   osSelecionada.value = osComCliente as any
@@ -295,6 +299,7 @@ async function onKanbanCardClick(card: KanbanCard) {
     cliente_telefone: osData.clientes?.telefone ?? null,
     endereco_instalacao: osData.endereco_instalacao ?? null,
     nome_trabalho: osData.nome_trabalho ?? null,
+    data_entrega: osData.data_entrega ?? null,
   } as any
 
   itensOSSelecionada.value = (itensData ?? []) as ItemOS[]

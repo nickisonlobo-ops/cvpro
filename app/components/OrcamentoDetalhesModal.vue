@@ -375,6 +375,7 @@ interface OrcamentoDetalhe {
   status: string
   token_aprovacao: string | null
   prazo_estimado_dias: number | null
+  data_entrega: string | null
   os_numero: string | null
   os_status: StatusOS | null
 }
@@ -685,6 +686,11 @@ async function aprovarInternamente() {
       .eq('orcamento_id', props.orcamento.id)
       .limit(1)
       .single()
+
+    // Atualizar data_entrega na OS a partir do orçamento
+    if (osData?.id && props.orcamento.data_entrega) {
+      await supabase.from('ordens_servico_adesivo').update({ data_entrega: props.orcamento.data_entrega }).eq('id', osData.id)
+    }
 
     // Gerar processos de produção a partir dos itens
     if (osData?.id && itens.value.length > 0) {
