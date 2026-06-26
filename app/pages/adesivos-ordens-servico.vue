@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="min-h-full p-3 sm:p-6">
 
     <!-- MODAL DETALHES DA OS -->
@@ -59,7 +59,7 @@
         <button v-for="f in filtrosEtapas" :key="f.value" type="button"
           class="px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all"
           :class="filtroEtapa === f.value ? 'text-white shadow-sm' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'"
-          :style="filtroEtapa === f.value ? { background: 'var(--color-primary, #059669)' } : {}"
+          :style="filtroEtapa === f.value ? { background: 'var(--color-primary)' } : {}"
           @click="filtroEtapa = f.value">
           {{ f.label }}
         </button>
@@ -70,14 +70,14 @@
       <div class="flex rounded-lg border border-gray-200 overflow-hidden flex-shrink-0">
         <button type="button" class="px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5"
           :class="viewMode === 'list' ? 'text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
-          :style="viewMode === 'list' ? { background: 'var(--color-primary, #059669)' } : {}"
+          :style="viewMode === 'list' ? { background: 'var(--color-primary)' } : {}"
           @click="viewMode = 'list'">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg>
           Lista
         </button>
         <button type="button" class="px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5"
           :class="viewMode === 'kanban' ? 'text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
-          :style="viewMode === 'kanban' ? { background: 'var(--color-primary, #059669)' } : {}"
+          :style="viewMode === 'kanban' ? { background: 'var(--color-primary)' } : {}"
           @click="viewMode = 'kanban'">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125z" /></svg>
           Kanban

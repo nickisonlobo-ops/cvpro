@@ -1995,7 +1995,7 @@ const oportunidades = computed(() => {
         categoria: 'Retenção',
         prazo: 'Este mês',
         valor: ganho,
-        cor: '#ec4899',
+        cor: 'var(--color-primary)',
         acoes: ['Lembretes automáticos', 'Pacote mensal com desconto', 'Programa de fidelidade'],
       })
     }

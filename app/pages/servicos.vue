@@ -2,8 +2,8 @@
   <div class="min-h-full bg-transparent p-3 sm:p-8">
 
     <!-- CABEÇALHO -->
-    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl">
-      <div class="absolute inset-0" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #ec4899, #f43f5e))' }" />
+    <div class="page-header relative rounded-3xl overflow-hidden mb-8 shadow-xl">
+      <div class="page-header-overlay absolute inset-0" />
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
       <div class="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
       <PageLogo />
@@ -29,7 +29,7 @@
             <button
               type="button"
               class="inline-flex items-center gap-2 text-sm font-semibold px-3 sm:px-5 py-2.5 rounded-xl transition-all duration-200"
-              :class="filtroAberto ? 'bg-white text-[#ff46a2] shadow-lg scale-[1.02]' : 'bg-white/10 text-white hover:bg-white/20 border border-white/15 backdrop-blur-sm'"
+              :class="filtroAberto ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'bg-white/10 text-white hover:bg-white/20 border border-white/15 backdrop-blur-sm'"
               @click="filtroAberto = !filtroAberto"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
@@ -38,7 +38,7 @@
             <button
               v-if="isAdminOrGerente"
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
               @click="abrirAdicionar"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -72,12 +72,12 @@
           v-model="filtro.busca"
           type="text"
           placeholder="Nome do serviço..."
-          class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
+          class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
       <div class="min-w-[160px]">
         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Categoria</label>
-        <select v-model="filtro.categoria" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400">
+        <select v-model="filtro.categoria" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="">Todas</option>
           <option value="cilios">Cílios</option>
           <option value="unhas">Unhas</option>
@@ -87,7 +87,7 @@
       </div>
       <div class="min-w-[140px]">
         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Status</label>
-        <select v-model="filtro.ativo" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400">
+        <select v-model="filtro.ativo" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="">Todos</option>
           <option value="true">Ativo</option>
           <option value="false">Inativo</option>
@@ -100,7 +100,7 @@
 
     <!-- LOADING -->
     <div v-if="loading" class="flex justify-center py-20">
-      <svg class="animate-spin w-8 h-8 text-pink-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+      <svg class="animate-spin w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
     </div>
 
     <!-- LISTA DE SERVIÇOS -->
@@ -108,7 +108,7 @@
       <div
         v-for="s in servicosFiltrados"
         :key="s.id"
-        class="group bg-white rounded-3xl border border-gray-100 shadow-md hover:shadow-xl hover:shadow-pink-100/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col"
+        class="group bg-white rounded-3xl border border-gray-100 shadow-md hover:shadow-xl hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col"
       >
         <!-- Photo / Gradient fallback -->
         <div class="relative h-44 overflow-hidden flex-shrink-0">
@@ -152,10 +152,7 @@
               <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z"/></svg>
               {{ s.duracao_min }}min
             </span>
-            <span
-              class="ml-auto text-xl font-black"
-              style="background: linear-gradient(135deg, #ec4899, #c026d3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;"
-            >{{ formatPreco(s.preco) }}</span>
+            <span class="ml-auto text-xl font-black text-primary">{{ formatPreco(s.preco) }}</span>
           </div>
 
           <!-- Funcionários vinculados -->
@@ -234,10 +231,10 @@
               <!-- Upload area -->
               <label
                 v-else
-                class="flex flex-col items-center justify-center h-32 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-pink-50 hover:border-pink-300 cursor-pointer transition-colors group"
+                class="flex flex-col items-center justify-center h-32 rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 hover:bg-primary-5 hover:border-primary-border cursor-pointer transition-colors group"
               >
-                <svg class="w-8 h-8 text-gray-300 group-hover:text-pink-400 transition-colors mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
-                <span class="text-xs text-gray-400 group-hover:text-pink-500 font-medium">Clique para adicionar foto</span>
+                <svg class="w-8 h-8 text-gray-300 group-hover:text-primary transition-colors mb-2" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"/></svg>
+                <span class="text-xs text-gray-400 group-hover:text-primary font-medium">Clique para adicionar foto</span>
                 <span class="text-xs text-gray-300 mt-0.5">JPG, PNG ou WebP · Máx. 5 MB</span>
                 <input type="file" accept="image/jpeg,image/png,image/webp" class="hidden" @change="handleFotoChange" />
               </label>
@@ -249,7 +246,7 @@
                 v-model="form.nome"
                 type="text"
                 placeholder="Nome do Serviço"
-                class="w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
+                class="w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                 :class="formErrors.nome ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'"
               />
               <p v-if="formErrors.nome" class="text-xs text-red-500 mt-1">{{ formErrors.nome }}</p>
@@ -261,7 +258,7 @@
                 v-model="form.descricao"
                 rows="2"
                 placeholder="Descreva o serviço..."
-                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400 resize-none"
+                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
               />
             </div>
 
@@ -286,7 +283,7 @@
                   type="number"
                   min="1"
                   placeholder="60"
-                  class="w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
+                  class="w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                   :class="formErrors.duracao_min ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'"
                 />
                 <p v-if="formErrors.duracao_min" class="text-xs text-red-500 mt-1">{{ formErrors.duracao_min }}</p>
@@ -302,7 +299,7 @@
                   min="0"
                   step="0.01"
                   placeholder="0,00"
-                  class="w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-400"
+                  class="w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                   :class="formErrors.preco ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'"
                 />
                 <p v-if="formErrors.preco" class="text-xs text-red-500 mt-1">{{ formErrors.preco }}</p>
@@ -351,9 +348,9 @@
                   v-for="func in funcionarios"
                   :key="func.id"
                   class="flex items-center gap-2 text-sm cursor-pointer select-none px-3 py-2 rounded-xl border transition-colors"
-                  :class="form.funcionarioIds.includes(func.id) ? 'border-pink-300 bg-pink-50 text-pink-700 font-semibold' : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'"
+                  :class="form.funcionarioIds.includes(func.id) ? 'border-primary bg-primary-5 text-primary font-semibold' : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'"
                 >
-                  <input type="checkbox" :value="func.id" v-model="form.funcionarioIds" class="accent-pink-500 w-3.5 h-3.5 shrink-0" />
+                  <input type="checkbox" :value="func.id" v-model="form.funcionarioIds" class="accent-primary w-3.5 h-3.5 shrink-0" />
                   <span class="truncate">{{ func.nome }}</span>
                 </label>
               </div>
@@ -372,9 +369,9 @@
                   v-for="s in outrosServicos"
                   :key="s.id"
                   class="flex items-center gap-2.5 text-sm cursor-pointer select-none px-3 py-2 rounded-xl border transition-colors"
-                  :class="form.simultaneosIds.includes(s.id) ? 'border-pink-300 bg-pink-50 text-pink-700 font-semibold' : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'"
+                  :class="form.simultaneosIds.includes(s.id) ? 'border-primary bg-primary-5 text-primary font-semibold' : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'"
                 >
-                  <input type="checkbox" :value="s.id" v-model="form.simultaneosIds" class="accent-pink-500 w-3.5 h-3.5 shrink-0" />
+                  <input type="checkbox" :value="s.id" v-model="form.simultaneosIds" class="accent-primary w-3.5 h-3.5 shrink-0" />
                   <span class="flex-1 truncate">{{ s.nome }}</span>
                   <span class="text-xs text-gray-400 shrink-0">{{ s.duracao_min }}min</span>
                 </label>
@@ -386,7 +383,7 @@
               <button
                 type="submit"
                 :disabled="saving"
-                class="flex-1 py-2.5 rounded-xl bg-pink-500 text-white text-sm font-bold hover:bg-pink-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                class="flex-1 py-2.5 rounded-xl bg-primary text-primary-text text-sm font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {{ saving ? 'Salvando...' : (editando ? 'Salvar' : 'Adicionar') }}
               </button>
@@ -516,12 +513,12 @@ function categoriaLabel(cat: string) {
 }
 
 function categoriaCor(cat: string) {
-  return { cilios: 'bg-pink-500', unhas: 'bg-purple-500', combo: 'bg-indigo-500', outro: 'bg-gray-400' }[cat] ?? 'bg-gray-300'
+  return { cilios: 'bg-primary', unhas: 'bg-purple-500', combo: 'bg-indigo-500', outro: 'bg-gray-400' }[cat] ?? 'bg-gray-300'
 }
 
 function categoriaBadge(cat: string) {
   return {
-    cilios: 'bg-pink-100 text-pink-700',
+    cilios: 'bg-primary-10 text-primary',
     unhas: 'bg-purple-100 text-purple-700',
     combo: 'bg-indigo-100 text-indigo-700',
     outro: 'bg-gray-100 text-gray-600',
@@ -539,7 +536,7 @@ function categoriaGradient(cat: string) {
 
 function categoriaBadgeOverlay(cat: string) {
   return {
-    cilios: 'bg-pink-500/80 text-white',
+    cilios: 'bg-primary/80 text-white',
     unhas: 'bg-purple-500/80 text-white',
     combo: 'bg-indigo-500/80 text-white',
     outro: 'bg-gray-500/80 text-white',

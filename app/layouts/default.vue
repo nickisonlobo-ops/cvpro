@@ -1,5 +1,6 @@
 ﻿<template>
   <div class="flex flex-col h-screen overflow-hidden" :style="{ background: 'var(--color-bg, #f8fafc)' }">
+    <TrialBanner />
     <AppHeader />
 
     <div class="flex flex-1 min-h-0">
@@ -20,6 +21,7 @@ import { useRoute } from 'vue-router'
 import AppHeader from '~/components/AppHeader.vue'
 import AppSidebar from '~/components/AppSidebar.vue'
 import AppBottomNav from '~/components/AppBottomNav.vue'
+import TrialBanner from '~/components/TrialBanner.vue'
 import { usePersonalizacao } from '~/composables/usePersonalizacao'
 
 const route = useRoute()

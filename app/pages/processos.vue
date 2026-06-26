@@ -1,7 +1,7 @@
-<template>
+﻿<template>
   <div class="min-h-screen p-4 sm:p-6 space-y-5">
     <!-- Header -->
-    <div class="bg-gradient-to-br from-violet-600 via-purple-600 to-indigo-700 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+    <div class="page-header p-6 text-white">
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]"></div>
       <div class="relative flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -15,7 +15,7 @@
           <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-bold bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all" :class="tab === 'templates' ? 'bg-white/20' : ''" @click="tab = 'templates'">
             Templates
           </button>
-          <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-bold bg-white text-purple-700 hover:bg-purple-50 shadow-lg transition-all" @click="abrirNovoTemplate">
+          <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-bold bg-white text-primary hover:bg-primary-5 shadow-lg transition-all" @click="abrirNovoTemplate">
             + Novo Processo
           </button>
         </div>
@@ -134,11 +134,11 @@
           <div class="space-y-4">
             <div>
               <label class="text-[10px] font-bold text-gray-400 uppercase">Nome *</label>
-              <input v-model="formTemplate.nome" type="text" placeholder="Ex: Adesivagem Veicular" class="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-purple-400" />
+              <input v-model="formTemplate.nome" type="text" placeholder="Ex: Adesivagem Veicular" class="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary" />
             </div>
             <div>
               <label class="text-[10px] font-bold text-gray-400 uppercase">Descrição</label>
-              <input v-model="formTemplate.descricao" type="text" placeholder="Opcional" class="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-purple-400" />
+              <input v-model="formTemplate.descricao" type="text" placeholder="Opcional" class="w-full mt-1 px-3 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-primary" />
             </div>
             <div>
               <label class="text-[10px] font-bold text-gray-400 uppercase">Cor</label>
@@ -149,12 +149,12 @@
             <div>
               <div class="flex items-center justify-between mb-2">
                 <label class="text-[10px] font-bold text-gray-400 uppercase">Etapas do Checklist</label>
-                <button type="button" class="text-[10px] font-bold text-purple-600 hover:text-purple-800" @click="adicionarEtapa">+ Adicionar</button>
+                <button type="button" class="text-[10px] font-bold text-primary hover:text-primary" @click="adicionarEtapa">+ Adicionar</button>
               </div>
               <div class="space-y-2">
                 <div v-for="(etapa, i) in formTemplate.etapas" :key="i" class="flex items-center gap-2">
                   <span class="text-[10px] font-bold text-gray-400 w-5 text-center">{{ i + 1 }}</span>
-                  <input v-model="etapa.titulo" type="text" placeholder="Nome da etapa" class="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-purple-400" />
+                  <input v-model="etapa.titulo" type="text" placeholder="Nome da etapa" class="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:border-primary" />
                   <button type="button" class="w-7 h-7 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center" @click="removerEtapa(i)">
                     <svg class="w-3 h-3 text-red-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                   </button>
@@ -164,7 +164,7 @@
           </div>
 
           <div class="flex items-center gap-3 mt-6 pt-4 border-t border-gray-100">
-            <button type="button" class="flex-1 py-3 rounded-xl text-sm font-bold bg-purple-600 text-white hover:bg-purple-700 transition-all shadow-sm disabled:opacity-50" :disabled="salvandoTemplate || !formTemplate.nome" @click="salvarTemplateForm">
+            <button type="button" class="flex-1 py-3 rounded-xl text-sm font-bold bg-primary text-primary-text hover:bg-primary transition-all shadow-sm disabled:opacity-50" :disabled="salvandoTemplate || !formTemplate.nome" @click="salvarTemplateForm">
               {{ salvandoTemplate ? 'Salvando...' : 'Salvar' }}
             </button>
             <button type="button" class="flex-1 py-3 rounded-xl text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all" @click="showTemplateModal = false">Cancelar</button>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="max-w-3xl mx-auto space-y-8">
     <!-- Cabeçalho -->
     <div>
@@ -21,14 +21,14 @@
 
     <template v-else>
       <!-- Logo da Empresa -->
-      <section class="bg-white rounded-2xl border border-pink-100 shadow-sm p-6 space-y-4">
+      <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-4">
         <h2 class="text-base font-bold text-gray-800">Logo da Empresa</h2>
 
         <div class="flex flex-col sm:flex-row gap-6 items-start sm:items-center">
           <!-- Preview do logo -->
-          <div class="w-24 h-24 rounded-2xl border-2 border-dashed border-pink-200 bg-pink-50 flex items-center justify-center overflow-hidden shrink-0">
+          <div class="w-24 h-24 rounded-2xl border-2 border-dashed border-primary-10 bg-primary-5 flex items-center justify-center overflow-hidden shrink-0">
             <img v-if="form.logo_url" :src="form.logo_url" alt="Logo" class="w-full h-full object-contain p-2" />
-            <svg v-else class="w-10 h-10 text-pink-300" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <svg v-else class="w-10 h-10 text-white/50" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
             </svg>
           </div>
@@ -38,7 +38,7 @@
             <label class="cursor-pointer">
               <span
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border-2 transition-colors"
-                :class="uploadingLogo ? 'opacity-60 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400' : 'bg-white border-pink-200 text-pink-700 hover:bg-pink-50'"
+                :class="uploadingLogo ? 'opacity-60 cursor-not-allowed bg-gray-50 border-gray-200 text-gray-400' : 'bg-white border-primary-10 text-primary hover:bg-primary-5'"
               >
                 <svg v-if="uploadingLogo" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
@@ -73,7 +73,7 @@
         <div v-if="form.logo_url" class="space-y-3 pt-3 border-t border-gray-100">
           <div class="flex items-center justify-between">
             <label class="text-sm font-medium text-gray-700">Tamanho do logo no cabeçalho</label>
-            <span class="text-sm font-black px-2.5 py-0.5 rounded-lg bg-pink-50 text-pink-600 border border-pink-100">{{ logoSizePx }}px</span>
+            <span class="text-sm font-black px-2.5 py-0.5 rounded-lg bg-primary-5 text-primary border border-primary-10">{{ logoSizePx }}px</span>
           </div>
           <!-- Preview em tempo real -->
           <div class="flex items-center justify-center bg-gray-50 rounded-2xl border border-gray-100 py-6" style="min-height: 120px">
@@ -104,7 +104,7 @@
       </section>
 
       <!-- Nome da empresa -->
-      <section class="bg-white rounded-2xl border border-pink-100 shadow-sm p-6 space-y-4">
+      <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-4">
         <h2 class="text-base font-bold text-gray-800">Logo para Documentos</h2>
         <p class="text-xs text-gray-500">Versão do logo para fundo claro (orçamentos, links externos). Se não configurado, usa o logo principal.</p>
 
@@ -147,7 +147,7 @@
       </section>
 
       <!-- Nome da empresa -->
-      <section class="bg-white rounded-2xl border border-pink-100 shadow-sm p-6 space-y-4">
+      <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-4">
         <h2 class="text-base font-bold text-gray-800">Nome Exibido</h2>
         <div class="space-y-1">
           <label class="text-sm font-medium text-gray-700">Nome da empresa no sistema</label>
@@ -155,14 +155,14 @@
             v-model="form.nome_empresa"
             type="text"
             maxlength="60"
-            class="w-full max-w-sm border border-pink-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+            class="w-full max-w-sm border border-primary-10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
             placeholder="UpStudio"
           />
         </div>
       </section>
 
       <!-- Cores -->
-      <section class="bg-white rounded-2xl border border-pink-100 shadow-sm p-6 space-y-6">
+      <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-6">
         <h2 class="text-base font-bold text-gray-800">Esquema de Cores</h2>
 
         <!-- Temas pré-definidos -->
@@ -200,7 +200,7 @@
             <p class="text-xs text-gray-400">Botões, links ativos e destaques</p>
             <div class="flex items-center gap-2 mt-2 flex-wrap">
               <input v-model="form.cor_primaria" type="color" class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-              <input v-model="form.cor_primaria" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_primaria')" />
+              <input v-model="form.cor_primaria" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_primaria')" />
               <!-- Degradê -->
               <label class="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer select-none">
                 <input v-model="usarGradPrimaria" type="checkbox" class="rounded" />
@@ -208,7 +208,7 @@
               </label>
               <template v-if="usarGradPrimaria">
                 <input v-model="form.cor_primaria_grad" type="color" class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-                <input v-model="form.cor_primaria_grad" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_primaria_grad')" />
+                <input v-model="form.cor_primaria_grad" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_primaria_grad')" />
                 <div class="h-5 w-20 rounded-full border border-gray-200" :style="{ background: `linear-gradient(90deg, ${form.cor_primaria}, ${form.cor_primaria_grad ?? form.cor_primaria})` }" />
               </template>
             </div>
@@ -220,7 +220,7 @@
             <p class="text-xs text-gray-400">Texto em botões e badges coloridos</p>
             <div class="flex items-center gap-2 mt-2">
               <input v-model="form.cor_primaria_texto" type="color" class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-              <input v-model="form.cor_primaria_texto" type="text" class="w-28 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_primaria_texto')" />
+              <input v-model="form.cor_primaria_texto" type="text" class="w-28 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_primaria_texto')" />
             </div>
           </div>
 
@@ -230,14 +230,14 @@
             <p class="text-xs text-gray-400">Background geral do sistema</p>
             <div class="flex items-center gap-2 mt-2 flex-wrap">
               <input v-model="form.cor_fundo" type="color" class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-              <input v-model="form.cor_fundo" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_fundo')" />
+              <input v-model="form.cor_fundo" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_fundo')" />
               <label class="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer select-none">
                 <input v-model="usarGradFundo" type="checkbox" class="rounded" />
                 Degradê
               </label>
               <template v-if="usarGradFundo">
                 <input v-model="form.cor_fundo_grad" type="color" class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-                <input v-model="form.cor_fundo_grad" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_fundo_grad')" />
+                <input v-model="form.cor_fundo_grad" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_fundo_grad')" />
                 <div class="h-5 w-20 rounded-full border border-gray-200" :style="{ background: `linear-gradient(90deg, ${form.cor_fundo}, ${form.cor_fundo_grad ?? form.cor_fundo})` }" />
               </template>
             </div>
@@ -249,14 +249,14 @@
             <p class="text-xs text-gray-400">Fundo do menu lateral e cabeçalho</p>
             <div class="flex items-center gap-2 mt-2 flex-wrap">
               <input v-model="form.cor_sidebar" type="color" class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-              <input v-model="form.cor_sidebar" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_sidebar')" />
+              <input v-model="form.cor_sidebar" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_sidebar')" />
               <label class="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer select-none">
                 <input v-model="usarGradSidebar" type="checkbox" class="rounded" />
                 Degradê
               </label>
               <template v-if="usarGradSidebar">
                 <input v-model="form.cor_sidebar_grad" type="color" class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-                <input v-model="form.cor_sidebar_grad" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_sidebar_grad')" />
+                <input v-model="form.cor_sidebar_grad" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_sidebar_grad')" />
                 <div class="h-5 w-20 rounded-full border border-gray-200" :style="{ background: `linear-gradient(90deg, ${form.cor_sidebar}, ${form.cor_sidebar_grad ?? form.cor_sidebar})` }" />
               </template>
             </div>
@@ -268,14 +268,14 @@
             <p class="text-xs text-gray-400">Fundo das tabelas, listas e painéis</p>
             <div class="flex items-center gap-2 mt-2 flex-wrap">
               <input v-model="form.cor_card" type="color" class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-              <input v-model="form.cor_card" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_card')" />
+              <input v-model="form.cor_card" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_card')" />
               <label class="flex items-center gap-1.5 text-xs text-gray-500 cursor-pointer select-none">
                 <input v-model="usarGradCard" type="checkbox" class="rounded" />
                 Degradê
               </label>
               <template v-if="usarGradCard">
                 <input v-model="form.cor_card_grad" type="color" class="w-10 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-                <input v-model="form.cor_card_grad" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_card_grad')" />
+                <input v-model="form.cor_card_grad" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_card_grad')" />
                 <div class="h-5 w-20 rounded-full border border-gray-200" :style="{ background: `linear-gradient(90deg, ${form.cor_card}, ${form.cor_card_grad ?? form.cor_card})` }" />
               </template>
             </div>
@@ -287,7 +287,7 @@
             <p class="text-xs text-gray-400">Cor dos textos dentro de tabelas e painéis</p>
             <div class="flex items-center gap-2 mt-2">
               <input v-model="form.cor_card_texto" type="color" class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-              <input v-model="form.cor_card_texto" type="text" class="w-28 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_card_texto')" />
+              <input v-model="form.cor_card_texto" type="text" class="w-28 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_card_texto')" />
             </div>
           </div>
 
@@ -297,7 +297,7 @@
             <p class="text-xs text-gray-400">Background dos botões de ação (Adicionar, Salvar...)</p>
             <div class="flex items-center gap-2 mt-2 flex-wrap">
               <input v-model="form.cor_botao" type="color" class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-              <input v-model="form.cor_botao" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_botao')" />
+              <input v-model="form.cor_botao" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_botao')" />
               <div class="h-8 px-3 rounded-lg border border-gray-200 flex items-center text-xs font-bold" :style="{ background: form.cor_botao, color: form.cor_botao_texto }">+ Adicionar</div>
             </div>
           </div>
@@ -308,7 +308,7 @@
             <p class="text-xs text-gray-400">Cor do texto e ícone dentro dos botões</p>
             <div class="flex items-center gap-2 mt-2">
               <input v-model="form.cor_botao_texto" type="color" class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-              <input v-model="form.cor_botao_texto" type="text" class="w-28 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_botao_texto')" />
+              <input v-model="form.cor_botao_texto" type="text" class="w-28 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_botao_texto')" />
             </div>
           </div>
 
@@ -318,7 +318,7 @@
             <p class="text-xs text-gray-400">Ícones ativos na sidebar e barra de navegação inferior</p>
             <div class="flex items-center gap-2 mt-2 flex-wrap">
               <input v-model="form.cor_icone" type="color" class="w-12 h-10 rounded-lg border border-gray-200 cursor-pointer p-0.5" />
-              <input v-model="form.cor_icone" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-pink-300" maxlength="7" @input="sanitizeHex('cor_icone')" />
+              <input v-model="form.cor_icone" type="text" class="w-24 border border-gray-200 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-primary" maxlength="7" @input="sanitizeHex('cor_icone')" />
               <div class="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center" :style="{ background: hexToRgba(form.cor_icone, 0.12) }">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" :style="{ color: form.cor_icone }"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6z"/></svg>
               </div>
@@ -345,7 +345,7 @@
       </section>
 
       <!-- Horários de Agendamento -->
-      <section class="bg-white rounded-2xl border border-pink-100 shadow-sm p-6 space-y-5">
+      <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-5">
         <div>
           <h2 class="text-base font-bold text-gray-800">Horários de Agendamento</h2>
           <p class="text-xs text-gray-400 mt-0.5">Configure os dias e horários que sua empresa recebe agendamentos pelo link público.</p>
@@ -380,7 +380,7 @@
             <input
               v-model="horarios.abertura"
               type="time"
-              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-200"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
           <div class="space-y-1.5">
@@ -388,7 +388,7 @@
             <input
               v-model="horarios.fechamento"
               type="time"
-              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-200"
+              class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
         </div>
@@ -416,7 +416,7 @@
               <input
                 v-model="horarios.almoco_inicio"
                 type="time"
-                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-200"
+                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
             <div class="space-y-1.5">
@@ -424,7 +424,7 @@
               <input
                 v-model="horarios.almoco_fim"
                 type="time"
-                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-200"
+                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary"
               />
             </div>
           </div>
@@ -491,7 +491,7 @@
       </section>
 
       <!-- Preview -->
-      <section class="bg-white rounded-2xl border border-pink-100 shadow-sm p-6 space-y-4">
+      <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-4">
         <h2 class="text-base font-bold text-gray-800">Preview</h2>
         <div class="rounded-xl overflow-hidden border border-gray-200 shadow-md">
           <!-- Mini header -->
@@ -532,6 +532,89 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <!-- Dados da Empresa -->
+      <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-5">
+        <div>
+          <h2 class="text-base font-bold text-gray-800">Dados da Empresa</h2>
+          <p class="text-xs text-gray-500 mt-1">Informações que aparecem nos orçamentos e documentos.</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-gray-500">Razão Social</label>
+            <input v-model="dadosEmpresa.razao_social" type="text" placeholder="Razão Social da empresa" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-gray-500">CNPJ</label>
+            <input v-model="dadosEmpresa.cnpj" type="text" placeholder="00.000.000/0000-00" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="text-xs font-bold text-gray-500">Endereço Completo</label>
+          <input v-model="dadosEmpresa.endereco" type="text" placeholder="Rua, número, bairro, cidade - UF, CEP" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-gray-500">Telefone</label>
+            <input v-model="dadosEmpresa.telefone" type="text" placeholder="(11) 99999-9999" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+          </div>
+          <div class="space-y-1">
+            <label class="text-xs font-bold text-gray-500">E-mail</label>
+            <input v-model="dadosEmpresa.email" type="text" placeholder="contato@empresa.com" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+          </div>
+        </div>
+
+        <!-- Dados Bancários -->
+        <div class="pt-3 border-t border-gray-100">
+          <h3 class="text-sm font-bold text-gray-700 mb-3">Dados Bancários</h3>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-gray-500">Banco</label>
+              <input v-model="dadosEmpresa.banco" type="text" placeholder="Ex: Banco do Brasil" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-gray-500">Agência</label>
+              <input v-model="dadosEmpresa.agencia" type="text" placeholder="0000" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-gray-500">Conta</label>
+              <input v-model="dadosEmpresa.conta" type="text" placeholder="00000-0" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+            </div>
+            <div class="space-y-1">
+              <label class="text-xs font-bold text-gray-500">Tipo de Conta</label>
+              <select v-model="dadosEmpresa.tipo_conta" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                <option value="">Selecione</option>
+                <option value="corrente">Corrente</option>
+                <option value="poupanca">Poupança</option>
+              </select>
+            </div>
+          </div>
+          <div class="space-y-1 mt-4">
+            <label class="text-xs font-bold text-gray-500">Chave PIX</label>
+            <input v-model="dadosEmpresa.chave_pix" type="text" placeholder="CPF, CNPJ, e-mail, telefone ou chave aleatória" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+          </div>
+          <div class="space-y-1 mt-4">
+            <label class="text-xs font-bold text-gray-500">Titular da Conta</label>
+            <input v-model="dadosEmpresa.titular_conta" type="text" placeholder="Nome do titular" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
+          </div>
+        </div>
+
+        <div class="flex justify-end pt-2">
+          <button
+            type="button"
+            :disabled="salvandoDadosEmpresa"
+            class="flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold bg-gray-900 text-white hover:bg-gray-800 transition-colors disabled:opacity-60"
+            @click="salvarDadosEmpresa"
+          >
+            <svg v-if="salvandoDadosEmpresa" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/></svg>
+            {{ salvandoDadosEmpresa ? 'Salvando...' : 'Salvar dados' }}
+          </button>
+        </div>
+        <p v-if="dadosEmpresaSaved" class="text-xs text-green-600 font-medium text-right">✓ Dados salvos!</p>
       </section>
 
       <!-- Ações -->
@@ -787,9 +870,80 @@ const temasProntos = [
   { nome: '🩵 Soft Blue',       cor_primaria: '#0ea5e9', cor_primaria_texto: '#ffffff', cor_fundo: '#0c4a6e', cor_sidebar: '#082f49', cor_card: '#0c4a6e', cor_card_texto: '#e0f2fe', cor_primaria_grad: '#38bdf8', cor_fundo_grad: '#082f49', cor_sidebar_grad: '#0c4a6e', cor_card_grad: null, grad_direction: '180deg', cor_botao: '#0ea5e9', cor_botao_texto: '#000000', cor_icone: '#38bdf8' },
 ]
 
+// ── Dados da Empresa ──────────────────────────────────────────────────────────
+const dadosEmpresa = reactive({
+  razao_social: '',
+  cnpj: '',
+  endereco: '',
+  telefone: '',
+  email: '',
+  banco: '',
+  agencia: '',
+  conta: '',
+  tipo_conta: '',
+  chave_pix: '',
+  titular_conta: '',
+})
+const salvandoDadosEmpresa = ref(false)
+const dadosEmpresaSaved = ref(false)
+
+async function carregarDadosEmpresa() {
+  await loadEmpresa()
+  if (!empresaId.value) return
+  const { data, error: err } = await supabase
+    .from('empresa_personalizacao')
+    .select('*')
+    .eq('empresa_id', empresaId.value)
+    .single()
+  if (err) { console.error('Erro ao carregar dados empresa:', err); return }
+  if (data) {
+    dadosEmpresa.razao_social = data.razao_social ?? ''
+    dadosEmpresa.cnpj = data.cnpj ?? ''
+    dadosEmpresa.endereco = data.endereco ?? ''
+    dadosEmpresa.telefone = data.telefone ?? ''
+    dadosEmpresa.email = data.email ?? ''
+    dadosEmpresa.banco = data.banco ?? ''
+    dadosEmpresa.agencia = data.agencia ?? ''
+    dadosEmpresa.conta = data.conta ?? ''
+    dadosEmpresa.tipo_conta = data.tipo_conta ?? ''
+    dadosEmpresa.chave_pix = data.chave_pix ?? ''
+    dadosEmpresa.titular_conta = data.titular_conta ?? ''
+  }
+}
+
+async function salvarDadosEmpresa() {
+  if (!empresaId.value) return
+  salvandoDadosEmpresa.value = true
+  dadosEmpresaSaved.value = false
+  const { error: err } = await supabase
+    .from('empresa_personalizacao')
+    .update({
+      razao_social: dadosEmpresa.razao_social || null,
+      cnpj: dadosEmpresa.cnpj || null,
+      endereco: dadosEmpresa.endereco || null,
+      telefone: dadosEmpresa.telefone || null,
+      email: dadosEmpresa.email || null,
+      banco: dadosEmpresa.banco || null,
+      agencia: dadosEmpresa.agencia || null,
+      conta: dadosEmpresa.conta || null,
+      tipo_conta: dadosEmpresa.tipo_conta || null,
+      chave_pix: dadosEmpresa.chave_pix || null,
+      titular_conta: dadosEmpresa.titular_conta || null,
+    })
+    .eq('empresa_id', empresaId.value)
+  salvandoDadosEmpresa.value = false
+  if (err) {
+    console.error('Erro ao salvar dados empresa:', err)
+    alert('Erro ao salvar: ' + err.message)
+  } else {
+    dadosEmpresaSaved.value = true
+    setTimeout(() => { dadosEmpresaSaved.value = false }, 3000)
+  }
+}
+
 onMounted(async () => {
   loading.value = true
-  await Promise.all([loadPersonalizacao(false), loadHorarios()])
+  await Promise.all([loadPersonalizacao(false), loadHorarios(), carregarDadosEmpresa()])
   loading.value = false
   Object.assign(form, config.value)
   // Inicializa toggles com base nos dados salvos

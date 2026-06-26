@@ -2,8 +2,8 @@
   <div class="min-h-full bg-transparent p-3 sm:p-8" @click="statusDropdownId = null">
 
     <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� CABE�?ALHO �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
-    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl">
-      <div class="absolute inset-0" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #ec4899, #f43f5e))' }" />
+    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl page-header">
+      <div class="absolute inset-0 page-header-overlay" />
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
       <div class="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
       <div class="absolute -bottom-20 left-1/4 w-96 h-96 rounded-full bg-white/[0.02] pointer-events-none" />
@@ -34,20 +34,20 @@
               type="button"
               class="inline-flex items-center gap-2 text-sm font-semibold px-3 sm:px-5 py-2.5 rounded-xl transition-all duration-200"
               :class="filtrosAbertos
-                ? 'bg-white text-[#ff46a2] shadow-lg scale-[1.02]'
+                ? 'bg-white text-primary shadow-lg scale-[1.02]'
                 : 'bg-white/10 text-white hover:bg-white/20 border border-white/15 backdrop-blur-sm'"
               @click="filtrosAbertos = !filtrosAbertos"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
               <span class="hidden sm:inline">Filtros</span>
-              <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-pink-400 text-xs font-black">
+              <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-primary text-xs font-black">
                 {{ filtrosAtivos }}
               </span>
             </button>
             <button
               v-if="isAdminOrGerente"
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
               @click="abrirAdicionar"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -109,16 +109,16 @@
         <!-- Header do painel -->
         <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/70">
           <div class="flex items-center gap-2.5">
-            <svg class="w-4 h-4 text-[#ff46a2]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
             <span class="text-sm font-bold text-gray-700">Filtros avançados</span>
-            <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-pink-50 text-[#ff46a2] text-xs font-bold">
+            <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-primary-5 text-primary text-xs font-bold">
               {{ filtrosAtivos }} ativo(s)
             </span>
           </div>
           <button
             v-if="filtrosAtivos > 0"
             type="button"
-            class="text-xs font-semibold text-[#ff46a2] hover:text-pink-600 hover:underline transition-colors"
+            class="text-xs font-semibold text-primary hover:text-primary hover:underline transition-colors"
             @click="limparFiltros"
           >
             Limpar tudo
@@ -160,8 +160,8 @@
                 type="button"
                 class="inline-flex items-center gap-2 text-xs font-semibold px-4 py-2 rounded-xl border transition-all duration-150"
                 :class="filtros.presetAtivo === preset.label
-                  ? 'bg-[#ff46a2] border-[#ff46a2] text-white shadow-sm shadow-pink-200'
-                  : 'bg-white border-gray-200 text-gray-600 hover:border-pink-400 hover:text-[#ff46a2] hover:bg-pink-50'"
+                  ? 'bg-primary border-primary text-primary-text shadow-sm'
+                  : 'bg-white border-gray-200 text-gray-600 hover:border-primary hover:text-primary hover:bg-primary-5'"
                 @click="aplicarPreset(preset)"
               >
                 {{ preset.label }}
@@ -211,7 +211,7 @@
                 :key="p"
                 type="button"
                 class="text-xs font-semibold px-3.5 py-1.5 rounded-full border transition-all duration-150 capitalize"
-                :class="filtros.periodicidade.includes(p) ? 'bg-pink-100 border-pink-400 text-[#ff46a2]' : 'bg-white border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-700'"
+                :class="filtros.periodicidade.includes(p) ? 'bg-primary-10 border-primary text-primary' : 'bg-white border-gray-200 text-gray-500 hover:border-gray-400 hover:text-gray-700'"
                 @click="toggleFiltroPeriodicidade(p)"
               >
                 {{ p }}
@@ -260,7 +260,7 @@
       <!-- Barra acima da tabela -->
       <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/50">
         <span class="text-sm font-semibold text-gray-600">
-          <span class="text-[#ff46a2] font-black">{{ contasFiltradas.length }}</span>
+          <span class="text-primary font-black">{{ contasFiltradas.length }}</span>
           resultado(s)
           <span v-if="filtrosAtivos > 0" class="text-gray-400 font-normal"> - filtros aplicados</span>
         </span>
@@ -299,10 +299,10 @@
             <tr
               v-for="conta in contasFiltradas"
               :key="conta.id"
-              class="hover:bg-pink-50/40 transition-colors duration-150 group"
+              class="hover:bg-primary-5/40 transition-colors duration-150 group"
             >
               <td class="px-7 py-4">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-[#ff46a2] font-black text-xs">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-primary font-black text-xs">
                   {{ conta.id }}
                 </span>
               </td>
@@ -394,13 +394,13 @@
                 <span class="text-gray-400 text-xs max-w-[150px] block truncate" :title="conta.observacao ?? ''">{{ conta.observacao ?? '-' }}</span>
               </td>
               <td class="px-5 py-4 text-gray-400 text-xs tabular-nums">{{ formatDateTime(conta.created_at) }}</td>
-              <td class="px-4 py-3 text-right sm:sticky sm:right-0 group-hover:bg-pink-50/60 transition-colors">
+              <td class="px-4 py-3 text-right sm:sticky sm:right-0 group-hover:bg-primary-5/60 transition-colors">
                 <div class="flex items-center justify-end gap-1">
                   <button
                     v-if="isAdminOrGerente"
                     type="button"
                     title="Editar"
-                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-[#ff46a2] hover:bg-pink-100 transition-colors"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-primary hover:bg-primary-10 transition-colors"
                     @click="editConta(conta)"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2.414a2 2 0 01.586-1.414z"/></svg>
@@ -472,7 +472,7 @@
                   <option value="avulsa">Avulsa</option>
                   <option value="mensal">Mensal (lança até dez/{{ new Date().getFullYear() }})</option>
                 </select>
-                <p v-if="form.periodicidade === 'mensal'" class="text-xs text-pink-600 font-semibold">
+                <p v-if="form.periodicidade === 'mensal'" class="text-xs text-primary font-semibold">
                   Serão criadas {{ mesesRestantes }} parcela(s) a partir do vencimento informado.
                 </p>
               </div>
@@ -615,7 +615,7 @@ const filtros = reactive({
 
 const statusOpcoes = [
   { value: 'pendente',  label: 'Pendente',  activeClass: 'bg-yellow-100 border-yellow-400 text-yellow-800' },
-  { value: 'pago',      label: 'Pago',      activeClass: 'bg-pink-100 border-pink-400 text-[#ff46a2]' },
+  { value: 'pago',      label: 'Pago',      activeClass: 'bg-primary-10 border-primary text-primary' },
   { value: 'vencido',   label: 'Vencido',   activeClass: 'bg-red-100 border-red-400 text-red-700' },
   { value: 'cancelado', label: 'Cancelado', activeClass: 'bg-gray-200 border-gray-400 text-gray-700' },
 ]

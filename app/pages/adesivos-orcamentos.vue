@@ -1,5 +1,5 @@
-<template>
-  <div class="min-h-full p-3 sm:p-6">
+﻿<template>
+  <div class="min-h-full px-6 md:px-8 lg:px-12 py-6">
 
     <!-- MODAL NOVO/EDITAR ORÇAMENTO -->
     <OrcamentoNovoModal
@@ -23,7 +23,7 @@
     />
 
     <!-- CABEÇALHO -->
-    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl">
+    <div class="relative rounded-3xl overflow-hidden mb-6 shadow-xl">
       <div class="absolute inset-0" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #6366f1, #8b5cf6))' }" />
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
       <div class="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
@@ -67,7 +67,7 @@
     <!-- KPI CARDS -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6">
       <!-- Pendentes -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
+      <AppCard elevation="raised" padding="sm" class="hover:shadow-card-hover transition-shadow">
         <div class="flex items-center gap-3 mb-2">
           <div class="w-9 h-9 rounded-xl flex items-center justify-center" :style="{ background: 'var(--color-primary-5, rgba(99,102,241,0.05))', border: '1px solid var(--color-primary-10, rgba(99,102,241,0.1))' }">
             <svg class="w-5 h-5" :style="{ color: 'var(--color-primary, #6366f1)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -77,10 +77,10 @@
           <span class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Pendentes</span>
         </div>
         <p class="text-2xl sm:text-3xl font-black text-gray-800">{{ kpis.pendentes }}</p>
-      </div>
+      </AppCard>
 
       <!-- Vencidos -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
+      <AppCard elevation="raised" padding="sm" class="hover:shadow-card-hover transition-shadow">
         <div class="flex items-center gap-3 mb-2">
           <div class="w-9 h-9 rounded-xl bg-red-50 border border-red-200 flex items-center justify-center">
             <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -90,10 +90,10 @@
           <span class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Vencidos</span>
         </div>
         <p class="text-2xl sm:text-3xl font-black text-gray-800">{{ kpis.vencidos }}</p>
-      </div>
+      </AppCard>
 
       <!-- Valor Aprovados Mês -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
+      <AppCard elevation="raised" padding="sm" class="hover:shadow-card-hover transition-shadow">
         <div class="flex items-center gap-3 mb-2">
           <div class="w-9 h-9 rounded-xl flex items-center justify-center" :style="{ background: 'var(--color-primary-5, rgba(99,102,241,0.05))', border: '1px solid var(--color-primary-10, rgba(99,102,241,0.1))' }">
             <svg class="w-5 h-5" :style="{ color: 'var(--color-primary, #6366f1)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -103,10 +103,10 @@
           <span class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Aprovados (mês)</span>
         </div>
         <p class="text-2xl sm:text-3xl font-black text-gray-800">{{ formatCurrency(kpis.valorAprovadosMes) }}</p>
-      </div>
+      </AppCard>
 
       <!-- Taxa de Conversão -->
-      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 hover:shadow-md transition-shadow">
+      <AppCard elevation="raised" padding="sm" class="hover:shadow-card-hover transition-shadow">
         <div class="flex items-center gap-3 mb-2">
           <div class="w-9 h-9 rounded-xl flex items-center justify-center" :style="{ background: 'var(--color-primary-5, rgba(99,102,241,0.05))', border: '1px solid var(--color-primary-10, rgba(99,102,241,0.1))' }">
             <svg class="w-5 h-5" :style="{ color: 'var(--color-primary, #6366f1)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -116,7 +116,7 @@
           <span class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Conversão</span>
         </div>
         <p class="text-2xl sm:text-3xl font-black text-gray-800">{{ kpis.taxaConversao.toFixed(1) }}%</p>
-      </div>
+      </AppCard>
     </div>
 
     <!-- FILTROS -->
@@ -127,14 +127,14 @@
         <div class="flex rounded-lg border border-gray-200 overflow-hidden flex-shrink-0">
           <button type="button" class="px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5"
             :class="viewMode === 'list' ? 'text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
-            :style="viewMode === 'list' ? { background: 'var(--color-primary, #059669)' } : {}"
+            :style="viewMode === 'list' ? { background: 'var(--color-primary)' } : {}"
             @click="viewMode = 'list'">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg>
             Lista
           </button>
           <button type="button" class="px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5"
             :class="viewMode === 'kanban' ? 'text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
-            :style="viewMode === 'kanban' ? { background: 'var(--color-primary, #059669)' } : {}"
+            :style="viewMode === 'kanban' ? { background: 'var(--color-primary)' } : {}"
             @click="viewMode = 'kanban'">
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125z" /></svg>
             Kanban
@@ -189,7 +189,7 @@
       </div>
 
     <!-- TABELA DE ORÇAMENTOS -->
-    <div v-else class="bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden">
+    <AppCard v-else elevation="raised" padding="none">
       <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/50">
         <span class="text-sm font-semibold text-gray-600">
           <span class="text-indigo-600 font-black">{{ orcamentosFiltrados.length }}</span> orçamento(s)
@@ -200,16 +200,16 @@
       <div class="overflow-x-auto">
         <table class="min-w-full text-sm">
           <thead>
-            <tr class="bg-gray-50 border-b border-gray-100">
-              <th class="text-left px-6 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Número</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Cliente</th>
-              <th class="text-center px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Itens</th>
-              <th class="text-right px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Valor Total</th>
-              <th class="text-center px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Criação</th>
-              <th class="text-center px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Validade</th>
-              <th class="text-center px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Status</th>
-              <th class="text-center px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">OS</th>
-              <th class="text-center px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Ações</th>
+            <tr class="bg-primary-5">
+              <th class="text-left px-6 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Número</th>
+              <th class="text-left px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Cliente</th>
+              <th class="text-center px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Itens</th>
+              <th class="text-right px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Valor Total</th>
+              <th class="text-center px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Criação</th>
+              <th class="text-center px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Validade</th>
+              <th class="text-center px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Status</th>
+              <th class="text-center px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">OS</th>
+              <th class="text-center px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Ações</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
@@ -303,7 +303,7 @@
           <button type="button" class="px-3 py-1.5 text-xs font-bold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-100 disabled:opacity-40 transition-colors" :disabled="currentPage >= totalPages" @click="goToPage(currentPage + 1)">Próxima</button>
         </div>
       </div>
-    </div>
+    </AppCard>
     </template>
 
     <!-- ═══ MODO KANBAN ═══ -->

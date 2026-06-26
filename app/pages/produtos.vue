@@ -33,18 +33,18 @@
               type="button"
               class="inline-flex items-center gap-2 text-sm font-semibold px-3 sm:px-5 py-2.5 rounded-xl transition-all duration-200"
               :class="filtroAberto
-                ? 'bg-white text-[#ff46a2] shadow-lg scale-[1.02]'
+                ? 'bg-white text-primary shadow-lg scale-[1.02]'
                 : 'bg-white/10 text-white hover:bg-white/20 border border-white/15 backdrop-blur-sm'"
               @click="filtroAberto = !filtroAberto"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
               <span class="hidden sm:inline">Filtros</span>
-              <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-pink-400 text-xs font-black">{{ filtrosAtivos }}</span>
+              <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-primary text-xs font-black">{{ filtrosAtivos }}</span>
             </button>
             <button
               v-if="isAdminOrGerente"
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg transition-all duration-200 hover:scale-[1.02]"
               @click="abrirAdicionar"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -92,10 +92,10 @@
       <div v-show="filtroAberto" class="bg-white rounded-3xl border border-gray-100 shadow-md mb-6 overflow-hidden">
         <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/70">
           <div class="flex items-center gap-2.5">
-            <svg class="w-4 h-4 text-[#ff46a2]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
             <span class="text-sm font-bold text-gray-700">Filtros</span>
           </div>
-          <button v-if="filtrosAtivos > 0" type="button" class="text-xs font-semibold text-[#ff46a2] hover:text-pink-600 hover:underline" @click="limparFiltros">
+          <button v-if="filtrosAtivos > 0" type="button" class="text-xs font-semibold text-primary hover:text-primary hover:underline" @click="limparFiltros">
             Limpar todos
           </button>
         </div>
@@ -124,7 +124,7 @@
                 class="flex-1 text-xs font-bold py-2 rounded-xl border transition-colors"
                 :class="filtros.ativo === op.value
                   ? 'bg-blue-600 border-blue-600 text-white'
-                  : 'border-gray-200 text-gray-500 hover:border-pink-400 hover:text-[#ff46a2] bg-white'"
+                  : 'border-gray-200 text-gray-500 hover:border-primary hover:text-primary bg-white'"
                 @click="filtros.ativo = op.value"
               >
                 {{ op.label }}
@@ -168,7 +168,7 @@
     <div v-else class="bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden">
       <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/50">
         <span class="text-sm font-semibold text-gray-600">
-          <span class="text-[#ff46a2] font-black">{{ produtosFiltrados.length }}</span>
+          <span class="text-primary font-black">{{ produtosFiltrados.length }}</span>
           resultado(s)
           <span v-if="filtrosAtivos > 0" class="text-gray-400 font-normal"> �?" filtros aplicados</span>
         </span>
@@ -205,10 +205,10 @@
             <tr
               v-for="prod in produtosFiltrados"
               :key="prod.id"
-              class="hover:bg-pink-50/40 transition-colors duration-150 group"
+              class="hover:bg-primary-5/40 transition-colors duration-150 group"
             >
               <td class="px-7 py-4">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-[#ff46a2] font-black text-xs">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-primary font-black text-xs">
                   {{ prod.id }}
                 </span>
               </td>
@@ -261,12 +261,12 @@
                   {{ prod.ativo !== false ? 'Ativo' : 'Inativo' }}
                 </span>
               </td>
-              <td class="px-7 py-4 text-right sm:sticky sm:right-0 group-hover:bg-pink-50/40 transition-colors">
+              <td class="px-7 py-4 text-right sm:sticky sm:right-0 group-hover:bg-primary-5/40 transition-colors">
                 <div class="flex items-center justify-end gap-1">
                   <button
                     v-if="isAdminOrGerente"
                     type="button"
-                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-[#ff46a2] hover:bg-pink-100 transition-colors"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-primary hover:bg-primary-10 transition-colors"
                     title="Editar"
                     @click="editProduto(prod)"
                   >

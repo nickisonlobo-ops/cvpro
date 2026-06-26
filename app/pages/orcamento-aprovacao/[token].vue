@@ -50,106 +50,147 @@
       </p>
     </div>
 
-    <!-- ═══ ACTIVE — Full approval page ═══ -->
-    <div v-else-if="pageState === 'active'" class="max-w-lg w-full space-y-6">
+    <!-- ═══ ACTIVE — Full approval page (Fiscal Layout) ═══ -->
+    <div v-else-if="pageState === 'active'" class="max-w-[800px] w-full space-y-5">
 
-      <!-- Header with logo/company name -->
-      <div class="text-center">
-        <img v-if="empresa.logo_url" :src="empresa.logo_url" :alt="empresa.nome" class="mx-auto mb-3 object-contain" :style="{ height: logoOrcSizePx + 'px', maxWidth: '90%' }" />
-        <h2 class="text-xl font-bold mb-1" :style="{ color: 'var(--color-primary-text, #ffffff)' }">Orçamento</h2>
-        <div class="flex items-center justify-center gap-3 mt-2">
-          <span v-if="orcamento?.numero_orcamento" class="inline-block text-xs font-bold px-2.5 py-1 rounded-full" :style="{ background: 'var(--color-primary-5, rgba(79,70,229,0.1))', color: 'var(--color-primary, #4f46e5)' }">
-            {{ orcamento.numero_orcamento }}
-          </span>
-          <span class="text-xs" :style="{ color: 'var(--color-card-texto, #9ca3af)', opacity: '0.6' }">Emitido em {{ formatDate(orcamento?.created_at) }}</span>
-        </div>
-      </div>
+      <!-- Documento principal — Layout Fiscal -->
+      <div v-if="!isLegacy" class="space-y-4">
 
-      <!-- Orçamento data card — MULTI-ITEM (new flow) -->
-      <div v-if="!isLegacy" class="rounded-2xl shadow-lg border overflow-hidden" :style="{ background: 'var(--color-card, #ffffff)', borderColor: 'var(--color-card-border, rgba(0,0,0,0.06))' }">
-        <div class="px-5 py-4 border-b" :style="{ borderColor: 'var(--color-card-border, rgba(0,0,0,0.06))' }">
-          <h3 class="text-sm font-bold uppercase tracking-wide" :style="{ color: 'var(--color-card-texto, #374151)' }">Itens do Orçamento</h3>
-        </div>
-
-        <div class="px-5 py-4 space-y-4">
-          <!-- Item list -->
-          <div v-for="(item, idx) in itensOrcamento" :key="item.id" class="rounded-xl p-4" :style="{ border: '1px solid var(--color-card-border, rgba(0,0,0,0.08))' }">
-            <div class="flex items-start justify-between mb-3">
-              <span class="text-xs font-bold" :style="{ color: 'var(--color-primary, #4f46e5)' }">Item {{ idx + 1 }}</span>
-              <span class="text-sm font-black" :style="{ color: 'var(--color-card-texto, #1f2937)' }">{{ formatCurrency(item.valor_item) }}</span>
-            </div>
-            <p class="text-sm font-semibold mb-3" :style="{ color: 'var(--color-card-texto, #1f2937)' }">{{ item.descricao || '—' }}</p>
-            <div class="grid grid-cols-3 gap-3 text-xs">
-              <div>
-                <span class="font-bold uppercase tracking-wider" style="color: var(--color-card-texto, #9ca3af); opacity: 0.5; font-size: 10px">Material</span>
-                <p class="mt-0.5 font-medium" :style="{ color: 'var(--color-card-texto, #374151)' }">{{ item.material_nome || '—' }}</p>
-              </div>
-              <div>
-                <span class="font-bold uppercase tracking-wider" style="color: var(--color-card-texto, #9ca3af); opacity: 0.5; font-size: 10px">Dimensões</span>
-                <p class="mt-0.5 font-medium" :style="{ color: 'var(--color-card-texto, #374151)' }">{{ item.largura_cm }} × {{ item.altura_cm }} cm</p>
-              </div>
-              <div>
-                <span class="font-bold uppercase tracking-wider" style="color: var(--color-card-texto, #9ca3af); opacity: 0.5; font-size: 10px">Qtd</span>
-                <p class="mt-0.5 font-medium" :style="{ color: 'var(--color-card-texto, #374151)' }">{{ item.quantidade }}</p>
+        <!-- ═══ BLOCO EMPRESA (separado) ═══ -->
+        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+          <!-- HEADER: Logo + Dados Empresa -->
+          <div class="px-8 py-6 flex items-start justify-between">
+            <div class="flex-shrink-0">
+              <img v-if="empresa.logo_url" :src="empresa.logo_url" :alt="empresa.nome" class="object-contain" :style="{ height: Math.min(logoOrcSizePx, 80) + 'px', maxWidth: '180px' }" />
+              <div v-else class="w-12 h-12 rounded bg-gray-100 flex items-center justify-center">
+                <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
               </div>
             </div>
-
-            <!-- Fotos: Arte e Local lado a lado -->
-            <div v-if="item.foto_arte_url || item.foto_local_url" class="grid grid-cols-2 gap-3 mt-4 pt-3" :style="{ borderTop: '1px solid var(--color-card-border, rgba(0,0,0,0.06))' }">
-              <!-- Arte -->
-              <div v-if="item.foto_arte_url">
-                <span class="text-[10px] font-bold uppercase tracking-wider block mb-1.5" style="color: var(--color-card-texto, #9ca3af); opacity: 0.5">Arte</span>
-                <a v-if="isPdf(item.foto_arte_url)" :href="item.foto_arte_url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-medium transition-colors" :style="{ color: 'var(--color-primary, #4f46e5)' }">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></svg>
-                  Ver PDF
-                </a>
-                <img v-else :src="item.foto_arte_url" alt="Arte" class="w-full h-28 rounded-lg object-cover cursor-pointer hover:opacity-80 transition-opacity shadow-sm" @click="openLightbox(item.foto_arte_url)" />
-              </div>
-              <!-- Local -->
-              <div v-if="item.foto_local_url">
-                <span class="text-[10px] font-bold uppercase tracking-wider block mb-1.5" style="color: var(--color-card-texto, #9ca3af); opacity: 0.5">Local</span>
-                <a v-if="isPdf(item.foto_local_url)" :href="item.foto_local_url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-medium transition-colors" :style="{ color: 'var(--color-primary, #4f46e5)' }">
-                  <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></svg>
-                  Ver PDF
-                </a>
-                <img v-else :src="item.foto_local_url" alt="Local" class="w-full h-28 rounded-lg object-cover cursor-pointer hover:opacity-80 transition-opacity shadow-sm" @click="openLightbox(item.foto_local_url)" />
-              </div>
+            <div class="text-right text-[13px] leading-relaxed text-gray-600">
+              <p class="font-semibold text-gray-900">{{ empresa.razao_social || empresa.nome }}</p>
+              <p v-if="empresa.cnpj" class="mt-0.5">{{ empresa.cnpj }}</p>
+              <p v-if="empresa.endereco" class="mt-0.5">{{ empresa.endereco }}</p>
+              <p v-if="empresa.telefone" class="mt-0.5">{{ empresa.telefone }}</p>
             </div>
           </div>
 
-          <!-- Valores discriminados (multi-item) -->
-          <div class="border-t border-gray-100 pt-3 space-y-1.5">
-            <div class="flex justify-between text-sm">
-              <span class="text-gray-500">Subtotal dos itens</span>
-              <span class="text-gray-700">{{ formatCurrency(subtotalItens) }}</span>
-            </div>
-            <div v-if="orcamento?.valor_mao_obra_global > 0" class="flex justify-between text-sm">
-              <span class="text-gray-500">Mão de obra</span>
-              <span class="text-gray-700">{{ formatCurrency(orcamento.valor_mao_obra_global) }}</span>
-            </div>
-            <div v-if="totalDescontos > 0" class="flex justify-between text-sm">
-              <span class="text-gray-500">Descontos</span>
-              <span class="text-green-600">-{{ formatCurrency(totalDescontos) }}</span>
-            </div>
-            <div class="flex justify-between text-base font-bold border-t border-gray-100 pt-2 mt-2">
-              <span class="text-gray-800">Total</span>
-              <span class="text-green-600">{{ formatCurrency(orcamento?.valor_total) }}</span>
-            </div>
-          </div>
-
-          <!-- Prazo e Validade -->
-          <div class="grid grid-cols-2 gap-4 border-t border-gray-100 pt-3">
+          <!-- Nº Proposta + Data -->
+          <div class="px-8 py-4 flex items-center justify-between bg-gray-50 border-t border-gray-200">
             <div>
-              <span class="text-xs font-semibold text-gray-400 uppercase">Prazo estimado</span>
-              <p class="text-sm text-gray-800 mt-0.5">{{ orcamento?.prazo_estimado_dias ? `${orcamento.prazo_estimado_dias} dias` : '—' }}</p>
+              <span class="text-[11px] font-semibold uppercase text-gray-400">Proposta</span>
+              <p class="text-sm font-bold text-gray-900 mt-0.5">{{ orcamento?.numero_orcamento || `#${orcamento?.id}` }}</p>
             </div>
-            <div>
-              <span class="text-xs font-semibold text-gray-400 uppercase">Válido até</span>
-              <p class="text-sm text-gray-800 mt-0.5">{{ formatDate(orcamento?.data_validade) }}</p>
+            <div class="text-right">
+              <span class="text-[11px] font-semibold uppercase text-gray-400">Data de emissão</span>
+              <p class="text-sm font-medium text-gray-700 mt-0.5">{{ formatDate(orcamento?.created_at) }}</p>
             </div>
           </div>
         </div>
-      </div>
+
+        <!-- ═══ BLOCO CONTEÚDO (destinatário + itens + valores) ═══ -->
+        <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+
+        <!-- ═══ BLOCO CLIENTE ═══ -->
+        <div class="px-8 py-5 border-b border-gray-200">
+          <p class="text-[11px] font-semibold uppercase text-gray-400 mb-2">CLIENTE</p>
+          <p class="text-sm font-semibold text-gray-900">{{ orcamento?.cliente_nome || '—' }}</p>
+          <p v-if="orcamento?.cliente_cpf_cnpj" class="text-[13px] text-gray-600 mt-0.5">{{ orcamento.cliente_cpf_cnpj }}</p>
+        </div>
+
+        <!-- ═══ TABELA DE ITENS ═══ -->
+        <div class="px-8 py-5">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left">
+              <thead>
+                <tr class="bg-gray-50 border-b border-gray-200">
+                  <th class="text-[11px] font-semibold uppercase text-gray-500 px-3 py-2.5 w-12">Item</th>
+                  <th class="text-[11px] font-semibold uppercase text-gray-500 px-3 py-2.5">Descrição</th>
+                  <th class="text-[11px] font-semibold uppercase text-gray-500 px-3 py-2.5 text-right w-16">Qtd</th>
+                  <th class="text-[11px] font-semibold uppercase text-gray-500 px-3 py-2.5 text-right w-28">Valor Unit.</th>
+                  <th class="text-[11px] font-semibold uppercase text-gray-500 px-3 py-2.5 text-right w-28">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(item, idx) in itensOrcamento" :key="item.id" class="border-b border-gray-100 even:bg-gray-50">
+                  <td class="px-3 py-3 text-[13px] text-gray-700 font-medium tabular-nums">{{ idx + 1 }}</td>
+                  <td class="px-3 py-3">
+                    <p class="text-[13px] font-medium text-gray-900">{{ item.descricao || '—' }}</p>
+                    <p class="text-[11px] text-gray-500 mt-0.5">{{ item.material_nome }} · {{ item.largura_cm }}×{{ item.altura_cm }}cm</p>
+                  </td>
+                  <td class="px-3 py-3 text-[13px] text-gray-700 text-right tabular-nums">{{ item.quantidade }}</td>
+                  <td class="px-3 py-3 text-[13px] text-gray-700 text-right tabular-nums">{{ formatCurrency(item.valor_item / (item.quantidade || 1)) }}</td>
+                  <td class="px-3 py-3 text-[13px] font-semibold text-gray-900 text-right tabular-nums">{{ formatCurrency(item.valor_item) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Fotos dos itens (se houver) -->
+          <div v-if="itensOrcamento.some(i => i.foto_arte_url || i.foto_local_url)" class="mt-5 pt-4 border-t border-gray-200">
+            <p class="text-[11px] font-semibold uppercase text-gray-400 mb-3">Anexos</p>
+            <div class="space-y-3">
+              <div v-for="(item, idx) in itensOrcamento.filter(i => i.foto_arte_url || i.foto_local_url)" :key="'foto-'+item.id" class="grid grid-cols-2 gap-3">
+                <div v-if="item.foto_arte_url">
+                  <span class="text-[10px] font-medium uppercase text-gray-400 block mb-1">Item {{ itensOrcamento.indexOf(item) + 1 }} — Arte</span>
+                  <a v-if="isPdf(item.foto_arte_url)" :href="item.foto_arte_url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></svg>
+                    Ver PDF
+                  </a>
+                  <img v-else :src="item.foto_arte_url" alt="Arte" class="w-full h-24 rounded object-cover cursor-pointer hover:opacity-80 transition-opacity" @click="openLightbox(item.foto_arte_url)" />
+                </div>
+                <div v-if="item.foto_local_url">
+                  <span class="text-[10px] font-medium uppercase text-gray-400 block mb-1">Item {{ itensOrcamento.indexOf(item) + 1 }} — Local</span>
+                  <a v-if="isPdf(item.foto_local_url)" :href="item.foto_local_url" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"/></svg>
+                    Ver PDF
+                  </a>
+                  <img v-else :src="item.foto_local_url" alt="Local" class="w-full h-24 rounded object-cover cursor-pointer hover:opacity-80 transition-opacity" @click="openLightbox(item.foto_local_url)" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ═══ RESUMO DE VALORES ═══ -->
+          <div class="mt-6 pt-4 border-t border-gray-200">
+            <div class="space-y-2 max-w-[280px] ml-auto">
+              <div class="flex justify-between text-[13px]">
+                <span class="text-gray-500">Subtotal</span>
+                <span class="text-gray-700 tabular-nums">{{ formatCurrency(subtotalItens) }}</span>
+              </div>
+              <div v-if="orcamento?.valor_mao_obra_global > 0" class="flex justify-between text-[13px]">
+                <span class="text-gray-500">Mão de obra</span>
+                <span class="text-gray-700 tabular-nums">{{ formatCurrency(orcamento.valor_mao_obra_global) }}</span>
+              </div>
+              <div v-if="totalDescontos > 0" class="flex justify-between text-[13px]">
+                <span class="text-gray-500">Desconto</span>
+                <span class="text-green-600 tabular-nums">-{{ formatCurrency(totalDescontos) }}</span>
+              </div>
+              <div class="flex justify-between items-center pt-3 mt-2 border-t border-gray-200">
+                <span class="text-sm font-semibold text-gray-900">Total</span>
+                <span class="text-xl font-bold text-gray-900 tabular-nums">{{ formatCurrency(orcamento?.valor_total) }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ RODAPÉ: Validade + Condições ═══ -->
+        <div class="px-8 py-4 border-t border-gray-200 bg-gray-50/50">
+          <div class="flex flex-wrap gap-x-8 gap-y-2 text-xs text-gray-500">
+            <div>
+              <span class="font-medium">Validade da proposta:</span> {{ formatDate(orcamento?.data_validade) }}
+            </div>
+            <div v-if="orcamento?.data_entrega">
+              <span class="font-medium">Previsão de entrega:</span> {{ formatDate(orcamento.data_entrega) }}
+            </div>
+            <div v-else-if="orcamento?.prazo_estimado_dias">
+              <span class="font-medium">Prazo estimado:</span> {{ orcamento.prazo_estimado_dias }} dias
+            </div>
+          </div>
+        </div>
+
+      </div><!-- fim BLOCO CONTEÚDO -->
+
+      </div><!-- fim v-if="!isLegacy" space-y-4 -->
 
       <!-- Orçamento data card — LEGACY (pedido-based) -->
       <div v-else class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
@@ -236,8 +277,11 @@
         </div>
       </div>
 
+      <!-- Mobile bottom spacer (so fixed buttons don't overlap content) -->
+      <div v-if="!actionDone && !showRejectReason && feedbackState === 'idle'" class="sm:hidden h-24"></div>
+
       <!-- Action buttons -->
-      <div v-if="!actionDone" class="space-y-3">
+      <div v-if="!actionDone && feedbackState === 'idle'" class="space-y-3">
         <!-- Reject reason textarea (shown after reject click) -->
         <div v-if="showRejectReason" class="bg-white rounded-2xl shadow-lg border border-gray-100 p-5">
           <label class="text-sm font-semibold text-gray-700 block mb-2">Motivo da rejeição (opcional)</label>
@@ -270,44 +314,119 @@
           </div>
         </div>
 
-        <!-- Main action buttons -->
-        <div v-else class="space-y-3">
-          <div class="flex gap-3">
+        <!-- Main action buttons: fixed on mobile, inline on desktop -->
+        <div v-else>
+          <!-- Mobile fixed bottom bar -->
+          <div class="fixed bottom-0 inset-x-0 bg-white p-4 shadow-[0_-4px_12px_rgba(0,0,0,0.08)] z-50 sm:hidden space-y-3">
+            <div class="flex gap-3">
+              <button
+                type="button"
+                class="flex-1 py-3.5 px-4 rounded-xl text-sm font-bold text-white bg-red-500 hover:bg-red-600 transition-all disabled:opacity-50 active:scale-[0.98]"
+                :disabled="actionLoading"
+                @click="handleReject"
+              >
+                <span v-if="actionLoading && actionType === 'reject'" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
+                <span class="flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                  Reprovar
+                </span>
+              </button>
+              <button
+                type="button"
+                class="flex-1 py-3.5 px-4 rounded-xl text-sm font-bold text-white bg-green-500 hover:bg-green-600 transition-all disabled:opacity-50 active:scale-[0.98]"
+                :disabled="actionLoading"
+                @click="handleApprove"
+              >
+                <span v-if="actionLoading && actionType === 'approve'" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
+                <span class="flex items-center justify-center gap-2">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                  Aprovar
+                </span>
+              </button>
+            </div>
             <button
               type="button"
-              class="flex-1 py-4 rounded-xl text-base font-bold bg-red-500 text-white hover:bg-red-600 shadow-lg shadow-red-500/25 transition-all disabled:opacity-50"
-              :disabled="actionLoading"
-              @click="handleReject"
+              class="w-full py-3.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-white bg-gray-800 hover:bg-gray-900 active:scale-[0.98]"
+              :disabled="gerandoPdf"
+              @click="gerarPdfOrcamento"
             >
-              <span v-if="actionLoading && actionType === 'reject'" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
-              ✗ Reprovar
-            </button>
-            <button
-              type="button"
-              class="flex-1 py-4 rounded-xl text-base font-bold bg-green-500 text-white hover:bg-green-600 shadow-lg shadow-green-500/25 transition-all disabled:opacity-50"
-              :disabled="actionLoading"
-              @click="handleApprove"
-            >
-              <span v-if="actionLoading && actionType === 'approve'" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
-              ✓ Aprovar
+              <span v-if="gerandoPdf" class="inline-block w-4 h-4 border-2 border-gray-400 border-t-white rounded-full animate-spin"></span>
+              <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+              {{ gerandoPdf ? 'Gerando...' : 'Baixar PDF' }}
             </button>
           </div>
-          <!-- Botão Baixar PDF -->
-          <button
-            type="button"
-            class="w-full py-3.5 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2.5 disabled:opacity-50 shadow-lg bg-gray-700 text-white hover:bg-gray-800"
-            :disabled="gerandoPdf"
-            @click="gerarPdfOrcamento"
-          >
-            <span v-if="gerandoPdf" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-            <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
-            {{ gerandoPdf ? 'Gerando PDF...' : 'Baixar PDF' }}
-          </button>
+
+          <!-- Desktop inline buttons -->
+          <div class="hidden sm:block">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-5">
+              <!-- Dados para Pagamento -->
+              <div v-if="empresa.banco || empresa.chave_pix">
+                <div class="flex items-center justify-between mb-3">
+                  <p class="text-[11px] font-semibold uppercase text-gray-400">Dados para Pagamento</p>
+                  <button type="button" class="flex items-center gap-1.5 px-2.5 py-1 rounded text-[11px] font-medium transition-all hover:bg-gray-100" :class="copiouDados ? 'text-green-600' : 'text-gray-500'" @click="copiarDadosBancarios">
+                    <svg v-if="!copiouDados" class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0013.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 01-.75.75H9.75a.75.75 0 01-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 01-2.25 2.25H6.75A2.25 2.25 0 014.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 011.927-.184" /></svg>
+                    <svg v-else class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                    {{ copiouDados ? 'Copiado!' : 'Copiar' }}
+                  </button>
+                </div>
+                <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-xs text-gray-700">
+                  <div v-if="empresa.banco"><p class="text-[10px] font-medium uppercase text-gray-400">Banco</p><p class="font-semibold">{{ empresa.banco }}</p></div>
+                  <div v-if="empresa.agencia"><p class="text-[10px] font-medium uppercase text-gray-400">Agência</p><p class="font-semibold">{{ empresa.agencia }}</p></div>
+                  <div v-if="empresa.conta"><p class="text-[10px] font-medium uppercase text-gray-400">Conta</p><p class="font-semibold">{{ empresa.conta }} <span v-if="empresa.tipo_conta" class="font-normal text-gray-400">({{ empresa.tipo_conta }})</span></p></div>
+                  <div v-if="empresa.titular_conta"><p class="text-[10px] font-medium uppercase text-gray-400">Titular</p><p class="font-semibold">{{ empresa.titular_conta }}</p></div>
+                </div>
+                <div v-if="empresa.chave_pix" class="mt-3 pt-3 border-t border-dashed border-gray-200">
+                  <p class="text-[10px] font-medium uppercase text-gray-400">Chave PIX</p>
+                  <p class="text-sm font-mono font-bold text-gray-900 mt-0.5">{{ empresa.chave_pix }}</p>
+                </div>
+              </div>
+              <!-- Aprovar/Reprovar -->
+              <div class="pt-4 border-t border-gray-100 space-y-3">
+                <div class="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    class="relative py-4 px-5 rounded-xl text-base font-bold text-white bg-red-500 hover:bg-red-600 transition-all disabled:opacity-50 active:scale-[0.98]"
+                    :disabled="actionLoading"
+                    @click="handleReject"
+                  >
+                    <span v-if="actionLoading && actionType === 'reject'" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
+                    <span class="flex items-center justify-center gap-2">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                      Reprovar
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    class="relative py-4 px-5 rounded-xl text-base font-bold text-white bg-green-500 hover:bg-green-600 transition-all disabled:opacity-50 active:scale-[0.98]"
+                    :disabled="actionLoading"
+                    @click="handleApprove"
+                  >
+                    <span v-if="actionLoading && actionType === 'approve'" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
+                    <span class="flex items-center justify-center gap-2">
+                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                      Aprovar
+                    </span>
+                  </button>
+                </div>
+                <!-- Baixar PDF -->
+                <button
+                  type="button"
+                  class="w-full py-4 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 disabled:opacity-50 text-white bg-gray-800 hover:bg-gray-900 active:scale-[0.98]"
+                  :disabled="gerandoPdf"
+                  @click="gerarPdfOrcamento"
+                >
+                  <span v-if="gerandoPdf" class="inline-block w-4 h-4 border-2 border-gray-400 border-t-white rounded-full animate-spin"></span>
+                  <svg v-else class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                  {{ gerandoPdf ? 'Gerando...' : 'Baixar PDF' }}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- Success confirmation -->
-      <div v-if="actionDone" class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 text-center">
+      <!-- Success confirmation (after feedback animation completes) -->
+      <div v-if="actionDone && feedbackState === 'idle'" class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 text-center">
         <div class="w-14 h-14 mx-auto mb-3 rounded-full flex items-center justify-center"
           :class="actionType === 'approve' ? 'bg-green-100' : 'bg-red-100'">
           <svg v-if="actionType === 'approve'" class="w-7 h-7 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -359,6 +478,43 @@
       </div>
     </Transition>
   </Teleport>
+
+  <!-- ═══ FEEDBACK OVERLAY: Aprovação/Rejeição ═══ -->
+  <Teleport to="body">
+    <Transition name="feedback-overlay">
+      <div
+        v-if="feedbackState !== 'idle'"
+        class="fixed inset-0 z-[200] flex items-center justify-center bg-white/95 backdrop-blur-sm"
+      >
+        <div class="flex flex-col items-center gap-4">
+          <!-- Animated check icon (approval) -->
+          <div
+            v-if="feedbackState === 'approved'"
+            class="feedback-icon w-24 h-24 rounded-full bg-green-100 flex items-center justify-center"
+            :class="{ 'feedback-icon-active': feedbackAnimating }"
+          >
+            <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+            </svg>
+          </div>
+          <!-- Animated X icon (rejection) -->
+          <div
+            v-if="feedbackState === 'rejected'"
+            class="feedback-icon w-24 h-24 rounded-full bg-red-100 flex items-center justify-center"
+            :class="{ 'feedback-icon-active': feedbackAnimating }"
+          >
+            <svg class="w-12 h-12 text-red-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <!-- Label -->
+          <p class="text-lg font-semibold" :class="feedbackState === 'approved' ? 'text-green-700' : 'text-red-700'">
+            {{ feedbackState === 'approved' ? 'Proposta aprovada!' : 'Proposta rejeitada' }}
+          </p>
+        </div>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
@@ -378,11 +534,27 @@ const pageState = ref<PageState>('loading')
 const orcamento = ref<any>(null)
 const itensOrcamento = ref<any[]>([])
 const artes = ref<{ id: number; nome_arquivo: string; url: string }[]>([])
-const empresa = ref<{ nome: string; logo_url: string | null }>({ nome: '', logo_url: null })
+const empresa = ref<{ nome: string; logo_url: string | null; razao_social?: string | null; cnpj?: string | null; endereco?: string | null; telefone?: string | null; email?: string | null; banco?: string | null; agencia?: string | null; conta?: string | null; tipo_conta?: string | null; chave_pix?: string | null; titular_conta?: string | null }>({ nome: '', logo_url: null })
 const pageBg = ref('var(--color-bg, #f8fafc)')
 const lightboxUrl = ref<string | null>(null)
 const logoOrcSizePx = ref(160)
 const isLegacy = ref(false)
+const copiouDados = ref(false)
+
+function copiarDadosBancarios() {
+  const parts: string[] = []
+  if (empresa.value.banco) parts.push(`Banco: ${empresa.value.banco}`)
+  if (empresa.value.agencia) parts.push(`Ag: ${empresa.value.agencia}`)
+  if (empresa.value.conta) parts.push(`CC: ${empresa.value.conta}${empresa.value.tipo_conta ? ' (' + empresa.value.tipo_conta + ')' : ''}`)
+  if (empresa.value.titular_conta) parts.push(`Titular: ${empresa.value.titular_conta}`)
+  if (empresa.value.chave_pix) parts.push(`PIX: ${empresa.value.chave_pix}`)
+  const text = parts.join('\n')
+  if (text && navigator.clipboard) {
+    navigator.clipboard.writeText(text)
+    copiouDados.value = true
+    setTimeout(() => { copiouDados.value = false }, 2000)
+  }
+}
 
 const showRejectReason = ref(false)
 const rejectReason = ref('')
@@ -391,6 +563,24 @@ const actionDone = ref(false)
 const actionType = ref<'approve' | 'reject' | null>(null)
 const actionError = ref<string | null>(null)
 const gerandoPdf = ref(false)
+
+// ─── Feedback animation state ──────────────────────
+type FeedbackState = 'idle' | 'approved' | 'rejected'
+const feedbackState = ref<FeedbackState>('idle')
+const feedbackAnimating = ref(false)
+
+function triggerFeedback(type: 'approved' | 'rejected') {
+  feedbackState.value = type
+  // Trigger scale+opacity animation after a tick
+  nextTick(() => {
+    feedbackAnimating.value = true
+  })
+  // After 1.8s, hide overlay and show the success card
+  setTimeout(() => {
+    feedbackState.value = 'idle'
+    feedbackAnimating.value = false
+  }, 1800)
+}
 
 // ─── Computed ──────────────────────────────────────
 const subtotalItens = computed(() => {
@@ -474,12 +664,14 @@ async function loadOrcamento() {
       desconto_valor,
       valor_total,
       prazo_estimado_dias,
+      data_entrega,
       data_validade,
       created_at,
       token_aprovacao,
       origem_aprovacao,
       motivo_rejeicao,
-      foto_local_url
+      foto_local_url,
+      clientes(nome, cpf_cnpj)
     `)
     .eq('token_aprovacao', token)
     .maybeSingle()
@@ -582,6 +774,8 @@ async function loadNewFlowOrcamento(data: any) {
     pedido_id: data.pedido_id,
     empresa_id: data.empresa_id,
     cliente_id: data.cliente_id,
+    cliente_nome: data.clientes?.nome ?? null,
+    cliente_cpf_cnpj: data.clientes?.cpf_cnpj ?? null,
     numero_orcamento: data.numero_orcamento,
     status: data.status,
     valor_material: data.valor_material,
@@ -591,6 +785,7 @@ async function loadNewFlowOrcamento(data: any) {
     desconto_valor: data.desconto_valor ?? 0,
     valor_total: data.valor_total,
     prazo_estimado_dias: data.prazo_estimado_dias,
+    data_entrega: data.data_entrega ?? null,
     data_validade: data.data_validade,
     created_at: data.created_at,
   }
@@ -658,6 +853,17 @@ async function loadEmpresaInfo(empresaId: number) {
   empresa.value = {
     nome: data?.nome_empresa || empresaRes.data?.nome || '',
     logo_url: data?.logo_orcamento_url || data?.logo_url || null,
+    razao_social: data?.razao_social || null,
+    cnpj: data?.cnpj || null,
+    endereco: data?.endereco || null,
+    telefone: data?.telefone || null,
+    email: data?.email || null,
+    banco: data?.banco || null,
+    agencia: data?.agencia || null,
+    conta: data?.conta || null,
+    tipo_conta: data?.tipo_conta || null,
+    chave_pix: data?.chave_pix || null,
+    titular_conta: data?.titular_conta || null,
   }
 
   // Tamanho do logo — usa logo_orcamento_size (valor numérico em px)
@@ -755,6 +961,7 @@ async function handleApproveNewFlow() {
   }
 
   actionDone.value = true
+  triggerFeedback('approved')
 }
 
 // ─── Approve: Legacy flow (pedido update) ──────────
@@ -815,6 +1022,7 @@ async function handleApproveLegacy() {
     .eq('id', orcamento.value.id)
 
   actionDone.value = true
+  triggerFeedback('approved')
 }
 
 // ─── Reject action ─────────────────────────────────
@@ -876,6 +1084,7 @@ async function confirmRejectNewFlow() {
 
   actionDone.value = true
   showRejectReason.value = false
+  triggerFeedback('rejected')
 }
 
 // ─── Reject: Legacy flow ───────────────────────────
@@ -911,6 +1120,7 @@ async function confirmRejectLegacy() {
 
   actionDone.value = true
   showRejectReason.value = false
+  triggerFeedback('rejected')
 }
 
 // ─── Gerar PDF do Orçamento ────────────────────────
@@ -1132,3 +1342,37 @@ onMounted(() => {
   loadOrcamento()
 })
 </script>
+
+
+<style scoped>
+/* ═══ Feedback overlay transitions ═══ */
+.feedback-overlay-enter-active,
+.feedback-overlay-leave-active {
+  transition: opacity 300ms ease;
+}
+.feedback-overlay-enter-from,
+.feedback-overlay-leave-to {
+  opacity: 0;
+}
+
+/* ═══ Feedback icon: scale + opacity animation (400ms ease) ═══ */
+.feedback-icon {
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 400ms ease, opacity 400ms ease;
+}
+.feedback-icon-active {
+  transform: scale(1);
+  opacity: 1;
+}
+
+/* ═══ Fade transition (lightbox) ═══ */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 200ms ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

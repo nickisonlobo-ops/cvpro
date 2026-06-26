@@ -2,8 +2,8 @@
   <div class="min-h-full bg-transparent p-3 sm:p-8">
 
     <!-- CABEÇALHO -->
-    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl">
-      <div class="absolute inset-0" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #ec4899, #f43f5e))' }" />
+    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl page-header">
+      <div class="absolute inset-0 page-header-overlay" />
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
       <div class="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
       <PageLogo />
@@ -60,7 +60,7 @@
             <button
               type="button"
               class="inline-flex items-center gap-2 text-sm font-semibold px-3 sm:px-5 py-2.5 rounded-xl transition-all duration-200"
-              :class="filtroAberto ? 'bg-white text-[#ff46a2] shadow-lg scale-[1.02]' : 'bg-white/10 text-white hover:bg-white/20 border border-white/15 backdrop-blur-sm'"
+              :class="filtroAberto ? 'bg-white text-primary shadow-lg scale-[1.02]' : 'bg-white/10 text-white hover:bg-white/20 border border-white/15 backdrop-blur-sm'"
               @click="filtroAberto = !filtroAberto"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
@@ -68,7 +68,7 @@
             </button>
             <button
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
               @click="abrirAdicionar"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -97,7 +97,7 @@
           v-model="filtro.busca"
           type="text"
           placeholder="Nome do cliente..."
-          class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+          class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
       <div class="flex-1 min-w-[220px]">
@@ -108,7 +108,7 @@
             :key="s"
             type="button"
             class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1.5 rounded-full border transition-all"
-            :class="filtro.status.includes(s) ? statusBadge(s) + ' border-transparent scale-[1.04]' : 'border-gray-200 text-gray-500 hover:border-pink-200 hover:text-pink-500'"
+            :class="filtro.status.includes(s) ? statusBadge(s) + ' border-transparent scale-[1.04]' : 'border-gray-200 text-gray-500 hover:border-primary-border hover:text-primary'"
             @click="filtro.status.includes(s) ? filtro.status.splice(filtro.status.indexOf(s), 1) : filtro.status.push(s)"
           >
             <span class="w-1.5 h-1.5 rounded-full" :class="statusCor(s)" />
@@ -121,7 +121,7 @@
         <input
           v-model="filtro.data"
           type="date"
-          class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400"
+          class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
         />
       </div>
     </div>
@@ -131,14 +131,14 @@
 
     <!-- LOADING -->
     <div v-if="loading" class="flex justify-center py-20">
-      <svg class="animate-spin w-8 h-8 text-violet-400" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
+      <svg class="animate-spin w-8 h-8 text-primary" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/></svg>
     </div>
 
     <!-- TABELA DE AGENDAMENTOS -->
     <div v-if="!loading" class="bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden">
       <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/50">
         <span class="text-sm font-semibold text-gray-600">
-          <span class="text-[#ff46a2] font-black">{{ agendamentosFiltrados.length }}</span> resultado(s)
+          <span class="text-primary font-black">{{ agendamentosFiltrados.length }}</span> resultado(s)
         </span>
         <span class="text-xs text-gray-400">Ordenado por data</span>
       </div>
@@ -168,16 +168,16 @@
             <tr
               v-for="ag in agendamentosFiltrados"
               :key="ag.id"
-              class="hover:bg-pink-50/40 transition-colors duration-150 group"
+              class="hover:bg-primary-5/40 transition-colors duration-150 group"
               :class="ag.status === 'solicitado' ? 'bg-amber-50/40' : ''"
             >
               <td class="px-5 py-3 font-semibold text-gray-700">
                 {{ new Date(ag.data_hora).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit', timeZone: 'America/Sao_Paulo' }) }}
               </td>
-              <td class="px-5 py-3 font-semibold text-[#ff46a2]">{{ formatHora(ag.data_hora) }}</td>
+              <td class="px-5 py-3 font-semibold text-primary">{{ formatHora(ag.data_hora) }}</td>
               <td class="px-5 py-3">
                 <div class="flex items-center gap-2">
-                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center text-white font-black text-[10px] shrink-0 shadow-sm shadow-pink-200">
+                  <div class="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-primary flex items-center justify-center text-white font-black text-[10px] shrink-0 shadow-sm">
                     {{ (ag.cliente_nome ?? ag.nome_solicitante ?? '?').slice(0, 2).toUpperCase() }}
                   </div>
                   <span class="font-semibold text-gray-800 max-w-[140px] truncate">{{ ag.cliente_nome ?? ag.nome_solicitante ?? '—' }}</span>
@@ -192,7 +192,7 @@
                   {{ statusLabel(ag.status) }}
                 </span>
               </td>
-              <td class="px-5 py-3 text-right sm:sticky sm:right-0 group-hover:bg-pink-50/40 transition-colors">
+              <td class="px-5 py-3 text-right sm:sticky sm:right-0 group-hover:bg-primary-5/40 transition-colors">
                 <div class="flex items-center justify-end gap-1">
                   <!-- Ações para solicitações -->
                   <template v-if="ag.status === 'solicitado'">
@@ -213,7 +213,7 @@
                   <template v-else>
                     <button
                       type="button"
-                      class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-[#ff46a2] hover:bg-pink-100 transition-colors"
+                      class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-primary hover:bg-primary-10 transition-colors"
                       title="Editar"
                       @click="editAgendamento(ag)"
                     >
@@ -243,14 +243,14 @@
         <h2 class="text-base font-bold text-gray-800 capitalize">{{ kanbanMesLabel }}</h2>
         <button
           type="button"
-          class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-pink-100 text-[#ff46a2] hover:bg-pink-200 transition-colors"
+          class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-primary-10 text-primary hover:bg-primary-10 transition-colors"
           @click="irParaHoje"
         >Hoje</button>
         <div class="ml-auto flex gap-2">
-          <button type="button" class="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-pink-50 hover:text-[#ff46a2] transition-colors shadow-sm" @click="semanaAnterior">
+          <button type="button" class="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-primary-5 hover:text-primary transition-colors shadow-sm" @click="semanaAnterior">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
           </button>
-          <button type="button" class="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-pink-50 hover:text-[#ff46a2] transition-colors shadow-sm" @click="semanaProxima">
+          <button type="button" class="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-primary-5 hover:text-primary transition-colors shadow-sm" @click="semanaProxima">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           </button>
         </div>
@@ -284,7 +284,7 @@
                 :class="[
                   ag.status === 'solicitado'
                     ? 'bg-amber-50 border-amber-200 cursor-default hover:border-amber-300 hover:shadow-md'
-                    : 'bg-white border-gray-200/80 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-pink-200',
+                    : 'bg-white border-gray-200/80 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-primary-border',
                   kanbanDragging === ag.id ? 'opacity-40 scale-95' : ''
                 ]"
                 @dragstart="ag.status !== 'solicitado' && kanbanDragStart(ag)"
@@ -293,7 +293,7 @@
               >
                 <div class="h-0.5 w-full rounded-full mb-2" :class="statusCor(ag.status)" />
                 <p class="text-xs font-bold text-gray-900 truncate leading-tight">{{ ag.cliente_nome ?? ag.nome_solicitante ?? '\u2014' }}</p>
-                <p class="text-[10px] font-semibold text-[#ff46a2] mt-0.5">{{ formatHora(ag.data_hora) }}</p>
+                <p class="text-[10px] font-semibold text-primary mt-0.5">{{ formatHora(ag.data_hora) }}</p>
                 <p v-if="ag.servicos_nomes" class="text-[10px] text-gray-400 mt-0.5 truncate">{{ ag.servicos_nomes }}</p>
                 <p v-if="ag.funcionario_nome" class="text-[10px] text-indigo-500 font-semibold mt-0.5 truncate">👤 {{ ag.funcionario_nome }}</p>
                 <span class="inline-flex mt-1.5 items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold" :class="statusBadge(ag.status)">{{ statusLabel(ag.status) }}</span>
@@ -314,7 +314,7 @@
               </div>
               <button
                 type="button"
-                class="mt-0.5 w-full py-2 rounded-xl border border-dashed border-gray-200 text-gray-300 text-[10px] font-semibold hover:border-pink-300 hover:text-[#ff46a2] transition-colors"
+                class="mt-0.5 w-full py-2 rounded-xl border border-dashed border-gray-200 text-gray-300 text-[10px] font-semibold hover:border-primary hover:text-primary transition-colors"
                 @click="abrirAdicionar"
               >+ novo</button>
             </div>
@@ -347,7 +347,7 @@
                 :class="[
                   ag.status === 'solicitado'
                     ? 'bg-amber-50 border-amber-200 cursor-default hover:border-amber-300 hover:shadow-md'
-                    : 'bg-white border-gray-200/80 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-pink-200',
+                    : 'bg-white border-gray-200/80 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-primary-border',
                   kanbanDragging === ag.id ? 'opacity-40 scale-95' : ''
                 ]"
                 @dragstart="ag.status !== 'solicitado' && kanbanDragStart(ag)"
@@ -356,7 +356,7 @@
               >
                 <div class="h-0.5 w-full rounded-full mb-2" :class="statusCor(ag.status)" />
                 <p class="text-xs font-bold text-gray-900 truncate leading-tight">{{ ag.cliente_nome ?? ag.nome_solicitante ?? '\u2014' }}</p>
-                <p class="text-[10px] font-semibold text-[#ff46a2] mt-0.5">{{ formatHora(ag.data_hora) }}</p>
+                <p class="text-[10px] font-semibold text-primary mt-0.5">{{ formatHora(ag.data_hora) }}</p>
                 <p v-if="ag.servicos_nomes" class="text-[10px] text-gray-400 mt-0.5 truncate">{{ ag.servicos_nomes }}</p>
                 <p v-if="ag.funcionario_nome" class="text-[10px] text-indigo-500 font-semibold mt-0.5 truncate">👤 {{ ag.funcionario_nome }}</p>
                 <span class="inline-flex mt-1.5 items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold" :class="statusBadge(ag.status)">{{ statusLabel(ag.status) }}</span>
@@ -377,7 +377,7 @@
               </div>
               <button
                 type="button"
-                class="mt-0.5 w-full py-2 rounded-xl border border-dashed border-gray-200 text-gray-300 text-[10px] font-semibold hover:border-pink-300 hover:text-[#ff46a2] transition-colors"
+                class="mt-0.5 w-full py-2 rounded-xl border border-dashed border-gray-200 text-gray-300 text-[10px] font-semibold hover:border-primary hover:text-primary transition-colors"
                 @click="abrirAdicionar"
               >+ novo</button>
             </div>
@@ -413,7 +413,7 @@
               :class="[
                 ag.status === 'solicitado'
                   ? 'bg-amber-50 border-amber-200 cursor-default hover:border-amber-300 hover:shadow-md'
-                  : 'bg-white border-gray-200/80 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-pink-200',
+                  : 'bg-white border-gray-200/80 cursor-grab active:cursor-grabbing hover:shadow-md hover:border-primary',
                 kanbanDragging === ag.id ? 'opacity-40 scale-95' : ''
               ]"
               @dragstart="ag.status !== 'solicitado' && kanbanDragStart(ag)"
@@ -422,7 +422,7 @@
             >
               <div class="h-0.5 w-full rounded-full mb-2" :class="statusCor(ag.status)" />
               <p class="text-xs font-bold text-gray-900 truncate leading-tight">{{ ag.cliente_nome ?? ag.nome_solicitante ?? '\u2014' }}</p>
-              <p class="text-[10px] font-semibold text-[#ff46a2] mt-0.5">{{ formatHora(ag.data_hora) }}</p>
+              <p class="text-[10px] font-semibold text-primary mt-0.5">{{ formatHora(ag.data_hora) }}</p>
               <p v-if="ag.servicos_nomes" class="text-[10px] text-gray-400 mt-0.5 truncate">{{ ag.servicos_nomes }}</p>
               <p v-if="ag.funcionario_nome" class="text-[10px] text-indigo-500 font-semibold mt-0.5 truncate">👤 {{ ag.funcionario_nome }}</p>
               <span class="inline-flex mt-1.5 items-center rounded-full px-1.5 py-0.5 text-[9px] font-semibold" :class="statusBadge(ag.status)">{{ statusLabel(ag.status) }}</span>
@@ -444,7 +444,7 @@
             </div>
             <button
               type="button"
-              class="mt-0.5 w-full py-2 rounded-xl border border-dashed border-gray-200 text-gray-300 text-[10px] font-semibold hover:border-pink-300 hover:text-[#ff46a2] transition-colors"
+              class="mt-0.5 w-full py-2 rounded-xl border border-dashed border-gray-200 text-gray-300 text-[10px] font-semibold hover:border-primary hover:text-primary transition-colors"
               @click="abrirAdicionar"
             >+ novo</button>
           </div>
@@ -481,7 +481,7 @@
                 <label class="text-xs font-semibold text-gray-600 uppercase tracking-widest">Cliente <span class="text-red-500">*</span></label>
                 <button
                   type="button"
-                  class="inline-flex items-center gap-1 text-xs font-bold text-[#ff46a2] hover:text-pink-600 transition-colors"
+                  class="inline-flex items-center gap-1 text-xs font-bold text-primary hover:text-primary transition-colors"
                   @click="quickClienteAberto = !quickClienteAberto"
                 >
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -495,7 +495,7 @@
                   v-model="buscaCliente"
                   type="text"
                   placeholder="Pesquisar cliente pelo nome..."
-                  class="w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+                  class="w-full rounded-xl border px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                   :class="formErrors.cliente_id ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50'"
                   @focus="clienteDropdownAberto = true"
                   @input="clienteDropdownAberto = true"
@@ -522,10 +522,10 @@
                     v-for="c in clientesFiltradosAgendamento"
                     :key="c.id"
                     type="button"
-                    class="w-full text-left px-4 py-2.5 text-sm hover:bg-pink-50 transition-colors flex items-center gap-3 border-b border-gray-50 last:border-0"
+                    class="w-full text-left px-4 py-2.5 text-sm hover:bg-primary-5 transition-colors flex items-center gap-3 border-b border-gray-50 last:border-0"
                     @mousedown.prevent="selecionarCliente(c)"
                   >
-                    <span class="w-7 h-7 rounded-full bg-pink-100 text-pink-600 flex items-center justify-center text-[10px] font-black shrink-0">
+                    <span class="w-7 h-7 rounded-full bg-primary-10 text-primary flex items-center justify-center text-[10px] font-black shrink-0">
                       {{ c.nome.split(' ').map((n: string) => n[0]).slice(0, 2).join('').toUpperCase() }}
                     </span>
                     <div>
@@ -553,7 +553,7 @@
               <button
                 type="button"
                 class="w-full rounded-xl border-2 px-4 py-3 text-left transition-all hover:shadow-md focus:outline-none"
-                :class="formErrors.slots ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 hover:border-pink-300'"
+                :class="formErrors.slots ? 'border-red-400 bg-red-50' : 'border-gray-200 bg-gray-50 hover:border-primary'"
                 @click="modalServicosAberto = true"
               >
                 <div v-if="!form.servicosSelecionados.length" class="flex items-center justify-between gap-2 text-sm text-gray-400 font-semibold">
@@ -565,7 +565,7 @@
                     v-for="id in form.servicosSelecionados"
                     :key="id"
                     class="inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full text-white"
-                    style="background:#ec4899"
+                    style="background: var(--color-primary)"
                   >
                     {{ servicosAtivos.find(s => s.id === id)?.nome }}
                   </span>
@@ -573,7 +573,7 @@
                 </div>
               </button>
               <p v-if="formErrors.slots" class="text-xs text-red-500 mt-1.5">{{ formErrors.slots }}</p>
-              <p v-if="form.servicosSelecionados.length" class="text-xs font-bold mt-1.5" style="color:#ec4899">
+              <p v-if="form.servicosSelecionados.length" class="text-xs font-bold mt-1.5" style="color: var(--color-primary)">
                 Total estimado: {{ formatPreco(totalSelecionado) }}
               </p>
             </div>
@@ -584,12 +584,12 @@
               :key="item.servico.id"
               class="flex flex-col gap-3 rounded-2xl border-2 p-4 transition-all"
               :style="item.data && !item.diaFechado && item.horario
-                ? { borderColor: '#ec4899' }
+                ? { borderColor: 'var(--color-primary)' }
                 : { borderColor: '#e5e7eb' }"
             >
               <!-- Cabeçalho -->
               <div class="flex items-center gap-2">
-                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black text-white shrink-0" style="background:#ec4899">{{ idx + 1 }}</div>
+                <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black text-white shrink-0" style="background: var(--color-primary)">{{ idx + 1 }}</div>
                 <div class="flex-1 min-w-0">
                   <p class="text-sm font-bold text-gray-900">{{ item.servico.nome }}</p>
                   <!-- Profissional: dropdown se há mais de um, texto fixo se só um -->
@@ -603,12 +603,12 @@
                         ? 'text-white border-transparent'
                         : 'border-gray-200 text-gray-400 bg-white hover:border-gray-300'"
                       :style="item.funcionarioBigintId === sf.funcionarios?.id
-                        ? { background: '#ec4899', borderColor: '#ec4899' }
+                        ? { background: 'var(--color-primary)', borderColor: 'var(--color-primary)' }
                         : {}"
                       @click="item.funcionarioBigintId = sf.funcionarios?.id ?? null; onFuncionarioChangeItem(item)"
                     >{{ sf.funcionarios?.nome }}</button>
                   </div>
-                  <p v-else-if="item.servico.servico_funcionarios?.length === 1" class="text-xs font-semibold mt-0.5" style="color:#ec4899">
+                  <p v-else-if="item.servico.servico_funcionarios?.length === 1" class="text-xs font-semibold mt-0.5" style="color: var(--color-primary)">
                     {{ item.servico.servico_funcionarios[0]!.funcionarios?.nome }}
                   </p>
                 </div>
@@ -619,13 +619,13 @@
 
               <!-- Badge simultâneo: se há parceiro anterior na lista, oculta seleção e mostra aviso -->
               <template v-if="getSimultaneoAnterior(item)">
-                <div class="flex items-center gap-2.5 p-3 rounded-xl border border-pink-200 bg-pink-50">
-                  <svg class="w-4 h-4 text-pink-400 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <div class="flex items-center gap-2.5 p-3 rounded-xl border border-primary-border bg-primary-5">
+                  <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"/>
                   </svg>
                   <div class="flex-1 min-w-0">
-                    <p class="text-xs font-bold text-pink-700">Simultâneo com {{ getSimultaneoAnterior(item)!.servico.nome }}</p>
-                    <p class="text-xs text-pink-500 mt-0.5">
+                    <p class="text-xs font-bold text-primary">Simultâneo com {{ getSimultaneoAnterior(item)!.servico.nome }}</p>
+                    <p class="text-xs text-primary mt-0.5">
                       {{ item.horario ? `Agendado às ${formatHoraSlot(item.horario)} — mesmo horário` : 'Aguardando seleção de horário acima…' }}
                     </p>
                   </div>
@@ -641,7 +641,7 @@
                 <input
                   v-model="item.data"
                   type="date"
-                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-300"
+                  class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm font-semibold text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary"
                   @change="onDataChangeItemInterno(item)"
                 />
                 <div v-if="item.diaFechado" class="flex items-center gap-2 p-2.5 bg-orange-50 border border-orange-200 rounded-xl mt-1">
@@ -657,7 +657,7 @@
                 <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Horário</label>
 
                 <div v-if="item.loading" class="flex items-center gap-2 py-3 justify-center">
-                  <div class="w-4 h-4 rounded-full border-2 border-gray-200 animate-spin" style="border-top-color:#ec4899" />
+                  <div class="w-4 h-4 rounded-full border-2 border-gray-200 animate-spin" style="border-top-color: var(--color-primary)" />
                   <p class="text-xs text-gray-400">Verificando disponibilidade...</p>
                 </div>
 
@@ -694,7 +694,7 @@
             <!-- Status -->
             <div>
               <label class="block text-xs font-semibold text-gray-600 uppercase tracking-widest mb-1.5">Status</label>
-              <select v-model="form.status" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400">
+              <select v-model="form.status" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
                 <option value="agendado">Agendado</option>
                 <option value="confirmado">Confirmado</option>
                 <option value="concluido">Concluído</option>
@@ -710,7 +710,7 @@
                 v-model="form.observacoes"
                 rows="2"
                 placeholder="Observações sobre o agendamento..."
-                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 resize-none"
+                class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary resize-none"
               />
             </div>
 
@@ -719,7 +719,7 @@
               <button
                 type="submit"
                 :disabled="saving"
-                class="flex-1 py-2.5 rounded-xl bg-[#ff46a2] text-white text-sm font-bold hover:bg-pink-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                class="flex-1 py-2.5 rounded-xl bg-primary text-primary-text text-sm font-bold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {{ saving ? 'Salvando...' : (editando ? 'Salvar' : 'Agendar') }}
               </button>
@@ -734,11 +734,11 @@
       <Transition name="quick-card">
         <div v-if="quickClienteAberto" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div class="absolute inset-0 bg-black/30 backdrop-blur-[2px]" @click="quickClienteAberto = false" />
-          <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm border border-pink-100">
+          <div class="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm border border-primary-10">
             <!-- Header -->
-            <div class="px-6 pt-5 pb-4 border-b border-pink-100 flex items-center justify-between">
+            <div class="px-6 pt-5 pb-4 border-b border-primary-10 flex items-center justify-between">
               <div class="flex items-center gap-2.5">
-                <div class="w-8 h-8 rounded-xl bg-gradient-to-br from-pink-500 to-rose-400 flex items-center justify-center">
+                <div class="w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
                   <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                 </div>
                 <h3 class="text-base font-bold text-gray-900">Novo Cliente</h3>
@@ -752,16 +752,16 @@
               <p class="text-xs text-gray-500">Preencha os dados básicos. O cliente será selecionado automaticamente no agendamento.</p>
               <div>
                 <label class="block text-xs font-semibold text-gray-600 mb-1.5">Nome <span class="text-red-500">*</span></label>
-                <input v-model="quickCliente.nome" type="text" placeholder="Nome completo" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300" />
+                <input v-model="quickCliente.nome" type="text" placeholder="Nome completo" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
               </div>
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-gray-600 mb-1.5">Telefone</label>
-                  <input v-model="quickCliente.telefone" type="text" placeholder="(00) 00000-0000" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300" />
+                  <input v-model="quickCliente.telefone" type="text" placeholder="(00) 00000-0000" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
                 <div>
                   <label class="block text-xs font-semibold text-gray-600 mb-1.5">E-mail</label>
-                  <input v-model="quickCliente.email" type="email" placeholder="email@exemplo.com" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300" />
+                  <input v-model="quickCliente.email" type="email" placeholder="email@exemplo.com" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
                 </div>
               </div>
               <p v-if="quickClienteError" class="text-xs text-red-500">{{ quickClienteError }}</p>
@@ -769,7 +769,7 @@
             <!-- Footer -->
             <div class="px-6 pb-5 flex gap-3">
               <button type="button" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors" @click="quickClienteAberto = false">Cancelar</button>
-              <button type="button" :disabled="savingQuick" class="flex-1 py-2.5 rounded-xl bg-[#ff46a2] text-white text-sm font-bold hover:bg-pink-400 disabled:opacity-50 transition-colors" @click="saveQuickCliente">
+              <button type="button" :disabled="savingQuick" class="flex-1 py-2.5 rounded-xl bg-primary text-primary-text text-sm font-bold hover:opacity-90 disabled:opacity-50 transition-colors" @click="saveQuickCliente">
                 {{ savingQuick ? 'Salvando...' : 'Salvar e selecionar' }}
               </button>
             </div>
@@ -826,8 +826,8 @@
               </div>
 
               <!-- Serviços -->
-              <div v-if="confirmandoSolicitacao.servicos_nomes" class="bg-violet-50 border border-violet-100 rounded-2xl px-4 py-3">
-                <p class="text-[10px] font-bold text-violet-600 uppercase tracking-widest mb-1">Serviços</p>
+              <div v-if="confirmandoSolicitacao.servicos_nomes" class="bg-primary-5 border border-primary-border rounded-2xl px-4 py-3">
+                <p class="text-[10px] font-bold text-primary uppercase tracking-widest mb-1">Serviços</p>
                 <p class="text-sm font-semibold text-gray-800">{{ confirmandoSolicitacao.servicos_nomes }}</p>
               </div>
 
@@ -915,7 +915,7 @@
                   <input
                     v-model="horarios.abertura"
                     type="time"
-                    class="w-full rounded-2xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-800 focus:outline-none focus:border-violet-400 focus:bg-white transition-colors"
+                    class="w-full rounded-2xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-colors"
                   />
                 </div>
                 <div class="space-y-1.5">
@@ -923,7 +923,7 @@
                   <input
                     v-model="horarios.fechamento"
                     type="time"
-                    class="w-full rounded-2xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-800 focus:outline-none focus:border-violet-400 focus:bg-white transition-colors"
+                    class="w-full rounded-2xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-colors"
                   />
                 </div>
               </div>
@@ -951,7 +951,7 @@
                     <input
                       v-model="horarios.almoco_inicio"
                       type="time"
-                      class="w-full rounded-2xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-800 focus:outline-none focus:border-violet-400 focus:bg-white transition-colors"
+                      class="w-full rounded-2xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-colors"
                     />
                   </div>
                   <div class="space-y-1.5">
@@ -959,7 +959,7 @@
                     <input
                       v-model="horarios.almoco_fim"
                       type="time"
-                      class="w-full rounded-2xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-800 focus:outline-none focus:border-violet-400 focus:bg-white transition-colors"
+                      class="w-full rounded-2xl border-2 border-gray-200 bg-gray-50 px-4 py-3 text-sm font-bold text-gray-800 focus:outline-none focus:border-primary focus:bg-white transition-colors"
                     />
                   </div>
                 </div>
@@ -1030,7 +1030,7 @@
             <div class="flex items-center justify-between px-5 pt-5 pb-3 shrink-0">
               <div>
                 <h2 class="text-base font-black text-gray-900">Escolha os serviços</h2>
-                <p v-if="form.servicosSelecionados.length" class="text-xs font-bold mt-0.5" style="color:#ec4899">
+                <p v-if="form.servicosSelecionados.length" class="text-xs font-bold mt-0.5" style="color: var(--color-primary)">
                   {{ form.servicosSelecionados.length }} selecionado{{ form.servicosSelecionados.length > 1 ? 's' : '' }} · {{ formatPreco(totalSelecionado) }}
                 </p>
               </div>
@@ -1047,7 +1047,7 @@
                   type="button"
                   class="group relative rounded-2xl border-2 transition-all duration-200 text-left w-full overflow-hidden shadow-sm hover:shadow-lg hover:-translate-y-0.5"
                   :class="form.servicosSelecionados.includes(s.id) ? '' : 'border-gray-200 bg-white'"
-                  :style="form.servicosSelecionados.includes(s.id) ? { borderColor: '#ec4899', background: '#fff' } : {}"
+                  :style="form.servicosSelecionados.includes(s.id) ? { borderColor: 'var(--color-primary)', background: '#fff' } : {}"
                   @click="form.servicosSelecionados.includes(s.id)
                     ? form.servicosSelecionados.splice(form.servicosSelecionados.indexOf(s.id), 1)
                     : form.servicosSelecionados.push(s.id)"
@@ -1065,7 +1065,7 @@
                       class="w-full h-full flex items-center justify-center"
                       style="background: linear-gradient(135deg, #fce7f3, #f5d0fe)"
                     >
-                      <svg class="w-8 h-8 text-pink-200" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
+                      <svg class="w-8 h-8 text-white/60" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z"/></svg>
                     </div>
                     <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                     <!-- Preço sobre a foto -->
@@ -1076,7 +1076,7 @@
                     <div
                       v-if="form.servicosSelecionados.includes(s.id)"
                       class="absolute top-2 right-3 w-6 h-6 rounded-full flex items-center justify-center shadow-lg"
-                      style="background:#ec4899"
+                      style="background: var(--color-primary)"
                     >
                       <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
                     </div>
@@ -1093,7 +1093,7 @@
                       <span
                         v-if="s.servico_funcionarios?.[0]?.funcionarios?.nome"
                         class="inline-flex items-center gap-1 text-[11px] font-semibold"
-                        style="color:#ec4899"
+                        style="color: var(--color-primary)"
                       >
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
                         {{ s.servico_funcionarios[0]!.funcionarios?.nome }}
@@ -1101,7 +1101,7 @@
                     </div>
                   </div>
                   <!-- Barra colorida quando selecionado -->
-                  <div v-if="form.servicosSelecionados.includes(s.id)" class="h-1 w-full" style="background:linear-gradient(90deg,#ec4899,#c026d3)" />
+                  <div v-if="form.servicosSelecionados.includes(s.id)" class="h-1 w-full" style="background: var(--color-primary)" />
                 </button>
                 <p v-if="!servicosAtivos.length" class="text-xs text-gray-400 text-center py-6 bg-gray-50 rounded-2xl">Nenhum serviço ativo cadastrado</p>
               </div>
@@ -1112,7 +1112,7 @@
                 type="button"
                 :disabled="!form.servicosSelecionados.length"
                 class="w-full py-3 rounded-2xl text-sm font-black transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-lg text-white"
-                style="background:linear-gradient(135deg,#ec4899,#f43f5e)"
+                style="background: var(--color-primary-bg)"
                 @click="modalServicosAberto = false"
               >
                 {{ form.servicosSelecionados.length ? `Confirmar ${form.servicosSelecionados.length} serviço${form.servicosSelecionados.length > 1 ? 's' : ''}` : 'Selecione ao menos um serviço' }}
@@ -1656,7 +1656,7 @@ function statusBadge(s: string) {
     solicitado: 'bg-amber-100 text-amber-700',
     agendado: 'bg-blue-100 text-blue-700',
     confirmado: 'bg-green-100 text-green-700',
-    concluido: 'bg-violet-100 text-violet-700',
+    concluido: 'bg-primary-10 text-primary',
     cancelado: 'bg-red-100 text-red-600',
     faltou: 'bg-orange-100 text-orange-600',
   }[s] ?? 'bg-gray-100 text-gray-600'

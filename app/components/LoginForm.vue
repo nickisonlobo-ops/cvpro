@@ -42,7 +42,7 @@
       </p>
 
     <!-- Entrar -->
-    <form v-if="activeTab === 'login'" class="flex flex-col gap-5 text-gray-800" @submit.prevent="handleLogin">
+    <form v-if="activeTab === 'login'" class="form-group" @submit.prevent="handleLogin">
       <AppInput
         v-model="login.email"
         label="E-mail"
@@ -75,7 +75,7 @@
     </form>
 
     <!-- Criar conta -->
-    <form v-else class="flex flex-col gap-5 text-gray-800" @submit.prevent="handleRegister">
+    <form v-else class="form-group" @submit.prevent="handleRegister">
       <AppInput
         v-model="register.name"
         label="Nome"

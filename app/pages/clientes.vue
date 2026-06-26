@@ -33,18 +33,18 @@
               type="button"
               class="inline-flex items-center gap-2 text-sm font-semibold px-3 sm:px-5 py-2.5 rounded-xl transition-all duration-200"
               :class="filtroAberto
-                ? 'bg-white text-[#ff46a2] shadow-lg scale-[1.02]'
+                ? 'bg-white text-primary shadow-lg scale-[1.02]'
                 : 'bg-white/10 text-white hover:bg-white/20 border border-white/15 backdrop-blur-sm'"
               @click="filtroAberto = !filtroAberto"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
               <span class="hidden sm:inline">Filtros</span>
-              <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-pink-400 text-xs font-black">{{ filtrosAtivos }}</span>
+              <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-primary text-xs font-black">{{ filtrosAtivos }}</span>
             </button>
             <button
               v-if="isAdminOrGerente"
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg transition-all duration-200 hover:scale-[1.02]"
               @click="abrirAdicionar"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -89,10 +89,10 @@
       <div v-show="filtroAberto" class="bg-white rounded-3xl border border-gray-100 shadow-md mb-6 overflow-hidden">
         <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/70">
           <div class="flex items-center gap-2.5">
-            <svg class="w-4 h-4 text-[#ff46a2]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
             <span class="text-sm font-bold text-gray-700">Filtros</span>
           </div>
-          <button v-if="filtrosAtivos > 0" type="button" class="text-xs font-semibold text-[#ff46a2] hover:text-pink-600 hover:underline" @click="limparFiltros">
+          <button v-if="filtrosAtivos > 0" type="button" class="text-xs font-semibold text-primary hover:text-primary hover:underline" @click="limparFiltros">
             Limpar todos
           </button>
         </div>
@@ -106,7 +106,7 @@
           </div>
           <div class="flex flex-col gap-1.5">
             <label class="text-xs font-bold text-gray-500 uppercase tracking-widest">Cidade</label>
-            <select v-model="filtros.cidade" class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+            <select v-model="filtros.cidade" class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
               <option value="">Todas</option>
               <option v-for="c in cidadesUnicas" :key="c" :value="c">{{ c }}</option>
             </select>
@@ -120,8 +120,8 @@
                 type="button"
                 class="flex-1 text-xs font-bold py-2 rounded-xl border transition-colors"
                 :class="filtros.ativo === op.value
-                  ? 'bg-violet-600 border-violet-600 text-white'
-                  : 'border-gray-200 text-gray-500 hover:border-pink-400 hover:text-[#ff46a2] bg-white'"
+                  ? 'bg-primary border-primary text-white'
+                  : 'border-gray-200 text-gray-500 hover:border-primary hover:text-primary bg-white'"
                 @click="filtros.ativo = op.value"
               >
                 {{ op.label }}
@@ -137,14 +137,14 @@
       <div class="flex rounded-lg border border-gray-200 overflow-hidden flex-shrink-0">
         <button type="button" class="px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5"
           :class="viewMode === 'list' ? 'text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
-          :style="viewMode === 'list' ? { background: 'var(--color-primary, #059669)' } : {}"
+          :style="viewMode === 'list' ? { background: 'var(--color-primary)' } : {}"
           @click="viewMode = 'list'">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" /></svg>
           Lista
         </button>
         <button type="button" class="px-3 py-1.5 text-xs font-bold transition-all flex items-center gap-1.5"
           :class="viewMode === 'kanban' ? 'text-white' : 'bg-white text-gray-500 hover:bg-gray-50'"
-          :style="viewMode === 'kanban' ? { background: 'var(--color-primary, #059669)' } : {}"
+          :style="viewMode === 'kanban' ? { background: 'var(--color-primary)' } : {}"
           @click="viewMode = 'kanban'">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 4.5v15m6-15v15m-10.875 0h15.75c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H4.125C3.504 4.5 3 5.004 3 5.625v12.75c0 .621.504 1.125 1.125 1.125z" /></svg>
           Kanban
@@ -155,7 +155,7 @@
     <!-- ═══ MODO LISTA ═══ -->
     <div v-if="viewMode === 'list'">
       <div v-if="loading" class="flex flex-col items-center justify-center gap-4 py-32">
-      <span class="inline-block w-12 h-12 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+      <span class="spinner spinner-lg" />
       <span class="text-sm text-gray-400 font-medium">Carregando clientes...</span>
     </div>
 
@@ -169,7 +169,7 @@
     <div v-else class="bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden">
       <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/50">
         <span class="text-sm font-semibold text-gray-600">
-          <span class="text-[#ff46a2] font-black">{{ clientesFiltrados.length }}</span>
+          <span class="text-primary font-black">{{ clientesFiltrados.length }}</span>
           resultado(s)
           <span v-if="filtrosAtivos > 0" class="text-gray-400 font-normal"> �?" filtros aplicados</span>
         </span>
@@ -203,21 +203,21 @@
             <tr
               v-for="cli in clientesFiltrados"
               :key="cli.id"
-              class="hover:bg-pink-50/40 transition-colors duration-150 group"
+              class="hover:bg-primary-5/40 transition-colors duration-150 group"
             >
               <td class="px-7 py-4">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-violet-100 text-[#ff46a2] font-black text-xs">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary-10 text-primary font-black text-xs">
                   {{ cli.id }}
                 </span>
               </td>
               <td class="px-5 py-4">
                 <div class="flex items-center gap-3">
-                  <div class="w-9 h-9 rounded-full bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center text-white font-black text-sm shrink-0 shadow-sm shadow-pink-200 select-none">
+                  <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-text font-black text-sm shrink-0 shadow-sm select-none">
                     {{ initials(cli.nome) }}
                   </div>
                   <button
                     type="button"
-                    class="font-semibold text-gray-800 max-w-[160px] block truncate hover:text-violet-600 transition-colors cursor-pointer"
+                    class="font-semibold text-gray-800 max-w-[160px] block truncate hover:text-primary transition-colors cursor-pointer"
                     @click="abrirDetalhesCliente(cli)"
                   >
                     {{ cli.nome }}
@@ -247,7 +247,7 @@
                   {{ cli.ativo !== false ? 'Ativo' : 'Inativo' }}
                 </span>
               </td>
-              <td class="px-7 py-4 text-right sm:sticky sm:right-0 group-hover:bg-pink-50/40 transition-colors">
+              <td class="px-7 py-4 text-right sm:sticky sm:right-0 group-hover:bg-primary-5/40 transition-colors">
                 <div class="flex items-center justify-end gap-1">
                   <button
                     v-if="cli.telefone"
@@ -261,7 +261,7 @@
                   <button
                     v-if="isAdminOrGerente"
                     type="button"
-                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-[#ff46a2] hover:bg-pink-100 transition-colors"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-primary hover:bg-primary-10 transition-colors"
                     title="Editar"
                     @click="editCliente(cli)"
                   >
@@ -339,7 +339,7 @@
                 <AppInput v-model="form.cidade" label="Cidade" placeholder="Ex: São Paulo" />
                 <div class="flex flex-col gap-1.5">
                   <label class="text-sm font-semibold text-gray-700">Estado</label>
-                  <select v-model="form.estado" class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500">
+                  <select v-model="form.estado" class="w-full rounded-xl border border-gray-200 px-4 py-2.5 text-sm text-gray-800 bg-gray-50/50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
                     <option value="">Selecione</option>
                     <option v-for="uf in ufs" :key="uf" :value="uf">{{ uf }}</option>
                   </select>
@@ -515,13 +515,13 @@
               <div class="border-t border-gray-100 pt-6">
                 <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center justify-between">
                   <span>Histórico de Atendimentos</span>
-                  <span class="inline-flex items-center justify-center min-w-[32px] h-8 px-2 rounded-lg bg-violet-100 text-violet-700 text-sm font-bold">
+                  <span class="inline-flex items-center justify-center min-w-[32px] h-8 px-2 rounded-lg bg-primary-10 text-primary text-sm font-bold">
                     {{ atendimentosCliente.length }}
                   </span>
                 </h3>
 
                 <div v-if="carregandoAtendimentos" class="flex items-center justify-center gap-3 py-8">
-                  <span class="inline-block w-8 h-8 border-4 border-violet-600 border-t-transparent rounded-full animate-spin" />
+                  <span class="spinner spinner-md" />
                   <span class="text-sm text-gray-500">Carregando atendimentos...</span>
                 </div>
 
@@ -598,7 +598,7 @@
                         v-model="formularioMensagem.conteudo"
                         placeholder="Digite sua mensagem aqui..."
                         rows="5"
-                        class="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder:text-gray-400 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-violet-600 focus:border-violet-600 resize-none"
+                        class="w-full rounded-xl border border-gray-200 px-4 py-3 text-gray-900 placeholder:text-gray-400 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary resize-none"
                       />
                     </div>
                     <div v-if="erroMensagem" class="flex items-center gap-3 text-sm text-red-700 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
@@ -619,7 +619,7 @@
                     </button>
                     <button
                       type="button"
-                      class="flex-1 py-3 rounded-xl bg-gradient-to-r from-violet-600 to-violet-700 text-white hover:shadow-lg hover:scale-[1.02] transition-all font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                      class="flex-1 py-3 rounded-xl bg-primary text-primary-text hover:shadow-lg hover:scale-[1.02] transition-all font-bold text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                       :disabled="!formularioMensagem.conteudo.trim() || enviarMensagemLoading"
                       @click="enviarMensagem"
                     >

@@ -18,7 +18,7 @@
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-bold text-pink-100 uppercase tracking-widest">UpStudio</p>
+                <p class="text-xs font-bold text-white/80 uppercase tracking-widest">UpStudio</p>
                 <h1 class="text-2xl font-black text-white leading-tight">
                   {{ funcionarioLogado ? `Olá, ${primeiroNome(funcionarioLogado.nome)}!` : 'Minhas Atividades' }}
                 </h1>
@@ -31,7 +31,7 @@
                 {{ funcionarioLogado.cargo ?? 'Funcionário' }}
               </span>
               <span class="inline-flex items-center gap-1 text-xs font-bold bg-white/10 border border-white/15 text-white px-3 py-1.5 rounded-xl">
-                <span class="w-2 h-2 rounded-full bg-pink-400" />
+                <span class="w-2 h-2 rounded-full bg-primary" />
                 {{ minhasAtividades.length }} atividade(s)
               </span>
             </div>
@@ -40,7 +40,7 @@
           <!-- Stats rápidos -->
           <div v-if="funcionarioLogado && !loadingAtividades" class="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
             <div class="flex flex-col gap-1 bg-white/10 backdrop-blur-sm rounded-2xl px-4 py-3 border border-white/10">
-              <span class="text-[10px] font-bold text-pink-300 uppercase tracking-widest">Pendentes</span>
+              <span class="text-[10px] font-bold text-primary/70 uppercase tracking-widest">Pendentes</span>
               <span class="text-xl font-black text-white">{{ countAtivStatus('pendente') }}</span>
             </div>
             <div class="flex flex-col gap-1 bg-white/10 backdrop-blur-sm rounded-2xl px-4 py-3 border border-white/10">
@@ -61,8 +61,8 @@
 
       <!-- Sem funcionário vinculado -->
       <div v-if="!loadingAtividades && !funcionarioLogado" class="flex flex-col items-center justify-center py-24 gap-4">
-        <div class="w-16 h-16 rounded-2xl bg-pink-50 border border-pink-100 flex items-center justify-center">
-          <svg class="w-8 h-8 text-pink-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+        <div class="w-16 h-16 rounded-2xl bg-primary-5 border border-primary-border flex items-center justify-center">
+          <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
         </div>
         <div class="text-center">
           <p class="text-base font-bold text-gray-700">Nenhum funcionário vinculado</p>
@@ -72,7 +72,7 @@
 
       <!-- Loading -->
       <div v-else-if="loadingAtividades" class="flex items-center justify-center py-24">
-        <span class="inline-block w-10 h-10 border-4 border-pink-500 border-t-transparent rounded-full animate-spin" />
+        <span class="spinner spinner-md" />
       </div>
 
       <!-- Tabs e lista de atividades -->
@@ -82,12 +82,12 @@
           <div class="flex items-center gap-3 mb-4">
             <svg class="w-5 h-5 shrink-0" :style="{ color: 'var(--color-primary, #ec4899)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
             <h2 class="text-base font-bold text-gray-800 capitalize">{{ meuKanbanMesLabel }}</h2>
-            <button type="button" class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-pink-100 text-pink-600 hover:bg-pink-200 transition-colors" @click="meuKanbanIrParaHoje">Hoje</button>
+            <button type="button" class="text-xs font-semibold px-3 py-1.5 rounded-xl bg-primary-10 text-primary hover:bg-primary-10 transition-colors" @click="meuKanbanIrParaHoje">Hoje</button>
             <div class="ml-auto flex gap-2">
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-pink-50 hover:text-pink-500 transition-colors shadow-sm" @click="meuKanbanSemanaAnterior">
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-primary-5 hover:text-primary transition-colors shadow-sm" @click="meuKanbanSemanaAnterior">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
               </button>
-              <button type="button" class="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-pink-50 hover:text-pink-500 transition-colors shadow-sm" @click="meuKanbanSemanaProxima">
+              <button type="button" class="w-8 h-8 flex items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 hover:bg-primary-5 hover:text-primary transition-colors shadow-sm" @click="meuKanbanSemanaProxima">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
               </button>
             </div>
@@ -187,8 +187,8 @@
             type="button"
             class="shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all duration-150"
             :class="tabAtiva === tab.value
-              ? 'bg-pink-500 text-white shadow-md'
-              : 'bg-white text-gray-600 border border-gray-200 hover:border-pink-400 hover:text-pink-700'"
+              ? 'bg-primary text-primary-text shadow-md'
+              : 'bg-white text-gray-600 border border-gray-200 hover:border-primary hover:text-primary'"
             @click="tabAtiva = tab.value"
           >
             {{ tab.label }}
@@ -202,8 +202,8 @@
         </div>
 
         <!-- Frase motivacional -->
-        <div v-if="funcionarioLogado" class="mb-5 flex items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-gray-50 to-pink-50/40 border border-pink-100">
-          <div class="shrink-0 w-8 h-8 rounded-xl bg-pink-500 flex items-center justify-center">
+        <div v-if="funcionarioLogado" class="mb-5 flex items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-gray-50 to-primary-5 border border-primary-border">
+          <div class="shrink-0 w-8 h-8 rounded-xl bg-primary flex items-center justify-center">
             <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/></svg>
           </div>
           <p class="text-sm font-semibold text-gray-800 leading-snug">{{ fraseAtual }}</p>
@@ -242,7 +242,7 @@
                 <h3 class="font-black text-white text-sm leading-snug tracking-tight drop-shadow-sm">{{ at.titulo }}</h3>
                 <span :class="['shrink-0 inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full border',
                   at.status === 'em_andamento' ? 'bg-blue-500/20 border-blue-400/40 text-blue-200' :
-                  at.status === 'pendente'     ? 'bg-pink-500/20 border-pink-400/40 text-pink-200' :
+                  at.status === 'pendente'     ? 'bg-primary/20 border-primary/40 text-white/80' :
                   'bg-white/10 border-white/20 text-white/80']">
                   <span v-if="at.status === 'em_andamento'" class="relative flex w-2 h-2">
                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-300 opacity-75" />
@@ -324,7 +324,7 @@
               </div>
               <div>
                 <p class="text-base font-black text-white leading-tight">Parabéns, {{ funcionarioLogado ? primeiroNome(funcionarioLogado.nome) : 'campeão' }}!</p>
-                <p class="text-sm text-pink-100/90 mt-0.5">Todas as tarefas desta aba foram concluídas. Excelente trabalho! Continue assim! 🎉</p>
+                <p class="text-sm text-white/80 mt-0.5">Todas as tarefas desta aba foram concluídas. Excelente trabalho! Continue assim! 🎉</p>
               </div>
             </div>
           </div>
@@ -332,12 +332,12 @@
           <!-- Divisor Concluídas -->
           <div v-if="concluidasTab(tabAtiva).length > 0" class="mt-8">
             <div class="flex items-center gap-3 mb-4">
-              <div class="flex-1 h-px bg-pink-100" />
-              <span class="inline-flex items-center gap-1.5 text-xs font-bold text-pink-600 bg-pink-50 border border-pink-100 px-3 py-1 rounded-full">
+              <div class="flex-1 h-px bg-primary-border" />
+              <span class="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary-5 border border-primary-border px-3 py-1 rounded-full">
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 Concluídas ({{ concluidasTab(tabAtiva).length }})
               </span>
-              <div class="flex-1 h-px bg-pink-100" />
+              <div class="flex-1 h-px bg-primary-10" />
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 opacity-70">
               <div
@@ -383,7 +383,7 @@
         <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
         <div class="relative px-6 sm:px-10 py-6 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-pink-100 mb-1">UpStudio · Painel Admin</p>
+            <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-white/80 mb-1">UpStudio · Painel Admin</p>
             <h1 class="text-xl sm:text-3xl font-black text-white leading-tight">Visão Geral do Negócio</h1>
             <p class="text-sm text-gray-300/70 mt-1">{{ dataHoje }}</p>
           </div>
@@ -391,12 +391,12 @@
             <button
               type="button"
               class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
-              :class="filtroAberto ? 'bg-white text-[#ff46a2] shadow-lg' : 'bg-white/10 text-white hover:bg-white/20 border border-white/15'"
+              :class="filtroAberto ? 'bg-white text-primary shadow-lg' : 'bg-white/10 text-white hover:bg-white/20 border border-white/15'"
               @click="filtroAberto = !filtroAberto"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
               Filtros
-              <span v-if="filtroPeriodo !== 'mes_atual'" class="w-2 h-2 rounded-full bg-[#ff46a2]" />
+              <span v-if="filtroPeriodo !== 'mes_atual'" class="w-2 h-2 rounded-full bg-primary" />
             </button>
             <div class="shrink-0 w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center">
               <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
@@ -412,26 +412,26 @@
         <div v-if="filtroAberto" class="bg-white rounded-3xl border border-gray-100 shadow-md mb-6 overflow-hidden">
           <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/60">
             <div class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-[#ff46a2]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+              <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
               <span class="text-sm font-black text-gray-700">Filtro Avançado</span>
             </div>
-            <button type="button" class="text-xs font-bold text-[#ff46a2] hover:text-pink-700" @click="resetarFiltros">Redefinir</button>
+            <button type="button" class="text-xs font-bold text-primary hover:text-primary" @click="resetarFiltros">Redefinir</button>
           </div>
           <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-6">
             <!-- Período financeiro -->
             <div>
-              <p class="text-[10px] font-black uppercase tracking-widest text-pink-500 mb-3">Período</p>
+              <p class="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Período</p>
               <div class="grid grid-cols-2 gap-2">
                 <button
                   v-for="opt in periodoOpcoes"
                   :key="opt.value"
                   type="button"
                   class="flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-semibold transition-all text-left"
-                  :class="filtroPeriodo === opt.value ? 'bg-pink-50 border-pink-300 text-[#ff46a2]' : 'border-gray-200 text-gray-600 hover:border-pink-200 hover:text-pink-500'"
+                  :class="filtroPeriodo === opt.value ? 'bg-primary-5 border-primary-border text-primary' : 'border-gray-200 text-gray-600 hover:border-primary-border hover:text-primary'"
                   @click="filtroPeriodo = opt.value; aplicarFiltros()"
                 >
-                  <span class="w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0" :class="filtroPeriodo === opt.value ? 'border-[#ff46a2]' : 'border-gray-300'">
-                    <span v-if="filtroPeriodo === opt.value" class="w-1.5 h-1.5 rounded-full bg-[#ff46a2]" />
+                  <span class="w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0" :class="filtroPeriodo === opt.value ? 'border-primary' : 'border-gray-300'">
+                    <span v-if="filtroPeriodo === opt.value" class="w-1.5 h-1.5 rounded-full bg-primary" />
                   </span>
                   {{ opt.label }}
                 </button>
@@ -440,13 +440,13 @@
 
             <!-- Mês/Ano específico -->
             <div>
-              <p class="text-[10px] font-black uppercase tracking-widest text-pink-500 mb-3">Mês / Ano Específico</p>
+              <p class="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Mês / Ano Específico</p>
               <div class="grid grid-cols-2 gap-3">
                 <div>
                   <label class="block text-xs font-semibold text-gray-500 mb-1.5">Mês</label>
                   <select
                     v-model="filtroMes"
-                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     @change="filtroPeriodo = 'personalizado'; aplicarFiltros()"
                   >
                     <option v-for="m in mesesOpcoes" :key="m.value" :value="m.value">{{ m.label }}</option>
@@ -456,7 +456,7 @@
                   <label class="block text-xs font-semibold text-gray-500 mb-1.5">Ano</label>
                   <select
                     v-model="filtroAno"
-                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-pink-300"
+                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
                     @change="filtroPeriodo = 'personalizado'; aplicarFiltros()"
                   >
                     <option v-for="a in anosOpcoes" :key="a" :value="a">{{ a }}</option>
@@ -464,7 +464,7 @@
                 </div>
               </div>
               <div class="mt-3 flex items-center gap-1.5 text-xs text-gray-400">
-                <svg class="w-3.5 h-3.5 text-pink-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
                 Exibindo: <span class="font-bold text-gray-600 ml-0.5">{{ periodoLabelAtual }}</span>
               </div>
             </div>
@@ -475,13 +475,13 @@
       <!-- Financeiro -->
       <div class="mb-3 flex items-center gap-2 px-1">
         <span class="text-[11px] font-black uppercase tracking-widest text-gray-400">Financeiro</span>
-        <div class="flex-1 h-px bg-pink-100" />
-        <span class="text-[10px] font-bold text-pink-400">{{ periodoLabelAtual }}</span>
+        <div class="flex-1 h-px bg-primary-10" />
+        <span class="text-[10px] font-bold text-primary">{{ periodoLabelAtual }}</span>
       </div>
       <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6">
 
         <!-- Faturamento -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-pink-100 p-4 shadow-sm">
+        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
 
 
           <div class="relative flex items-center gap-2 mb-3">
@@ -493,7 +493,7 @@
         </div>
 
         <!-- Agendamentos do mês -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-pink-100 p-4 shadow-sm">
+        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
 
 
           <div class="relative flex items-center gap-2 mb-3">
@@ -505,7 +505,7 @@
         </div>
 
         <!-- Contas a pagar -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-pink-100 p-4 shadow-sm">
+        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
 
 
           <div class="relative flex items-center gap-2 mb-3">
@@ -515,14 +515,14 @@
           <p class="relative text-lg sm:text-xl font-black text-gray-900 truncate">{{ resumoLoading ? '...' : formatCurrency(valorContasPagar) }}</p>
           <div class="relative flex items-center gap-1.5 mt-1">
             <span class="text-[11px] text-gray-500">em aberto</span>
-            <span class="inline-flex items-center justify-center text-[10px] font-black px-1.5 py-0.5 rounded-full bg-pink-50 text-gray-600 border border-pink-100">
+            <span class="inline-flex items-center justify-center text-[10px] font-black px-1.5 py-0.5 rounded-full bg-primary-5 text-gray-600 border border-primary-10">
               {{ resumoLoading ? '...' : totalContasPagar }} conta{{ totalContasPagar !== 1 ? 's' : '' }}
             </span>
           </div>
         </div>
 
         <!-- Contas vencidas -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-pink-100 p-4 shadow-sm">
+        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
 
 
           <div class="relative flex items-center gap-2 mb-3">
@@ -542,13 +542,13 @@
       <!-- Operacional -->
       <div class="mb-3 flex items-center gap-2 px-1">
         <span class="text-[11px] font-black uppercase tracking-widest text-gray-400">Operacional</span>
-        <div class="flex-1 h-px bg-pink-100" />
-        <span class="text-[10px] font-bold text-pink-400">{{ periodoLabelAtual }}</span>
+        <div class="flex-1 h-px bg-primary-10" />
+        <span class="text-[10px] font-bold text-primary">{{ periodoLabelAtual }}</span>
       </div>
       <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-8">
 
         <!-- Ticket Médio -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-pink-100 p-4 shadow-sm">
+        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
 
 
           <div class="relative flex items-center gap-2 mb-3">
@@ -560,7 +560,7 @@
         </div>
 
         <!-- Produtos em estoque -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-pink-100 p-4 shadow-sm">
+        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
 
 
           <div class="relative flex items-center gap-2 mb-3">
@@ -569,15 +569,15 @@
           </div>
           <p class="relative text-2xl font-black text-gray-900">{{ resumoLoading ? '...' : produtosTotal }}</p>
           <div class="relative flex items-center gap-2 mt-1 flex-wrap">
-            <span v-if="produtosBaixoEstoque > 0" class="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-pink-100 text-pink-700">
-              <span class="w-1.5 h-1.5 rounded-full bg-pink-400" />{{ produtosBaixoEstoque }} estoque baixo
+            <span v-if="produtosBaixoEstoque > 0" class="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary-10 text-primary">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary" />{{ produtosBaixoEstoque }} estoque baixo
             </span>
             <span v-else class="text-[11px] text-gray-500">todos ok</span>
           </div>
         </div>
 
         <!-- Tarefas Hoje -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-pink-100 p-4 shadow-sm">
+        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
 
 
           <div class="relative flex items-center gap-2 mb-3">
@@ -589,7 +589,7 @@
         </div>
 
         <!-- Clientes -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-pink-100 p-4 shadow-sm">
+        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
 
 
           <div class="relative flex items-center gap-2 mb-3">
@@ -604,7 +604,7 @@
       <!-- Atalhos -->
       <div class="mb-3 flex items-center gap-2 px-1">
         <span class="text-[11px] font-black uppercase tracking-widest text-gray-400">Atalhos</span>
-        <div class="flex-1 h-px bg-pink-100" />
+        <div class="flex-1 h-px bg-primary-10" />
       </div>
       <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
         <NuxtLink
@@ -627,7 +627,7 @@
 
     <!-- Loading inicial -->
     <div v-if="adminLoading" class="flex items-center justify-center py-32">
-      <span class="inline-block w-10 h-10 border-4 border-pink-500 border-t-transparent rounded-full animate-spin" />
+      <span class="spinner spinner-md" />
     </div>
   </div>
 </template>
@@ -923,14 +923,14 @@ function statusLabel(s: string | null) {
   return s ?? '�?"'
 }
 function statusBadgeClass(s: string | null) {
-  if (s === 'pendente')     return 'bg-pink-100 text-pink-700'
+  if (s === 'pendente')     return 'bg-primary-10 text-primary'
   if (s === 'em_andamento') return 'bg-blue-100 text-blue-700'
   if (s === 'concluida')    return 'bg-green-100 text-green-700'
   if (s === 'cancelada')    return 'bg-red-100 text-red-700'
   return 'bg-gray-100 text-gray-500'
 }
 function statusDotClass(s: string | null) {
-  if (s === 'pendente')     return 'bg-pink-500'
+  if (s === 'pendente')     return 'bg-primary'
   if (s === 'em_andamento') return 'bg-blue-500'
   if (s === 'concluida')    return 'bg-green-500'
   if (s === 'cancelada')    return 'bg-red-500'
@@ -964,7 +964,7 @@ function periodicidadeLabel(p: string | null) {
   return p ?? '�?"'
 }
 function periodicidadeBadgeClass(p: string | null) {
-  if (p === 'diaria')    return 'bg-violet-100 text-violet-700'
+  if (p === 'diaria')    return 'bg-primary-10 text-primary'
   if (p === 'quinzenal') return 'bg-teal-100 text-teal-700'
   if (p === 'mensal')    return 'bg-rose-100 text-rose-700'
   return 'bg-gray-100 text-gray-500'
@@ -1057,7 +1057,7 @@ function agKanbanStatusCor(s: string) {
   return { solicitado: 'bg-amber-400', agendado: 'bg-blue-400', confirmado: 'bg-green-400', concluido: 'bg-violet-500', cancelado: 'bg-red-400', faltou: 'bg-orange-400' }[s] ?? 'bg-gray-300'
 }
 function agKanbanStatusBadge(s: string) {
-  return { solicitado: 'bg-amber-100 text-amber-700', agendado: 'bg-blue-100 text-blue-700', confirmado: 'bg-green-100 text-green-700', concluido: 'bg-violet-100 text-violet-700', cancelado: 'bg-red-100 text-red-600', faltou: 'bg-orange-100 text-orange-600' }[s] ?? 'bg-gray-100 text-gray-600'
+  return { solicitado: 'bg-amber-100 text-amber-700', agendado: 'bg-blue-100 text-blue-700', confirmado: 'bg-green-100 text-green-700', concluido: 'bg-primary-10 text-primary', cancelado: 'bg-red-100 text-red-600', faltou: 'bg-orange-100 text-orange-600' }[s] ?? 'bg-gray-100 text-gray-600'
 }
 function agKanbanStatusLabel(s: string) {
   return { solicitado: 'Solicitado', agendado: 'Agendado', confirmado: 'Confirmado', concluido: 'Concluído', cancelado: 'Cancelado', faltou: 'Faltou' }[s] ?? s

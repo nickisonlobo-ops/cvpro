@@ -1,10 +1,10 @@
-﻿<template>
-  <!-- Botão flutuante de menu (FAB) -->
+<template>
+  <!-- FAB de menu -->
   <button
     type="button"
-    class="fixed bottom-5 right-5 z-40 md:hidden w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all duration-300"
-    :style="{ background: 'var(--color-primary, #374151)' }"
-    :class="menuAberto ? 'rotate-45 scale-90' : 'hover:scale-110'"
+    class="fab-btn md:hidden"
+    :class="menuAberto ? 'fab-btn--open' : ''"
+    :style="{ background: 'var(--color-primary, #374151)', boxShadow: `0 8px 28px var(--glow-primary, rgba(55,65,81,0.45)), 0 2px 8px rgba(0,0,0,0.25)` }"
     @click="menuAberto = !menuAberto"
   >
     <svg v-if="!menuAberto" class="w-6 h-6 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -16,37 +16,39 @@
   </button>
 
   <!-- Backdrop -->
-  <Transition name="fade">
+  <Transition name="nav-fade">
     <div
       v-if="menuAberto"
-      class="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm md:hidden"
+      class="fixed inset-0 z-30 md:hidden"
+      style="background: rgba(0,0,0,0.50); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);"
       @click="menuAberto = false"
     />
   </Transition>
 
-  <!-- Menu expandido (grid de ícones) -->
-  <Transition name="slide-up">
+  <!-- Painel de navegação -->
+  <Transition name="nav-slide-up">
     <div
       v-if="menuAberto"
-      class="fixed bottom-24 left-4 right-4 z-40 md:hidden rounded-3xl shadow-2xl overflow-hidden"
-      :style="{ background: 'var(--color-sidebar, #ffffff)' }"
+      class="nav-panel md:hidden"
+      :style="{ background: 'var(--color-sidebar, #1f2937)', borderColor: 'var(--color-primary-border, rgba(255,255,255,0.10))' }"
     >
-      <div class="p-5">
-        <div class="grid grid-cols-4 gap-3">
-          <NuxtLink
-            v-for="item in navItems"
-            :key="item.to"
-            :to="item.to"
-            exact-active-class="menu-icon-active"
-            class="flex flex-col items-center justify-center gap-1.5 p-3 rounded-2xl transition-all duration-150 menu-icon"
-            @click="menuAberto = false"
-          >
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center" style="background: rgba(255,255,255,0.1)">
-              <AppNavIcon :name="item.icon" class="w-5 h-5" />
-            </div>
-            <span class="text-[10px] font-semibold text-center leading-tight whitespace-nowrap">{{ item.label }}</span>
-          </NuxtLink>
-        </div>
+      <!-- Handle de drag visual -->
+      <div class="nav-panel__handle" />
+
+      <div class="nav-panel__grid">
+        <NuxtLink
+          v-for="item in navItems"
+          :key="item.to"
+          :to="item.to"
+          exact-active-class="nav-item--active"
+          class="nav-item"
+          @click="menuAberto = false"
+        >
+          <div class="nav-item__icon-wrap">
+            <AppNavIcon :name="item.icon" class="w-5 h-5" />
+          </div>
+          <span class="nav-item__label">{{ item.label }}</span>
+        </NuxtLink>
       </div>
     </div>
   </Transition>
@@ -87,36 +89,115 @@ const navItems = computed(() =>
 </script>
 
 <style scoped>
-.menu-icon {
-  color: var(--color-primary-text, #ffffff);
-  opacity: 0.75;
+/* ── FAB ─────────────────────────────────────────────────────────────── */
+.fab-btn {
+  position:    fixed;
+  bottom:      1.25rem;
+  right:       1.25rem;
+  z-index:     40;
+  width:       56px;
+  height:      56px;
+  border-radius: 9999px;
+  border:      none;
+  cursor:      pointer;
+  display:     flex;
+  align-items: center;
+  justify-content: center;
+  transition:  transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 200ms ease;
 }
-.menu-icon:hover {
-  background: rgba(255,255,255,0.1);
-  opacity: 1;
+.fab-btn:hover   { transform: scale(1.08); }
+.fab-btn:active  { transform: scale(0.94); }
+.fab-btn--open   { transform: rotate(180deg) !important; }
+.fab-btn--open:hover { transform: rotate(180deg) scale(1.06) !important; }
+
+/* ── Painel ──────────────────────────────────────────────────────────── */
+.nav-panel {
+  position:    fixed;
+  bottom:      5.5rem;
+  left:        0.875rem;
+  right:       0.875rem;
+  z-index:     40;
+  border-radius: 1.5rem;
+  border:      1px solid;
+  overflow:    hidden;
+  box-shadow:  0 24px 60px rgba(0,0,0,0.40), 0 8px 20px rgba(0,0,0,0.25);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
-.menu-icon:active {
-  transform: scale(0.92);
+
+.nav-panel__handle {
+  width:         2.5rem;
+  height:        4px;
+  border-radius: 9999px;
+  background:    rgba(255,255,255,0.20);
+  margin:        0.875rem auto 0;
 }
-.menu-icon-active {
-  background: rgba(255,255,255,0.15) !important;
-  opacity: 1 !important;
+
+.nav-panel__grid {
+  display:               grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:                   0.375rem;
+  padding:               1rem;
 }
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+
+/* ── Item ────────────────────────────────────────────────────────────── */
+.nav-item {
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             0.375rem;
+  padding:         0.75rem 0.375rem;
+  border-radius:   1rem;
+  text-decoration: none;
+  color:           var(--color-primary-text, #fff);
+  opacity:         0.60;
+  transition:      background 130ms ease, opacity 130ms ease, transform 130ms ease;
 }
-.slide-up-enter-from,
-.slide-up-leave-to {
-  transform: translateY(30px);
-  opacity: 0;
+.nav-item:hover  { background: rgba(255,255,255,0.08); opacity: 0.90; }
+.nav-item:active { transform: scale(0.93); }
+.nav-item--active {
+  background: rgba(255,255,255,0.14) !important;
+  opacity:    1 !important;
 }
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
+
+.nav-item__icon-wrap {
+  width:            40px;
+  height:           40px;
+  border-radius:    11px;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  background:       rgba(255,255,255,0.08);
+  transition:       background 130ms ease;
 }
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+.nav-item--active .nav-item__icon-wrap {
+  background: rgba(255,255,255,0.16);
 }
+
+.nav-item__label {
+  font-size:   0.625rem;
+  font-weight: 700;
+  text-align:  center;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+/* ── Transições ──────────────────────────────────────────────────────── */
+.nav-slide-up-enter-active {
+  transition: transform 320ms cubic-bezier(0.16, 1, 0.3, 1), opacity 240ms ease;
+}
+.nav-slide-up-leave-active {
+  transition: transform 200ms ease, opacity 180ms ease;
+}
+.nav-slide-up-enter-from,
+.nav-slide-up-leave-to {
+  transform: translateY(28px);
+  opacity:   0;
+}
+
+.nav-fade-enter-active { transition: opacity 220ms ease; }
+.nav-fade-leave-active { transition: opacity 180ms ease; }
+.nav-fade-enter-from,
+.nav-fade-leave-to     { opacity: 0; }
 </style>

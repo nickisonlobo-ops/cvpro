@@ -31,7 +31,7 @@
             <button
               v-if="isAdminOrGerente"
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg transition-all duration-200 hover:scale-[1.02]"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg transition-all duration-200 hover:scale-[1.02]"
               @click="abrirAdicionar"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -75,7 +75,7 @@
           v-model="busca"
           type="text"
           placeholder="Buscar produto..."
-          class="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-pink-400/40 focus:border-pink-400"
+          class="w-full pl-9 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
         />
       </div>
       <div class="flex gap-2">
@@ -84,7 +84,7 @@
           :key="f.value"
           type="button"
           class="px-4 py-2.5 rounded-xl text-sm font-semibold border transition-colors"
-          :class="filtroAtivo === f.value ? 'bg-[#ff46a2] text-white border-[#ff46a2]' : 'bg-white text-gray-600 border-gray-200 hover:border-pink-400'"
+          :class="filtroAtivo === f.value ? 'bg-primary text-primary-text border-primary' : 'bg-white text-gray-600 border-gray-200 hover:border-primary'"
           @click="filtroAtivo = f.value"
         >
           {{ f.label }}
@@ -100,14 +100,14 @@
 
     <!-- LOADING -->
     <div v-if="loading" class="flex items-center justify-center py-20">
-      <span class="w-10 h-10 border-4 border-[#ff46a2] border-t-transparent rounded-full animate-spin" />
+      <span class="spinner spinner-md" />
     </div>
 
     <!-- TABELA DE PRODUTOS -->
     <div v-if="!loading" class="bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden">
       <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/50">
         <span class="text-sm font-semibold text-gray-600">
-          <span class="text-[#ff46a2] font-black">{{ produtosFiltrados.length }}</span> resultado(s)
+          <span class="text-primary font-black">{{ produtosFiltrados.length }}</span> resultado(s)
         </span>
         <span class="text-xs text-gray-400">Ordenado por nome</span>
       </div>
@@ -136,11 +136,11 @@
             <tr
               v-for="p in produtosFiltrados"
               :key="p.id"
-              class="hover:bg-pink-50/40 transition-colors duration-150 group"
+              class="hover:bg-primary-5/40 transition-colors duration-150 group"
               :class="!p.ativo ? 'opacity-60' : ''"
             >
               <td class="px-7 py-3">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-pink-100 text-[#ff46a2] font-black text-xs">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-primary-10 text-primary font-black text-xs">
                   {{ p.id }}
                 </span>
               </td>
@@ -148,7 +148,7 @@
                 <div class="flex items-center gap-3">
                   <div
                     class="w-2 h-8 rounded-full shrink-0"
-                    :class="p.estoque <= 0 ? 'bg-red-400' : p.estoque <= 5 ? 'bg-pink-400' : 'bg-emerald-400'"
+                    :class="p.estoque <= 0 ? 'bg-red-400' : p.estoque <= 5 ? 'bg-primary' : 'bg-emerald-400'"
                   />
                   <span class="font-semibold text-gray-800 max-w-[180px] truncate">{{ p.nome }}</span>
                 </div>
@@ -159,11 +159,11 @@
                 <div class="flex items-center gap-2">
                   <span
                     class="font-black text-base"
-                    :class="p.estoque <= 0 ? 'text-red-500' : p.estoque <= 5 ? 'text-pink-500' : 'text-emerald-600'"
+                    :class="p.estoque <= 0 ? 'text-red-500' : p.estoque <= 5 ? 'text-primary' : 'text-emerald-600'"
                   >{{ p.estoque }}</span>
                   <span class="text-xs text-gray-400">unid.</span>
                   <span v-if="p.estoque <= 0" class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-600">Sem estoque</span>
-                  <span v-else-if="p.estoque <= 5" class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-pink-100 text-pink-600">Baixo</span>
+                  <span v-else-if="p.estoque <= 5" class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-primary-10 text-primary">Baixo</span>
                 </div>
               </td>
               <td class="px-5 py-3">
@@ -175,12 +175,12 @@
                   {{ p.ativo ? 'Ativo' : 'Inativo' }}
                 </span>
               </td>
-              <td class="px-7 py-3 text-right sm:sticky sm:right-0 group-hover:bg-pink-50/40 transition-colors">
+              <td class="px-7 py-3 text-right sm:sticky sm:right-0 group-hover:bg-primary-5/40 transition-colors">
                 <div class="flex items-center justify-end gap-1">
                   <button
                     v-if="isAdminOrGerente"
                     type="button"
-                    class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-white shadow-sm text-gray-600 hover:text-[#ff46a2] border border-gray-200 hover:border-pink-200 transition-colors"
+                    class="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full bg-white shadow-sm text-gray-600 hover:text-primary border border-gray-200 hover:border-primary-border transition-colors"
                     @click="abrirMovimento(p)"
                   >
                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg>
@@ -189,7 +189,7 @@
                   <button
                     v-if="isAdminOrGerente"
                     type="button"
-                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-[#ff46a2] hover:bg-pink-100 transition-colors"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-primary hover:bg-primary-10 transition-colors"
                     title="Editar"
                     @click="editProduto(p)"
                   >
@@ -234,7 +234,7 @@
                   <button
                     type="button"
                     class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-                    :class="form.ativo ? 'bg-[#ff46a2]' : 'bg-gray-300'"
+                    :class="form.ativo ? 'bg-primary' : 'bg-gray-300'"
                     @click="form.ativo = !form.ativo"
                   >
                     <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform" :class="form.ativo ? 'translate-x-6' : 'translate-x-1'" />
@@ -252,7 +252,7 @@
               </button>
               <button
                 type="button"
-                class="flex-1 py-2.5 rounded-xl text-sm font-bold text-white bg-[#ff46a2] hover:bg-pink-400 transition-colors disabled:opacity-50"
+                class="flex-1 py-2.5 rounded-xl text-sm font-bold text-primary-text bg-primary hover:opacity-90 transition-colors disabled:opacity-50"
                 :disabled="saving"
                 @click="editando ? salvarEdicao() : salvarAdicao()"
               >
@@ -286,7 +286,7 @@
                 <button
                   type="button"
                   class="flex-1 py-2 rounded-xl text-sm font-bold border-2 transition-colors"
-                  :class="tipoMovimento === 'entrada' ? 'bg-[#ff46a2] text-white border-[#ff46a2]' : 'bg-white text-gray-600 border-gray-200'"
+                  :class="tipoMovimento === 'entrada' ? 'bg-primary text-primary-text border-primary' : 'bg-white text-gray-600 border-gray-200'"
                   @click="tipoMovimento = 'entrada'"
                 >
                   + Entrada
@@ -310,7 +310,7 @@
               <button
                 type="button"
                 class="flex-1 py-2.5 rounded-xl text-sm font-bold text-white transition-colors disabled:opacity-50"
-                :class="tipoMovimento === 'entrada' ? 'bg-[#ff46a2] hover:bg-pink-400' : 'bg-red-500 hover:bg-red-400'"
+                :class="tipoMovimento === 'entrada' ? 'bg-primary hover:opacity-90' : 'bg-red-500 hover:bg-red-400'"
                 :disabled="savingMovimento"
                 @click="confirmarMovimento"
               >

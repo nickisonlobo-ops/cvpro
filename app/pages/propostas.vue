@@ -2,8 +2,8 @@
   <div class="min-h-full bg-gray-50/60 p-3 sm:p-8">
 
     <!-- ═══════════════════════════════ CABEÇALHO ═══════════════════════════════ -->
-    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl">
-      <div class="absolute inset-0" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #ec4899, #f43f5e))' }" />
+    <div class="page-header relative rounded-3xl overflow-hidden mb-8 shadow-xl">
+      <div class="page-header-overlay absolute inset-0" />
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
       <div class="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
       <div class="absolute -bottom-20 left-1/4 w-96 h-96 rounded-full bg-white/[0.02] pointer-events-none" />

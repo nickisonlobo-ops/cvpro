@@ -2,8 +2,8 @@
   <div class="min-h-full bg-gray-50/60 p-3 sm:p-8">
 
     <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� CABE�?ALHO �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
-    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl">
-      <div class="absolute inset-0" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #ec4899, #f43f5e))' }" />
+    <div class="page-header relative rounded-3xl overflow-hidden mb-8 shadow-xl">
+      <div class="page-header-overlay absolute inset-0" />
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
       <div class="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
       <div class="absolute -bottom-20 left-1/4 w-96 h-96 rounded-full bg-white/[0.02] pointer-events-none" />
@@ -200,7 +200,7 @@
               <!-- Cliente -->
               <td class="px-5 py-4">
                 <div class="flex items-center gap-2.5">
-                  <div class="w-8 h-8 rounded-full bg-gradient-to-br from-violet-400 to-violet-600 flex items-center justify-center text-white font-black text-xs shrink-0 shadow-sm shadow-violet-200 select-none">
+                  <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-text font-black text-xs shrink-0 shadow-sm select-none">
                     {{ (venda.clientes?.nome ?? '?')[0]?.toUpperCase() }}
                   </div>
                   <span class="font-semibold text-gray-800 max-w-[160px] block truncate whitespace-nowrap">{{ venda.clientes?.nome ?? '�?"' }}</span>

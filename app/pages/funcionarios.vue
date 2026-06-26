@@ -1,8 +1,8 @@
 ﻿<template>
-  <div class="min-h-full bg-transparent p-3 sm:p-8">
+  <div class="min-h-full bg-transparent px-6 md:px-8 lg:px-12 py-6">
 
     <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� CABE�?ALHO �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
-    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl">
+    <div class="relative rounded-3xl overflow-hidden mb-6 shadow-xl">
       <div class="absolute inset-0" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #ec4899, #f43f5e))' }" />
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
       <div class="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
@@ -34,18 +34,18 @@
               type="button"
               class="inline-flex items-center gap-2 text-sm font-semibold px-3 sm:px-5 py-2.5 rounded-xl transition-all duration-200"
               :class="filtroAberto
-                ? 'bg-white text-[#ff46a2] shadow-lg scale-[1.02]'
+                ? 'bg-white text-primary shadow-lg scale-[1.02]'
                 : 'bg-white/10 text-white hover:bg-white/20 border border-white/15 backdrop-blur-sm'"
               @click="filtroAberto = !filtroAberto"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
               <span class="hidden sm:inline">Filtros</span>
-              <span v-if="buscaAtiva" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-pink-400 text-xs font-black">1</span>
+              <span v-if="buscaAtiva" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-primary text-xs font-black">1</span>
             </button>
             <button
               v-if="isAdminOrGerente"
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg transition-all duration-200 hover:scale-[1.02]"
               @click="modalFolha = true"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
@@ -54,7 +54,7 @@
             <button
               v-if="isAdminOrGerente"
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg transition-all duration-200 hover:scale-[1.02]"
               @click="abrirAdicionar"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -97,10 +97,10 @@
       <div v-show="filtroAberto" class="bg-white rounded-3xl border border-gray-100 shadow-md mb-6 overflow-hidden">
         <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/70">
           <div class="flex items-center gap-2.5">
-            <svg class="w-4 h-4 text-[#ff46a2]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
             <span class="text-sm font-bold text-gray-700">Filtros</span>
           </div>
-          <button v-if="buscaAtiva" type="button" class="text-xs font-semibold text-[#ff46a2] hover:text-pink-600 hover:underline" @click="busca = ''">
+          <button v-if="buscaAtiva" type="button" class="text-xs font-semibold text-primary hover:text-primary hover:underline" @click="busca = ''">
             Limpar
           </button>
         </div>
@@ -144,30 +144,32 @@
     </div>
 
     <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� TABELA �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
-    <div v-else class="bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden">
-      <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/50">
+    <AppCard v-else elevation="raised" padding="none">
+      <template #header>
+        <div class="flex items-center justify-between px-7 py-4">
         <span class="text-sm font-semibold text-gray-600">
-          <span class="text-[#ff46a2] font-black">{{ funcionariosFiltrados.length }}</span>
+          <span class="text-primary font-black">{{ funcionariosFiltrados.length }}</span>
           resultado(s)
           <span v-if="buscaAtiva || filtroCargo" class="text-gray-400 font-normal"> �?" filtros aplicados</span>
         </span>
         <span class="text-xs text-gray-400">Ordenado por ID</span>
       </div>
+      </template>
 
       <div class="overflow-x-auto">
         <table class="min-w-full text-sm whitespace-nowrap">
           <thead>
-            <tr class="bg-gray-50 border-b border-gray-100">
-              <th class="text-left px-7 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">#</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Nome</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">E-mail</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">CPF</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Idade</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Cargo</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Perfil</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Salário</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Endereço</th>
-              <th class="px-7 py-4 text-right text-xs font-extrabold text-gray-400 uppercase tracking-widest sm:sticky sm:right-0 bg-gray-50">Ações</th>
+            <tr class="bg-primary-5">
+              <th class="text-left px-7 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">#</th>
+              <th class="text-left px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Nome</th>
+              <th class="text-left px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">E-mail</th>
+              <th class="text-left px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">CPF</th>
+              <th class="text-left px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Idade</th>
+              <th class="text-left px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Cargo</th>
+              <th class="text-left px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Perfil</th>
+              <th class="text-left px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Salário</th>
+              <th class="text-left px-5 py-4 text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em]">Endereço</th>
+              <th class="px-7 py-4 text-right text-[11px] font-semibold text-primary-500 uppercase tracking-[0.05em] sm:sticky sm:right-0 bg-gray-50">Ações</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
@@ -183,10 +185,10 @@
             <tr
               v-for="func in funcionariosFiltrados"
               :key="func.id"
-              class="hover:bg-pink-50/40 transition-colors duration-150 group"
+              class="hover:bg-primary-5/40 transition-colors duration-150 group"
             >
               <td class="px-7 py-4">
-                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-[#ff46a2] font-black text-xs">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-green-100 text-primary font-black text-xs">
                   {{ func.id }}
                 </span>
               </td>
@@ -202,7 +204,7 @@
               <td class="px-5 py-4 text-gray-500 font-medium tabular-nums">{{ func.cpf ?? '�?"' }}</td>
               <td class="px-5 py-4 text-gray-500 font-medium text-center">{{ func.idade ?? '�?"' }}</td>
               <td class="px-5 py-4">
-                <span v-if="func.cargo" class="inline-block text-xs font-bold bg-pink-50 text-[#ff46a2] border border-pink-200 rounded-xl px-3 py-1.5">
+                <span v-if="func.cargo" class="inline-block text-xs font-bold bg-primary-5 text-primary border border-primary-10 rounded-xl px-3 py-1.5">
                   {{ func.cargo }}
                 </span>
                 <span v-else class="text-gray-300">�?"</span>
@@ -218,19 +220,19 @@
                   {{ func.perfil ?? 'funcionario' }}
                 </span>
               </td>              <td class="px-5 py-4">
-                <span v-if="func.salario" class="font-black text-gray-900 tabular-nums">{{ formatCurrency(func.salario) }}</span>
+                <span v-if="func.salario" class="text-[15px] font-bold text-gray-900 font-[tabular-nums]">{{ formatCurrency(func.salario) }}</span>
                 <span v-else class="text-gray-300">�?"</span>
               </td>
               <td class="px-5 py-4">
                 <span class="text-gray-400 text-xs max-w-[200px] block truncate" :title="func.endereco ?? ''">{{ func.endereco ?? '�?"' }}</span>
               </td>
-              <td class="px-7 py-4 text-right sm:sticky sm:right-0 group-hover:bg-pink-50/60 transition-colors">
+              <td class="px-7 py-4 text-right sm:sticky sm:right-0 group-hover:bg-primary-5/60 transition-colors">
                 <div class="flex items-center justify-end gap-1">
                   <button
                     v-if="isAdminOrGerente"
                     type="button"
                     title="Editar"
-                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-[#ff46a2] hover:bg-pink-100 transition-colors"
+                    class="w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-primary hover:bg-primary-10 transition-colors"
                     @click="editFuncionario(func)"
                   >
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2.414a2 2 0 01.586-1.414z"/></svg>
@@ -250,7 +252,7 @@
           </tbody>
         </table>
       </div>
-    </div>
+    </AppCard>
 
     <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� MODAL LAN�?AR FOLHA �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
     <Teleport to="body">
@@ -313,7 +315,7 @@
               <p v-if="folhaError" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">
                 {{ folhaError }}
               </p>
-              <p v-if="folhaSucesso" class="text-sm text-[#ff46a2] bg-pink-50 border border-pink-200 rounded-xl px-4 py-3">
+              <p v-if="folhaSucesso" class="text-sm text-primary bg-primary-5 border border-primary-10 rounded-xl px-4 py-3">
                 {{ folhaSucesso }}
               </p>
 
@@ -323,7 +325,7 @@
                 </button>
                 <button
                   type="button"
-                  class="flex-1 py-3 rounded-xl bg-[#ff46a2] hover:bg-pink-600 text-white font-bold text-sm transition-colors shadow-sm shadow-pink-200 disabled:opacity-60"
+                  class="flex-1 py-3 rounded-xl bg-primary hover:opacity-90 text-primary-text font-bold text-sm transition-colors shadow-sm disabled:opacity-60"
                   :disabled="lanandoFolha || !folhaMes || funcionariosComSalario.length === 0"
                   @click="lancarFolha"
                 >

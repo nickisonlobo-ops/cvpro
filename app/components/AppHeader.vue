@@ -1,73 +1,58 @@
-﻿<template>
-  <header class="border-b flex items-center justify-between px-4 sm:px-6 shrink-0 sticky top-0 z-30 backdrop-blur-md" :class="headerHeight" :style="{ background: 'var(--color-sidebar, #ffffff)', borderColor: 'rgba(255,255,255,0.08)' }">
-    <!-- Logo -->
-    <div class="flex items-center gap-2.5">
+<template>
+  <header
+    class="app-header"
+    :class="headerHeight"
+    :style="{ background: 'var(--color-sidebar, #1f2937)' }"
+  >
+    <!-- Logo / Brand -->
+    <div class="app-header__brand">
       <div
         v-if="!config.logo_url"
-        class="w-9 h-9 rounded-xl flex items-center justify-center"
-        style="background: rgba(255,255,255,0.1); backdrop-filter: blur(4px)"
+        class="app-header__logo-icon"
       >
-        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true" :style="{ color: 'var(--color-primary-text, #ffffff)' }"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z"/></svg>
+        <svg class="w-[18px] h-[18px]" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true" :style="{ color: 'var(--color-primary-text, #ffffff)' }">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+        </svg>
       </div>
-      <img v-else :src="config.logo_url" alt="Logo" class="object-contain rounded-xl" :style="{ width: headerLogoPx + 'px', height: headerLogoPx + 'px' }" />
-      <span class="text-base font-bold tracking-tight hidden sm:block" :style="{ color: 'var(--color-primary-text, #ffffff)' }">{{ config.nome_empresa }}</span>
+      <img
+        v-else
+        :src="config.logo_url"
+        alt="Logo"
+        class="rounded-xl object-contain"
+        :style="{ width: headerLogoPx + 'px', height: headerLogoPx + 'px' }"
+      />
+      <span class="app-header__company-name hidden sm:block" :style="{ color: 'var(--color-primary-text, #fff)' }">
+        {{ config.nome_empresa }}
+      </span>
     </div>
 
-    <!-- Ações -->
-    <div class="flex items-center gap-2">
-      <span class="text-sm font-medium hidden sm:block opacity-80" :style="{ color: 'var(--color-primary-text, #ffffff)' }">Olá, {{ displayName }}</span>
+    <!-- Ações do usuário -->
+    <div class="app-header__actions">
+      <span class="hidden sm:block app-header__greeting" :style="{ color: 'var(--color-primary-text, #fff)' }">
+        Olá, {{ displayName }}
+      </span>
+
+      <!-- Avatar -->
       <div
-        class="w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs select-none ring-2 ring-white/20"
-        :style="{ background: 'var(--color-primary, #6366f1)', color: 'var(--color-primary-text, #ffffff)' }"
+        class="app-header__avatar"
+        :style="{ background: 'var(--color-primary, #374151)', color: 'var(--color-primary-text, #fff)' }"
+        :title="userName"
       >
         {{ initials }}
       </div>
+
+      <!-- Botão sair -->
       <button
         type="button"
-        class="flex items-center gap-1 text-xs font-medium transition-all px-2.5 py-1.5 rounded-lg opacity-70 hover:opacity-100 hover:bg-white/10"
-        :style="{ color: 'var(--color-primary-text, #ffffff)' }"
+        class="app-header__logout"
+        :style="{ color: 'var(--color-primary-text, #fff)' }"
         @click="handleLogout"
       >
         <span class="hidden sm:inline">Sair</span>
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"/></svg>
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9" />
+        </svg>
       </button>
-    </div>
-
-    <!-- Banner trial -->
-    <div
-      v-if="diasRestantesTrial !== null && diasRestantesTrial >= 0"
-      class="border-b px-4 py-2 flex items-center justify-between gap-4"
-      :style="diasRestantesTrial <= 2
-        ? 'background: linear-gradient(90deg,#fef3c7,#fde68a); border-color:#fcd34d; color:#92400e'
-        : 'background: linear-gradient(90deg,#f0fdfa,#ccfbf1); border-color:#99f6e4; color:#0f766e'"
-    >
-      <div class="flex items-center gap-3 min-w-0">
-        <!-- Barra de progresso -->
-        <div class="hidden sm:flex items-center gap-1.5 shrink-0">
-          <span class="text-xs font-bold">Teste grátis:</span>
-          <div class="w-28 h-2 rounded-full overflow-hidden" style="background: rgba(0,0,0,0.1)">
-            <div
-              class="h-full rounded-full transition-all"
-              :style="{
-                width: `${Math.max(4, ((7 - diasRestantesTrial) / 7) * 100)}%`,
-                background: diasRestantesTrial <= 2 ? '#d97706' : '#0d9488'
-              }"
-            ></div>
-          </div>
-        </div>
-        <span class="text-xs font-semibold truncate">
-          <template v-if="diasRestantesTrial === 0">⚠️ Último dia! Assine agora para não perder o acesso.</template>
-          <template v-else-if="diasRestantesTrial <= 2">⏳ {{ diasRestantesTrial }} dia{{ diasRestantesTrial > 1 ? 's' : '' }} restantes no teste. Assine para continuar.</template>
-          <template v-else>🎉 Você está no período de teste gratuito — {{ diasRestantesTrial }} dias restantes.</template>
-        </span>
-      </div>
-      <a
-        href="/landing#precos"
-        class="shrink-0 text-xs px-3 py-1 rounded-lg font-bold transition-all hover:scale-105 whitespace-nowrap"
-        :style="diasRestantesTrial <= 2 ? 'background:#92400e;color:#fff' : 'background:#0d9488;color:#fff'"
-      >
-        Ver planos
-      </a>
     </div>
   </header>
 </template>
@@ -100,6 +85,9 @@ function logoSizeToPx(s: string): number {
 
 const headerLogoPx = computed(() => logoSizeToPx(config.value.logo_size))
 
+const userName = ref('')
+const diasRestantesTrial = ref<number | null>(null)
+
 const headerHeight = computed(() => {
   if (!config.value.logo_url) return 'h-16'
   const px = headerLogoPx.value
@@ -110,9 +98,6 @@ const headerHeight = computed(() => {
   if (px <= 72) return 'h-24'
   return 'h-28'
 })
-
-const userName = ref('')
-const diasRestantesTrial = ref<number | null>(null)
 
 onMounted(async () => {
   const { data: { user } } = await supabase.auth.getUser()
@@ -159,3 +144,98 @@ async function handleLogout() {
 }
 </script>
 
+<style scoped>
+.app-header {
+  display:         flex;
+  align-items:     center;
+  justify-content: space-between;
+  padding:         0 1.25rem;
+  flex-shrink:     0;
+  position:        sticky;
+  top:             0;
+  z-index:         30;
+  border-bottom:   1px solid rgba(255,255,255,0.07);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  gap:             0.5rem;
+}
+
+@media (min-width: 640px) {
+  .app-header { padding: 0 1.5rem; }
+}
+
+.app-header__brand {
+  display:     flex;
+  align-items: center;
+  gap:         0.625rem;
+  min-width:   0;
+}
+.app-header__logo-icon {
+  width:            36px;
+  height:           36px;
+  border-radius:    10px;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  flex-shrink:      0;
+  background:       rgba(255,255,255,0.10);
+  border:           1px solid rgba(255,255,255,0.10);
+}
+.app-header__company-name {
+  font-size:      0.9375rem;
+  font-weight:    800;
+  letter-spacing: -0.01em;
+  white-space:    nowrap;
+  overflow:       hidden;
+  text-overflow:  ellipsis;
+  opacity:        0.92;
+}
+
+.app-header__actions {
+  display:     flex;
+  align-items: center;
+  gap:         0.5rem;
+}
+.app-header__greeting {
+  font-size:   0.875rem;
+  font-weight: 500;
+  opacity:     0.70;
+  white-space: nowrap;
+}
+
+.app-header__avatar {
+  width:            34px;
+  height:           34px;
+  border-radius:    9999px;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  font-size:        0.75rem;
+  font-weight:      800;
+  letter-spacing:   0.02em;
+  flex-shrink:      0;
+  box-shadow:       0 0 0 2px rgba(255,255,255,0.18);
+  cursor:           default;
+  user-select:      none;
+}
+
+.app-header__logout {
+  display:     flex;
+  align-items: center;
+  gap:         0.375rem;
+  font-size:   0.8125rem;
+  font-weight: 600;
+  padding:     0.375rem 0.75rem;
+  border-radius: 0.625rem;
+  opacity:     0.60;
+  transition:  opacity 150ms, background 150ms;
+  cursor:      pointer;
+  border:      none;
+  background:  transparent;
+}
+.app-header__logout:hover {
+  opacity:    1;
+  background: rgba(255,255,255,0.10);
+}
+
+</style>

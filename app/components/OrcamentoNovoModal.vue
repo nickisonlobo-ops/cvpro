@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <Teleport to="body">
     <transition name="modal">
       <div v-if="show" class="fixed inset-0 z-50 flex flex-col" @click.self="fechar">
@@ -20,21 +20,21 @@
           </div>
 
           <!-- Scrollable Content -->
-          <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-4 space-y-5">
+          <div class="flex-1 overflow-y-auto px-4 sm:px-6 py-4">
 
             <!-- Validation Errors -->
-            <div v-if="Object.keys(validationErrors).length > 0" class="flex items-start gap-3 p-3 rounded-xl bg-red-50 border border-red-100">
+            <div v-if="Object.keys(validationErrors).length > 0" class="flex items-start gap-3 p-3 rounded-xl bg-red-50 border border-red-100 mb-5">
               <svg class="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
               <div class="text-xs text-red-600 space-y-0.5">
                 <p v-for="(msg, key) in validationErrors" :key="key">{{ msg }}</p>
               </div>
             </div>
 
-        <!-- Form -->
-            <form id="orcamento-form" @submit.prevent="salvarRascunho">
+        <!-- Form — usa form-section para gap-6 entre grupos -->
+            <form id="orcamento-form" class="form-section" @submit.prevent="salvarRascunho">
 
               <!-- ═══ SEÇÃO: CLIENTE ═══ -->
-              <div class="space-y-2 mb-5">
+              <div class="form-group">
                 <div class="flex items-center gap-2">
                   <div class="w-5 h-5 rounded-full bg-indigo-100 flex items-center justify-center">
                     <svg class="w-3 h-3 text-indigo-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0"/></svg>
@@ -61,7 +61,7 @@
               </div>
 
               <!-- ═══ SEÇÃO: NOME DO TRABALHO ═══ -->
-              <div class="space-y-2 mb-5">
+              <div class="form-group">
                 <div class="flex items-center gap-2">
                   <div class="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center">
                     <svg class="w-3 h-3 text-purple-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z" /><path stroke-linecap="round" stroke-linejoin="round" d="M6 6h.008v.008H6V6z" /></svg>
@@ -77,7 +77,7 @@
               </div>
 
               <!-- ═══ SEÇÃO: CONDIÇÕES ═══ -->
-              <div class="space-y-2 mb-5">
+              <div class="form-group">
                 <div class="flex items-center gap-2">
                   <div class="w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
                     <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
@@ -109,7 +109,7 @@
               </div>
 
               <!-- ═══ SEÇÃO: ENDEREÇO DE INSTALAÇÃO ═══ -->
-              <div class="space-y-2 mb-5">
+              <div class="form-group">
                 <div class="flex items-center gap-2">
                   <div class="w-5 h-5 rounded-full bg-orange-100 flex items-center justify-center">
                     <svg class="w-3 h-3 text-orange-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
@@ -125,11 +125,11 @@
               </div>
 
               <!-- ═══ SEÇÃO: ITENS ═══ -->
-              <div class="space-y-3 mb-5">
+              <div class="form-group">
                 <div class="flex items-center justify-between">
                   <div class="flex items-center gap-2">
                     <div class="w-5 h-5 rounded-full bg-violet-100 flex items-center justify-center">
-                      <svg class="w-3 h-3 text-violet-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                      <svg class="w-3 h-3 text-primary" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
                     </div>
                     <span class="text-xs font-bold text-gray-700 uppercase tracking-wide">Itens</span>
                     <span class="text-[10px] text-gray-400">({{ form.itens.length }})</span>
@@ -160,7 +160,7 @@
               </div>
 
               <!-- ═══ SEÇÃO: DESCONTO ═══ -->
-              <div class="space-y-2 mb-5">
+              <div class="form-group">
                 <div class="flex items-center gap-2">
                   <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
                     <svg class="w-3 h-3 text-green-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 14.25l6-6m4.5-3.493V21.75l-3.75-1.5-3.75 1.5-3.75-1.5-3.75 1.5V4.757c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0c1.1.128 1.907 1.077 1.907 2.185z"/></svg>
@@ -189,14 +189,16 @@
             </form>
           </div>
 
-          <!-- Sticky Footer -->
-          <div class="flex-shrink-0 flex items-center justify-between gap-3 px-4 sm:px-6 py-3 border-t" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #1e40af, #4f46e5))', borderColor: 'var(--color-primary-border, rgba(255,255,255,0.1))' }">
-            <button type="button" class="px-4 py-2.5 rounded-xl text-sm font-semibold transition-all" style="color: var(--color-primary-text, #ffffff); opacity: 0.7" :disabled="salvando" @click="fechar">Cancelar</button>
-            <button type="submit" form="orcamento-form" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold active:scale-[0.97] shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed" :style="{ background: 'var(--color-btn, #ffffff)', color: 'var(--color-btn-text, #1e40af)' }" :disabled="salvando">
-              <span v-if="salvando" class="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
-              <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
-              {{ actionButtonLabel }}
-            </button>
+          <!-- Sticky Footer — form-actions: botões à direita com gap-3 -->
+          <div class="flex-shrink-0 px-4 sm:px-6 py-3 border-t" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #1e40af, #4f46e5))', borderColor: 'var(--color-primary-border, rgba(255,255,255,0.1))' }">
+            <div class="form-actions">
+              <button type="button" class="px-4 py-2.5 rounded-lg text-sm font-medium transition-all" style="color: var(--color-primary-text, #ffffff); opacity: 0.7" :disabled="salvando" @click="fechar">Cancelar</button>
+              <button type="submit" form="orcamento-form" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold active:scale-[0.98] shadow-lg transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed" :style="{ background: 'var(--color-btn, #ffffff)', color: 'var(--color-btn-text, #1e40af)' }" :disabled="salvando">
+                <span v-if="salvando" class="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+                <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                {{ actionButtonLabel }}
+              </button>
+            </div>
           </div>
         </div>
       </div>

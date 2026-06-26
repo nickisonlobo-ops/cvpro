@@ -2,8 +2,8 @@
   <div class="min-h-full p-3 sm:p-6">
 
     <!-- CABEÇALHO -->
-    <div class="relative rounded-3xl overflow-hidden mb-8 shadow-xl">
-      <div class="absolute inset-0" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #6366f1, #8b5cf6))' }" />
+    <div class="page-header relative rounded-3xl overflow-hidden mb-8 shadow-xl">
+      <div class="page-header-overlay absolute inset-0" />
       <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
       <div class="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
       <div class="absolute -bottom-20 left-1/4 w-96 h-96 rounded-full bg-white/[0.02] pointer-events-none" />
@@ -45,7 +45,7 @@
 
     <!-- LOADING -->
     <div v-if="loading" class="flex flex-col items-center justify-center gap-4 py-32">
-      <span class="inline-block w-12 h-12 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+      <span class="spinner spinner-lg" />
       <span class="text-sm text-gray-400 font-medium">Carregando estoque...</span>
     </div>
 

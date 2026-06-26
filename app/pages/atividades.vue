@@ -35,26 +35,26 @@
               type="button"
               class="inline-flex items-center gap-2 text-sm font-semibold px-3 sm:px-5 py-2.5 rounded-xl transition-all duration-200"
               :class="filtroAberto
-                ? 'bg-white text-[#ff46a2] shadow-lg scale-[1.02]'
+                ? 'bg-white text-primary shadow-lg scale-[1.02]'
                 : 'bg-white/10 text-white hover:bg-white/20 border border-white/15 backdrop-blur-sm'"
               @click="filtroAberto = !filtroAberto"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
               <span class="hidden sm:inline">Filtros</span>
-              <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-pink-400 text-xs font-black">{{ filtrosAtivos }}</span>
+              <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-white text-primary text-xs font-black">{{ filtrosAtivos }}</span>
             </button>
             <!-- toggle Instâncias / Modelos -->
             <div class="flex rounded-xl overflow-hidden border border-white/20">
               <button
                 type="button"
                 class="px-3 py-2 text-xs font-bold transition-colors"
-                :class="viewMode === 'instancias' ? 'bg-white text-[#ff46a2]' : 'text-white hover:bg-white/20'"
+                :class="viewMode === 'instancias' ? 'bg-white text-primary' : 'text-white hover:bg-white/20'"
                 @click="viewMode = 'instancias'"
               >Instâncias</button>
               <button
                 type="button"
                 class="px-3 py-2 text-xs font-bold transition-colors"
-                :class="viewMode === 'modelos' ? 'bg-white text-[#ff46a2]' : 'text-white hover:bg-white/20'"
+                :class="viewMode === 'modelos' ? 'bg-white text-primary' : 'text-white hover:bg-white/20'"
                 @click="viewMode = 'modelos'"
               >Modelos</button>
             </div>
@@ -63,16 +63,16 @@
               v-if="viewMode === 'modelos' && isAdminOrGerente"
               type="button"
               :disabled="gerando"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-4 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02] disabled:opacity-60"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-4 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg transition-all duration-200 hover:scale-[1.02] disabled:opacity-60"
               @click="gerarHoje"
             >
-              <span v-if="gerando" class="inline-block w-4 h-4 border-2 border-[#ff46a2] border-t-transparent rounded-full animate-spin" />
+              <span v-if="gerando" class="inline-block w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
               <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
               <span class="hidden sm:inline">{{ gerando ? 'Gerando...' : 'Gerar Hoje' }}</span>
             </button>
             <button
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#ff46a2] hover:bg-pink-50 shadow-lg shadow-pink-200/40 transition-all duration-200 hover:scale-[1.02]"
+              class="inline-flex items-center gap-2 text-sm font-bold px-3 sm:px-5 py-2.5 rounded-xl bg-white text-primary hover:bg-primary-5 shadow-lg transition-all duration-200 hover:scale-[1.02]"
               @click="abrirAdicionar"
             >
               <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
@@ -123,10 +123,10 @@
       <div v-show="filtroAberto" class="bg-white rounded-3xl border border-gray-100 shadow-md mb-6 overflow-hidden">
         <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/70">
           <div class="flex items-center gap-2.5">
-            <svg class="w-4 h-4 text-[#ff46a2]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+            <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
             <span class="text-sm font-bold text-gray-700">Filtros</span>
           </div>
-          <button v-if="filtrosAtivos > 0" type="button" class="text-xs font-semibold text-[#ff46a2] hover:text-pink-600 hover:underline" @click="limparFiltros">
+          <button v-if="filtrosAtivos > 0" type="button" class="text-xs font-semibold text-primary hover:underline" @click="limparFiltros">
             Limpar todos
           </button>
         </div>
@@ -193,13 +193,13 @@
     <!-- �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� TABELA �.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.��.� -->
     <div v-else class="bg-white rounded-3xl shadow-md border border-gray-100 overflow-hidden">
       <!-- Banner Modelos -->
-      <div v-if="viewMode === 'modelos'" class="flex items-center gap-3 px-7 py-3 bg-pink-50 border-b border-pink-100">
-        <svg class="w-4 h-4 text-pink-500 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
-        <p class="text-xs font-semibold text-pink-700">
+      <div v-if="viewMode === 'modelos'" class="flex items-center gap-3 px-7 py-3 bg-primary-5 border-b border-primary-border">
+        <svg class="w-4 h-4 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+        <p class="text-xs font-semibold text-primary">
           Modelos são atividades <strong>sem data definida</strong> usadas como base para geração automática.
           Ao clicar em <strong>Gerar Hoje</strong>, instâncias com a data de hoje são criadas para cada modelo conforme a periodicidade.
         </p>
-        <span v-if="geracaoMsg" class="ml-auto text-xs font-bold text-[#ff46a2] bg-pink-100 px-3 py-1 rounded-full shrink-0">{{ geracaoMsg }}</span>
+        <span v-if="geracaoMsg" class="ml-auto text-xs font-bold text-primary bg-primary-10 px-3 py-1 rounded-full shrink-0">{{ geracaoMsg }}</span>
       </div>
 
       <div class="flex items-center justify-between px-7 py-4 border-b border-gray-100 bg-gray-50/50">
@@ -297,7 +297,7 @@
               <td class="px-5 py-4">
                 <div class="flex flex-col gap-0.5 text-xs text-gray-500 font-medium whitespace-nowrap">
                   <span v-if="at.data_atividade">{{ formatDate(at.data_atividade) }}</span>
-                  <span v-else class="inline-flex items-center gap-1 text-[11px] font-bold bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full">
+                  <span v-else class="inline-flex items-center gap-1 text-[11px] font-bold bg-primary-10 text-primary px-2 py-0.5 rounded-full">
                     <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
                     Recorrente
                   </span>
@@ -638,14 +638,14 @@ function statusLabel(s: string | null): string {
   return s ?? '�?"'
 }
 function statusBadgeClass(s: string | null): string {
-  if (s === 'pendente')     return 'bg-pink-100 text-pink-700'
+  if (s === 'pendente')     return 'bg-primary-10 text-primary'
   if (s === 'em_andamento') return 'bg-blue-100 text-blue-700'
   if (s === 'concluida')    return 'bg-green-100 text-green-700'
   if (s === 'cancelada')    return 'bg-red-100 text-red-700'
   return 'bg-gray-100 text-gray-500'
 }
 function statusDotClass(s: string | null): string {
-  if (s === 'pendente')     return 'bg-pink-500'
+  if (s === 'pendente')     return 'bg-primary'
   if (s === 'em_andamento') return 'bg-blue-500'
   if (s === 'concluida')    return 'bg-green-500'
   if (s === 'cancelada')    return 'bg-red-500'
@@ -681,7 +681,7 @@ function periodicidadeLabel(p: string | null): string {
   return p ?? '�?"'
 }
 function periodicidadeBadgeClass(p: string | null): string {
-  if (p === 'diaria')    return 'bg-violet-100 text-violet-700'
+  if (p === 'diaria')    return 'bg-primary-10 text-primary'
   if (p === 'quinzenal') return 'bg-teal-100 text-teal-700'
   if (p === 'mensal')    return 'bg-rose-100 text-rose-700'
   return 'bg-gray-100 text-gray-500'

@@ -3,10 +3,22 @@
     v-bind="$attrs"
     :type="type"
     :disabled="disabled || loading"
-    :class="[baseClasses, variantClasses[variant], sizeClasses[size], { 'opacity-60 cursor-not-allowed': disabled || loading }]"
+    :class="[
+      baseClasses,
+      variantClasses[variant],
+      sizeClasses[size],
+      { 'opacity-60 cursor-not-allowed pointer-events-none': disabled || loading }
+    ]"
   >
-    <span v-if="loading" class="inline-block w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-    <slot />
+    <!-- Spinner de loading integrado -->
+    <span
+      v-if="loading"
+      class="inline-block border-2 border-current border-t-transparent rounded-full animate-spin"
+      :class="spinnerSizeClasses[size]"
+    />
+    <template v-if="!loading">
+      <slot />
+    </template>
   </button>
 </template>
 
@@ -15,8 +27,8 @@ defineOptions({ name: 'AppButton' })
 
 withDefaults(
   defineProps<{
-    variant?: 'primary' | 'secondary' | 'accent' | 'outline' | 'ghost'
-    size?: 'sm' | 'md' | 'lg'
+    variant?: 'primary' | 'secondary' | 'danger' | 'outline' | 'ghost' | 'white'
+    size?: 'xs' | 'sm' | 'md' | 'lg'
     type?: 'button' | 'submit' | 'reset'
     disabled?: boolean
     loading?: boolean
@@ -30,19 +42,36 @@ withDefaults(
   }
 )
 
-const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-colors duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2'
+const baseClasses = [
+  'inline-flex items-center justify-center',
+  'font-medium',
+  'rounded-lg',
+  'transition-all duration-150',
+  'active:scale-[0.98]',
+  'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
+  'whitespace-nowrap',
+].join(' ')
 
-const variantClasses = {
-  primary:   'bg-primary text-white hover:bg-primary-hover focus-visible:ring-primary',
-  secondary: 'bg-orange-500 text-white hover:bg-orange-600 focus-visible:ring-orange-500',
-  accent:    'bg-accent text-white hover:bg-accent-hover focus-visible:ring-accent',
-  outline:   'border-2 border-primary text-primary bg-transparent hover:bg-primary hover:text-white focus-visible:ring-primary',
-  ghost:     'text-primary bg-transparent hover:bg-bg focus-visible:ring-primary',
+const variantClasses: Record<string, string> = {
+  primary:   'bg-primary text-primary-text hover:opacity-90 focus-visible:ring-primary shadow-sm',
+  secondary: 'bg-primary-5 text-primary hover:bg-primary-10 focus-visible:ring-primary border border-primary-10',
+  danger:    'bg-error text-white hover:opacity-90 focus-visible:ring-error shadow-sm',
+  outline:   'border border-primary-20 text-primary bg-transparent hover:bg-primary-5 focus-visible:ring-primary',
+  ghost:     'text-primary bg-transparent hover:bg-primary-5 focus-visible:ring-primary',
+  white:     'bg-white text-primary hover:bg-primary-50 focus-visible:ring-primary shadow-sm border border-primary-10',
 }
 
-const sizeClasses = {
-  sm:  'px-3 py-1.5 text-sm gap-1.5',
-  md:  'px-5 py-2.5 text-base gap-2',
-  lg:  'px-7 py-3.5 text-lg gap-2.5',
+const sizeClasses: Record<string, string> = {
+  xs: 'h-7 px-2.5 text-[12px] gap-1',
+  sm: 'h-8 px-3 text-[13px] gap-1.5',
+  md: 'h-10 px-4 text-[13px] gap-2',
+  lg: 'h-11 px-5 text-[15px] gap-2.5',
+}
+
+const spinnerSizeClasses: Record<string, string> = {
+  xs: 'w-3 h-3',
+  sm: 'w-3.5 h-3.5',
+  md: 'w-4 h-4',
+  lg: 'w-[18px] h-[18px]',
 }
 </script>

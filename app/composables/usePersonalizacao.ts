@@ -279,6 +279,33 @@ export function usePersonalizacao() {
     const isCardDark = isColorDark(cfg.cor_card)
     root.style.setProperty('--color-card-border',  isCardDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)')
 
+    // ── Atributo data-theme-dark para regras CSS de tipografia (Req 1.5) ──
+    root.setAttribute('data-theme-dark', isCardDark ? 'true' : 'false')
+
+    // ── Glass morphism (derivado do modo dark/light) ──────────────────
+    if (isCardDark) {
+      root.style.setProperty('--glass-bg',           'rgba(255,255,255,0.05)')
+      root.style.setProperty('--glass-bg-hover',      'rgba(255,255,255,0.09)')
+      root.style.setProperty('--glass-bg-active',     'rgba(255,255,255,0.14)')
+      root.style.setProperty('--glass-border',        'rgba(255,255,255,0.08)')
+      root.style.setProperty('--glass-border-strong', 'rgba(255,255,255,0.16)')
+      root.style.setProperty('--glass-shadow',        '0 8px 32px rgba(0,0,0,0.28), 0 2px 8px rgba(0,0,0,0.14)')
+      root.style.setProperty('--glass-shadow-hover',  '0 20px 60px rgba(0,0,0,0.36), 0 4px 16px rgba(0,0,0,0.20)')
+      root.style.setProperty('--glass-shadow-card',   '0 4px 20px rgba(0,0,0,0.22), 0 1px 4px rgba(0,0,0,0.12)')
+      root.style.setProperty('--modal-overlay-bg',    'rgba(0,0,0,0.65)')
+    } else {
+      root.style.setProperty('--glass-bg',           'rgba(255,255,255,0.72)')
+      root.style.setProperty('--glass-bg-hover',      'rgba(255,255,255,0.88)')
+      root.style.setProperty('--glass-bg-active',     'rgba(255,255,255,0.96)')
+      root.style.setProperty('--glass-border',        'rgba(0,0,0,0.07)')
+      root.style.setProperty('--glass-border-strong', 'rgba(0,0,0,0.13)')
+      root.style.setProperty('--glass-shadow',        '0 4px 24px rgba(0,0,0,0.09), 0 1px 4px rgba(0,0,0,0.05)')
+      root.style.setProperty('--glass-shadow-hover',  '0 12px 40px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.08)')
+      root.style.setProperty('--glass-shadow-card',   '0 2px 12px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.04)')
+      root.style.setProperty('--modal-overlay-bg',    'rgba(0,0,0,0.40)')
+    }
+    root.style.setProperty('--glow-primary', hexToRgba(cfg.cor_primaria, 0.30))
+
     // ── Injeta CSS global para sobrescrever classes Tailwind pink ──
     injectGlobalThemeCSS(cfg)
   }
