@@ -2,14 +2,14 @@
   <div class="w-full max-w-md">
     <!-- Cabeçalho fora do card -->
     <div class="flex flex-col items-center gap-3 mb-8">
-      <!-- Ícone CV Pro -->
-      <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg shadow-indigo-900/30" style="background: linear-gradient(135deg, #1e40af, #4f46e5)">
+      <!-- Ícone SignPRO -->
+      <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/30 bg-gradient-to-br from-violet-500 to-indigo-600">
         <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6.429 9.75L2.25 12l4.179 2.25m0-4.5l5.571 3 5.571-3m-11.142 0L2.25 7.5 12 2.25l9.75 5.25-4.179 2.25m0 0L12 12.75 6.429 9.75m11.142 0l4.179 2.25L12 17.25 2.25 12l4.179-2.25"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/>
         </svg>
       </div>
       <div class="text-center">
-        <h1 class="text-2xl font-black tracking-tight" style="background: linear-gradient(135deg, #1e40af, #4f46e5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text">CV Pro</h1>
+        <h1 class="text-2xl font-bold tracking-tight">Sign<span style="background: linear-gradient(135deg, #7c3aed, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text">PRO</span></h1>
         <p class="text-sm text-gray-500 mt-0.5">Sistema para comunicação visual</p>
       </div>
     </div>
