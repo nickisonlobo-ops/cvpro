@@ -159,7 +159,7 @@ Redesign completo do sistema visual do App CV PRO, implementado em camadas: toke
     - Garantir todos os inputs usem AppInput com labels padronizados
     - _Requirements: 6.6, 6.7_
 
-  - [-] 10.2 Aplicar novos componentes e tokens em todas as páginas existentes
+  - [ ] 10.2 Aplicar novos componentes e tokens em todas as páginas existentes
     - Substituir cards manuais por AppCard com elevação adequada
     - Substituir tabelas manuais por AppTable
     - Aplicar PageTemplate padrão em páginas sem header consistente
@@ -167,7 +167,7 @@ Redesign completo do sistema visual do App CV PRO, implementado em camadas: toke
     - Verificar contraste WCAG AA em valores numéricos de destaque (font-size ≥24px, weight 700)
     - _Requirements: 2.2, 2.3, 2.4, 2.5, 4.5, 4.6, 8.1, 8.2, 8.3_
 
-- [~] 11. Final checkpoint - Verificação completa
+- [ ] 11. Final checkpoint - Verificação completa
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes

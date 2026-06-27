@@ -67,7 +67,7 @@
         <!-- Badge -->
         <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 mb-8 backdrop-blur-sm">
           <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
-          <span class="text-xs font-medium text-white/70">Sistema #1 para comunicação visual no Brasil</span>
+          <span class="text-xs font-medium text-white/70">Sistema #1 para comunicação visual em Portugal</span>
         </div>
 
         <!-- Headline -->
@@ -79,7 +79,7 @@
         <!-- Sub -->
         <p class="text-lg sm:text-xl text-white/50 max-w-2xl mx-auto mb-10 leading-relaxed font-light">
           Orçamentos, ordens de serviço, kanban de produção, financeiro e CRM.
-          Tudo em um só lugar para gráficas e empresas de comunicação visual.
+          Tudo num só lugar para gráficas e empresas de comunicação visual.
         </p>
 
         <!-- CTAs -->
@@ -121,7 +121,7 @@
       <div class="max-w-5xl mx-auto px-6 sm:px-10 text-center">
         <p class="text-xs font-medium text-white/30 uppercase tracking-widest mb-8">Feito para quem trabalha com</p>
         <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-white/25">
-          <span v-for="tipo in ['Gráficas', 'Comunicação Visual', 'Adesivadores', 'Sinalização', 'Frotas e Plotagem']" :key="tipo" class="text-sm font-semibold tracking-wide">{{ tipo }}</span>
+          <span v-for="tipo in ['Gráficas', 'Comunicação Visual', 'Aplicadores de Vinil', 'Sinalética', 'Frotas e Rotulagem']" :key="tipo" class="text-sm font-semibold tracking-wide">{{ tipo }}</span>
         </div>
       </div>
     </section>
@@ -132,7 +132,7 @@
         <div class="text-center mb-16">
           <p class="text-xs font-semibold text-violet-400 uppercase tracking-widest mb-3">Funcionalidades</p>
           <h2 class="text-3xl sm:text-5xl font-bold tracking-tight mb-4">Tudo para o seu dia a dia</h2>
-          <p class="text-white/50 max-w-lg mx-auto">Do orçamento à entrega, do financeiro à equipe. Uma plataforma que entende o ritmo da sua produção.</p>
+          <p class="text-white/50 max-w-lg mx-auto">Do orçamento à entrega, do financeiro à equipa. Uma plataforma que compreende o ritmo da sua produção.</p>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           <div v-for="feat in features" :key="feat.title"
@@ -213,8 +213,8 @@
       <div class="relative max-w-5xl mx-auto px-6 sm:px-10">
         <div class="text-center mb-16">
           <p class="text-xs font-semibold text-violet-400 uppercase tracking-widest mb-3">Planos</p>
-          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight mb-4">Investimento que se paga em 1 semana</h2>
-          <p class="text-white/50 max-w-sm mx-auto">A partir de R$97/mês. Cancele quando quiser.</p>
+          <h2 class="text-3xl sm:text-5xl font-bold tracking-tight mb-4">Investimento que se paga numa semana</h2>
+          <p class="text-white/50 max-w-sm mx-auto">A partir de €29/mês. Cancele quando quiser.</p>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-start">
           <div v-for="plan in plans" :key="plan.name"
@@ -287,7 +287,7 @@
           Da arte à entrega.<br><span class="bg-gradient-to-r from-violet-400 to-indigo-400 bg-clip-text text-transparent">Controle total.</span>
         </h2>
         <p class="text-white/50 text-lg mb-10 max-w-md mx-auto leading-relaxed">
-          Sua empresa merece um sistema que organiza tudo sem dor de cabeça. Comece hoje, de graça.
+          A sua empresa merece um sistema que organiza tudo sem dores de cabeça. Comece hoje, de graça.
         </p>
         <a href="/login"
           class="inline-flex items-center gap-2 text-lg font-semibold px-10 py-5 rounded-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white shadow-2xl shadow-violet-500/30 hover:shadow-violet-500/50 hover:scale-105 transition-all duration-200">
@@ -321,9 +321,9 @@ import { ref, onMounted, onUnmounted } from 'vue'
 definePageMeta({ layout: false })
 
 useHead({
-  title: 'SignPRO — Sistema para Gráficas e Comunicação Visual',
+  title: 'SignPRO — Sistema para Gráficas e Comunicação Visual em Portugal',
   meta: [
-    { name: 'description', content: 'Sistema completo para gráficas e empresas de comunicação visual. Orçamentos, OS, kanban de produção, financeiro e CRM em um só lugar.' }
+    { name: 'description', content: 'Sistema completo para gráficas e empresas de comunicação visual em Portugal. Orçamentos, OS, kanban de produção, financeiro e CRM num só lugar.' }
   ],
   script: [
     {
@@ -373,29 +373,29 @@ const stats = [
 ]
 
 const steps = [
-  { svg: '<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>', title: 'Crie sua conta', desc: 'Cadastre sua empresa em menos de 5 minutos. Sem burocracia e sem cartão.' },
-  { svg: '<path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>', title: 'Configure sua operação', desc: 'Adicione materiais, equipe e configure etapas de produção.' },
-  { svg: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>', title: 'Comece a produzir', desc: 'Orçamentos, pedidos e financeiro organizados. Acesse de qualquer lugar.' },
+  { svg: '<path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>', title: 'Crie a sua conta', desc: 'Registe a sua empresa em menos de 5 minutos. Sem burocracia e sem cartão.' },
+  { svg: '<path stroke-linecap="round" stroke-linejoin="round" d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.108-1.204l-.526-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"/><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>', title: 'Configure a sua operação', desc: 'Adicione materiais, equipa e configure as etapas de produção.' },
+  { svg: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z"/>', title: 'Comece a produzir', desc: 'Orçamentos, encomendas e financeiro organizados. Aceda a partir de qualquer lugar.' },
 ]
 
 const reviews = [
-  { name: 'Ricardo Mendes', role: 'Gráfica Express — São Paulo', text: 'Acabei com a planilha de orçamentos. Agora faço tudo em 2 minutos e o cliente recebe na hora pelo WhatsApp.' },
-  { name: 'Marcos Silva', role: 'MS Comunicação Visual — Campinas', text: 'O kanban de produção mudou tudo. Sei exatamente o que está em cada etapa e nunca mais atrasei entrega.' },
-  { name: 'Luciana Ferreira', role: 'Print & Go — Belo Horizonte', text: 'Tenho 4 operadores e o controle ficou perfeito. Cada um sabe o que fazer sem eu precisar ficar cobrando.' },
+  { name: 'António Ferreira', role: 'Gráfica Lusitana — Lisboa', text: 'Acabei com as folhas de Excel. Agora faço orçamentos em 2 minutos e o cliente recebe logo pelo WhatsApp.' },
+  { name: 'Marta Oliveira', role: 'VisuArt — Porto', text: 'O kanban de produção mudou tudo. Sei exatamente o que está em cada fase e nunca mais atrasei uma entrega.' },
+  { name: 'Pedro Santos', role: 'PrintMax — Braga', text: 'Tenho 4 operadores e o controlo ficou perfeito. Cada um sabe o que fazer sem eu precisar de andar atrás.' },
 ]
 
 const plans = [
-  { name: 'Starter', desc: 'Para quem está começando', price: 'R$97', period: '/mês', featured: false, url: '/login', cta: 'Começar grátis', items: ['Até 2 usuários', 'Orçamentos ilimitados', 'OS e kanban', 'Financeiro básico', 'Suporte via WhatsApp'] },
-  { name: 'Profissional', desc: 'O mais completo', price: 'R$197', period: '/mês', featured: true, url: '/login', cta: 'Começar grátis', items: ['Até 10 usuários', 'Tudo do Starter', 'Dashboard avançado', 'Consultor IA', 'Comissões e equipe', 'Relatórios PDF'] },
-  { name: 'Enterprise', desc: 'Para grandes operações', price: 'Sob consulta', period: '', featured: false, url: 'https://wa.me/5511940527609', cta: 'Falar com consultor', items: ['Usuários ilimitados', 'Tudo do Profissional', 'API e integrações', 'Onboarding dedicado', 'SLA prioritário'] },
+  { name: 'Starter', desc: 'Para quem está a começar', price: '€29', period: '/mês', featured: false, url: '/login', cta: 'Começar grátis', items: ['Até 2 utilizadores', 'Orçamentos ilimitados', 'OS e kanban', 'Financeiro básico', 'Suporte via WhatsApp'] },
+  { name: 'Profissional', desc: 'O mais completo', price: '€59', period: '/mês', featured: true, url: '/login', cta: 'Começar grátis', items: ['Até 10 utilizadores', 'Tudo do Starter', 'Dashboard avançado', 'Consultor IA', 'Comissões e equipa', 'Relatórios PDF'] },
+  { name: 'Enterprise', desc: 'Para grandes operações', price: 'Sob consulta', period: '', featured: false, url: 'https://wa.me/5511940527609', cta: 'Falar com consultor', items: ['Utilizadores ilimitados', 'Tudo do Profissional', 'API e integrações', 'Onboarding dedicado', 'SLA prioritário'] },
 ]
 
 const faqs = [
-  { q: 'Preciso instalar alguma coisa?', a: 'Não. O SignPRO funciona 100% no navegador — celular, tablet ou computador. Basta acessar e usar.' },
-  { q: 'O teste gratuito é realmente grátis?', a: 'Sim. 7 dias sem cartão de crédito. Se não gostar, não paga nada.' },
-  { q: 'Posso usar no celular?', a: 'Sim, o sistema é totalmente responsivo. Funciona perfeitamente no celular como um app nativo.' },
-  { q: 'Meus dados ficam seguros?', a: 'Usamos criptografia de ponta a ponta e servidores com redundância. Seus dados são exclusivamente seus.' },
-  { q: 'Consigo importar meus clientes?', a: 'Sim. Você pode importar clientes via planilha CSV ou cadastrar manualmente de forma rápida.' },
-  { q: 'Tem contrato de fidelidade?', a: 'Não. Cancele quando quiser, sem multa. Sem letras miúdas.' },
+  { q: 'Preciso de instalar alguma coisa?', a: 'Não. O SignPRO funciona 100% no navegador — telemóvel, tablet ou computador. Basta aceder e utilizar.' },
+  { q: 'O teste gratuito é mesmo grátis?', a: 'Sim. 7 dias sem cartão de crédito. Se não gostar, não paga nada.' },
+  { q: 'Posso usar no telemóvel?', a: 'Sim, o sistema é totalmente responsivo. Funciona perfeitamente no telemóvel como uma app nativa.' },
+  { q: 'Os meus dados ficam seguros?', a: 'Utilizamos encriptação de ponta a ponta e servidores com redundância. Os seus dados são exclusivamente seus.' },
+  { q: 'Consigo importar os meus clientes?', a: 'Sim. Pode importar clientes via ficheiro CSV ou registar manualmente de forma rápida.' },
+  { q: 'Tem contrato de fidelização?', a: 'Não. Cancele quando quiser, sem multa. Sem letras pequenas.' },
 ]
 </script>
