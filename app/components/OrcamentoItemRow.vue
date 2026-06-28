@@ -33,13 +33,29 @@
     <!-- Conteúdo expandido -->
     <div v-show="expanded" class="px-3 sm:px-4 pb-3 sm:pb-4 space-y-3 border-t border-gray-50">
 
-      <!-- Material (seletor com modal) -->
-      <div class="flex flex-col gap-1 pt-3">
+      <!-- Produto (seletor com modal ou input manual) -->
+      <div class="flex flex-col gap-1.5 pt-3">
         <div class="flex items-center justify-between">
-          <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Material *</label>
+          <label class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Produto *</label>
           <button type="button" class="text-[10px] font-bold text-red-400 hover:text-red-600 transition-colors" @click.stop="emit('remove', index)">Remover item</button>
         </div>
+
+        <!-- Toggle: Catálogo / Manual -->
+        <div class="flex items-center gap-2 mb-1">
+          <div class="flex rounded-md border overflow-hidden" style="border-color: var(--color-card-border, rgba(0,0,0,0.1))">
+            <button type="button" class="px-2.5 py-1 text-[10px] font-bold transition-all focus:outline-none"
+              :style="!modoManual ? { background: 'var(--color-primary, #4f46e5)', color: '#ffffff' } : { color: 'var(--color-card-texto, #6b7280)' }"
+              @click.stop="modoManual = false">Catálogo</button>
+            <button type="button" class="px-2.5 py-1 text-[10px] font-bold transition-all focus:outline-none"
+              :style="modoManual ? { background: 'var(--color-primary, #4f46e5)', color: '#ffffff' } : { color: 'var(--color-card-texto, #6b7280)' }"
+              @click.stop="ativarModoManual">Manual</button>
+          </div>
+          <span class="text-[9px] text-gray-400">{{ modoManual ? 'Digite o nome do item' : 'Selecione do catálogo' }}</span>
+        </div>
+
+        <!-- Modo Catálogo -->
         <button
+          v-if="!modoManual"
           type="button"
           class="w-full flex items-center justify-between rounded-xl border px-3 py-2.5 text-left transition-all active:scale-[0.99]"
           :class="errors.material_id ? 'border-red-300 bg-red-50/50' : materialSelecionado ? 'border-gray-200 bg-white' : 'border-dashed border-gray-300 bg-gray-50/80'"
@@ -57,6 +73,19 @@
           </div>
           <svg class="w-4 h-4 text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
         </button>
+
+        <!-- Modo Manual -->
+        <input
+          v-else
+          :value="item.descricao"
+          type="text"
+          placeholder="Nome do produto ou serviço..."
+          maxlength="100"
+          class="w-full rounded-xl border px-3 py-2.5 text-sm font-medium text-gray-800 bg-gray-50/80 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:border-indigo-400 transition-all"
+          :class="errors.material_id ? 'border-red-300' : 'border-gray-200'"
+          @input="onDescricaoManualInput"
+        />
+
         <p v-if="errors.material_id" class="text-[11px] text-red-500 font-medium">{{ errors.material_id }}</p>
       </div>
 
@@ -222,6 +251,12 @@ const fotoArquivoRef = ref<any>(null)
 const tempItemId = ref<string>(crypto.randomUUID())
 const showMaterialModal = ref(false)
 const expanded = ref(true) // novo item abre expandido
+const modoManual = ref(false)
+
+// Detect if item is manual (has description but no valid material_id)
+watch(() => props.item.material_id, (val) => {
+  if (!val && props.item.descricao) modoManual.value = true
+}, { immediate: true })
 
 // ─── Computed ────────────────────────────────────────────────────────────────
 const materialSelecionado = computed(() => props.item.material_id ? { id: props.item.material_id, nome: props.item.descricao || props.item.material_nome || '' } : null)
@@ -263,6 +298,19 @@ function validateField(field: string, value: number | null | undefined): string 
 }
 
 // ─── Handlers ────────────────────────────────────────────────────────────────
+function ativarModoManual() {
+  modoManual.value = true
+  // Limpar material selecionado e setar modalidade para unidade
+  delete errors.value.material_id
+  emitUpdate({ material_id: 0, material_nome: '', descricao: '', modalidade_preco: 'unidade', preco_unitario: undefined })
+}
+
+function onDescricaoManualInput(event: Event) {
+  const value = (event.target as HTMLInputElement).value
+  delete errors.value.material_id
+  emitUpdate({ descricao: value, material_nome: value })
+}
+
 async function onMaterialSelected(product: { id: number; nome: string; preco_venda: number; tipo_precificacao?: string }) {
   delete errors.value.material_id
   delete errors.value.preco_m2

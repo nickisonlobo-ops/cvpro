@@ -305,14 +305,17 @@ export function useOrcamentos() {
           errors[`itens[${i}].descricao`] = `Item ${i + 1}: descrição é obrigatória`
         }
         if (!item.material_id || item.material_id <= 0) {
-          errors[`itens[${i}].material_id`] = `Item ${i + 1}: material é obrigatório`
+          // Aceitar item manual (sem material_id) se tem descrição
+          if (!item.descricao || !item.descricao.trim()) {
+            errors[`itens[${i}].material_id`] = `Item ${i + 1}: selecione um produto ou digite o nome manualmente`
+          }
         }
         const largura = Number(item.largura_cm) || 0
-        if (largura < 0.1 || largura > 9999.9) {
+        if (item.modalidade_preco === 'm2' && (largura < 0.1 || largura > 9999.9)) {
           errors[`itens[${i}].largura_cm`] = `Item ${i + 1}: largura deve estar entre 0.1 e 9999.9 cm`
         }
         const altura = Number(item.altura_cm) || 0
-        if (altura < 0.1 || altura > 9999.9) {
+        if (item.modalidade_preco === 'm2' && (altura < 0.1 || altura > 9999.9)) {
           errors[`itens[${i}].altura_cm`] = `Item ${i + 1}: altura deve estar entre 0.1 e 9999.9 cm`
         }
         const qtd = Number(item.quantidade) || 0
