@@ -34,7 +34,7 @@
     </div>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <main class="flex-1 min-w-0 px-6 py-6 lg:px-10 lg:py-8 lg:max-w-3xl">
+    <main class="flex-1 min-w-0 px-4 py-6 sm:px-8 lg:px-10 lg:py-8 max-w-4xl">
 
       <!-- Alerta de erro -->
       <div v-if="error" class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 mb-6">
