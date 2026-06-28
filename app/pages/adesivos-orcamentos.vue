@@ -525,7 +525,8 @@ async function abrirEdicao(orc: OrcamentoListItem) {
 }
 
 function abrirDetalhe(orc: OrcamentoListItem) {
-  fetchOrcamentoDetalhe(orc.id)
+  // Abre o modal unificado em modo edição
+  abrirEdicao(orc)
 }
 
 function onDetalheRefresh() {
@@ -538,8 +539,9 @@ function onAbrirOS() {
 }
 
 async function onKanbanCardClick(card: KanbanCard) {
-  // Reuse the existing detalhe modal flow
-  await fetchOrcamentoDetalhe(card.id)
+  // Abrir modal unificado via ID do card
+  const mockOrc = { id: card.id } as OrcamentoListItem
+  abrirEdicao(mockOrc)
 }
 
 // ─── Data Fetching ───────────────────────────────────────────────────────────
