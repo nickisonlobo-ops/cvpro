@@ -1,25 +1,59 @@
 ﻿<template>
-  <div class="max-w-3xl mx-auto space-y-8">
-    <!-- Cabeçalho -->
-    <div>
-      <h1 class="text-2xl font-black text-gray-900">Personalização</h1>
-      <p class="text-sm text-gray-500 mt-1">Customize as cores, logo e nome da sua empresa no sistema.</p>
+  <div class="flex min-h-full">
+
+    <!-- SIDEBAR DE NAVEGAÇÃO (desktop) -->
+    <aside class="hidden lg:flex flex-col w-[240px] shrink-0 border-r border-gray-100 bg-white p-4 space-y-1 sticky top-0 self-start h-fit">
+      <h1 class="text-lg font-bold text-gray-900 px-3 mb-4">Configurações</h1>
+      <button
+        v-for="tab in tabs"
+        :key="tab.id"
+        type="button"
+        class="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left"
+        :class="activeTab === tab.id ? 'bg-orange-50 text-orange-700 font-semibold' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+        @click="activeTab = tab.id"
+      >
+        <span class="w-8 h-8 rounded-lg flex items-center justify-center" :class="activeTab === tab.id ? 'bg-orange-100' : 'bg-gray-100'">
+          <svg class="w-4 h-4" :class="activeTab === tab.id ? 'text-orange-600' : 'text-gray-500'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" v-html="tab.icon"></svg>
+        </span>
+        {{ tab.label }}
+      </button>
+    </aside>
+
+    <!-- MOBILE TAB BAR -->
+    <div class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white border-b border-gray-100 px-4 py-3 overflow-x-auto flex gap-2">
+      <button
+        v-for="tab in tabs"
+        :key="tab.id"
+        type="button"
+        class="px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all"
+        :class="activeTab === tab.id ? 'bg-orange-50 text-orange-700 border border-orange-200' : 'text-gray-500 hover:bg-gray-50'"
+        @click="activeTab = tab.id"
+      >
+        {{ tab.label }}
+      </button>
     </div>
 
-    <!-- Alerta de erro -->
-    <div v-if="error" class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">
-      {{ error }}
-    </div>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="flex-1 min-w-0 px-6 py-6 lg:px-10 lg:py-8 lg:max-w-3xl">
 
-    <!-- Loading inicial -->
-    <div v-if="loading" class="flex items-center justify-center py-20">
-      <svg class="animate-spin w-8 h-8 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-      </svg>
-    </div>
+      <!-- Alerta de erro -->
+      <div v-if="error" class="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700 mb-6">
+        {{ error }}
+      </div>
 
-    <template v-else>
+      <!-- Loading inicial -->
+      <div v-if="loading" class="flex items-center justify-center py-20">
+        <svg class="animate-spin w-8 h-8 text-[var(--color-primary)]" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+        </svg>
+      </div>
+
+      <template v-else>
+
+      <!-- ═══ TAB: EMPRESA ═══ -->
+      <div v-show="activeTab === 'empresa'" class="space-y-8">
+
       <!-- Logo da Empresa -->
       <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-4">
         <h2 class="text-base font-bold text-gray-800">Logo da Empresa</h2>
@@ -683,7 +717,26 @@
           </button>
         </div>
       </div>
+      </div><!-- end empresa tab (contains all for now) -->
+
+      <!-- ═══ TAB: VISUAL (placeholder — conteúdo será separado) ═══ -->
+      <div v-show="activeTab === 'visual'" class="space-y-8">
+        <div class="text-center py-12">
+          <p class="text-sm text-gray-400">As configurações visuais estão na aba Empresa por enquanto.</p>
+          <button type="button" class="mt-2 text-sm text-orange-600 font-medium" @click="activeTab = 'empresa'">Ir para Empresa</button>
+        </div>
+      </div>
+
+      <!-- ═══ TAB: HORÁRIOS (placeholder — conteúdo será separado) ═══ -->
+      <div v-show="activeTab === 'horarios'" class="space-y-8">
+        <div class="text-center py-12">
+          <p class="text-sm text-gray-400">Os horários estão na aba Empresa por enquanto.</p>
+          <button type="button" class="mt-2 text-sm text-orange-600 font-medium" @click="activeTab = 'empresa'">Ir para Empresa</button>
+        </div>
+      </div>
+
     </template>
+  </main>
   </div>
 </template>
 
@@ -694,6 +747,15 @@ import { createSupabaseClient } from '~/lib/supabase'
 import { useEmpresa } from '~/composables/useEmpresa'
 
 defineOptions({ name: 'ConfiguracoesPage' })
+
+// ── Tab Navigation ───────────────────────────────────────────────────────────
+const activeTab = ref<'empresa' | 'visual' | 'horarios'>('empresa')
+
+const tabs = [
+  { id: 'empresa' as const, label: 'Empresa', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />' },
+  { id: 'visual' as const, label: 'Personalização', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />' },
+  { id: 'horarios' as const, label: 'Horários', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />' },
+]
 
 const supabase = createSupabaseClient()
 const { empresaId, loadEmpresa } = useEmpresa()
