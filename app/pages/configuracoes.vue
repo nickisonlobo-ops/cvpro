@@ -195,6 +195,11 @@
         </div>
       </section>
 
+      </div><!-- end TAB: EMPRESA first half -->
+
+      <!-- ═══ TAB: VISUAL ═══ -->
+      <div v-show="activeTab === 'visual'" class="space-y-8">
+
       <!-- Cores -->
       <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-6">
         <h2 class="text-base font-bold text-gray-800">Esquema de Cores</h2>
@@ -377,6 +382,11 @@
           </div>
         </div>
       </section>
+
+      </div><!-- end TAB: VISUAL -->
+
+      <!-- ═══ TAB: HORÁRIOS ═══ -->
+      <div v-show="activeTab === 'horarios'" class="space-y-8">
 
       <!-- Horários de Agendamento -->
       <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-5">
@@ -568,6 +578,11 @@
         </div>
       </section>
 
+      </div><!-- end TAB: HORÁRIOS -->
+
+      <!-- Empresa tab continues: Dados da Empresa -->
+      <div v-show="activeTab === 'empresa'" class="space-y-8">
+
       <!-- Dados da Empresa -->
       <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-5">
         <div>
@@ -717,23 +732,7 @@
           </button>
         </div>
       </div>
-      </div><!-- end empresa tab (contains all for now) -->
-
-      <!-- ═══ TAB: VISUAL (placeholder — conteúdo será separado) ═══ -->
-      <div v-show="activeTab === 'visual'" class="space-y-8">
-        <div class="text-center py-12">
-          <p class="text-sm text-gray-400">As configurações visuais estão na aba Empresa por enquanto.</p>
-          <button type="button" class="mt-2 text-sm text-orange-600 font-medium" @click="activeTab = 'empresa'">Ir para Empresa</button>
-        </div>
-      </div>
-
-      <!-- ═══ TAB: HORÁRIOS (placeholder — conteúdo será separado) ═══ -->
-      <div v-show="activeTab === 'horarios'" class="space-y-8">
-        <div class="text-center py-12">
-          <p class="text-sm text-gray-400">Os horários estão na aba Empresa por enquanto.</p>
-          <button type="button" class="mt-2 text-sm text-orange-600 font-medium" @click="activeTab = 'empresa'">Ir para Empresa</button>
-        </div>
-      </div>
+      </div><!-- end empresa tab second half (Dados) -->
 
     </template>
   </main>
