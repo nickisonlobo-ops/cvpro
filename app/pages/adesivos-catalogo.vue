@@ -268,292 +268,350 @@
           class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md px-4 py-4"
           @click.self="fecharModal"
         >
-          <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl flex flex-col overflow-hidden" style="max-height:92vh">
+          <div class="bg-white rounded-3xl shadow-2xl w-full sm:max-w-5xl flex flex-col overflow-hidden" style="max-height:92vh">
 
             <!-- Header -->
-            <div class="relative bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 px-8 py-6 shrink-0">
-              <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(20,184,166,0.12),transparent_60%)] pointer-events-none" />
-              <div class="relative flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                  <div class="w-11 h-11 rounded-2xl bg-teal-500/20 border border-teal-400/30 flex items-center justify-center shadow-lg">
-                    <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/></svg>
+            <div class="relative bg-white border-b border-gray-100 px-6 py-5 shrink-0">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3.5">
+                  <div class="w-10 h-10 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.568 3H5.25A2.25 2.25 0 003 5.25v4.318c0 .597.237 1.17.659 1.591l9.581 9.581c.699.699 1.78.872 2.607.33a18.095 18.095 0 005.223-5.223c.542-.827.369-1.908-.33-2.607L11.16 3.66A2.25 2.25 0 009.568 3z"/></svg>
                   </div>
                   <div>
-                    <p class="text-[10px] font-bold text-teal-400 uppercase tracking-[0.2em] mb-0.5">{{ editandoProduto ? 'Editar' : 'Cadastrar' }}</p>
-                    <h2 class="text-xl font-black text-white leading-none">{{ editandoProduto ? 'Editar Produto' : 'Novo Produto' }}</h2>
+                    <h2 class="text-lg font-black text-gray-900 leading-none">{{ editandoProduto ? 'Editar Produto' : 'Novo produto' }}</h2>
+                    <div class="flex items-center gap-2 mt-1">
+                      <span class="text-xs text-gray-500">Cadastre um novo item para o catálogo</span>
+                      <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-100">Cadastro</span>
+                    </div>
                   </div>
                 </div>
-                <button type="button" class="w-9 h-9 flex items-center justify-center rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors" @click="fecharModal">
+                <button type="button" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors" @click="fecharModal">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
               </div>
             </div>
 
-            <!-- Form -->
-            <form class="flex flex-col gap-5 px-8 py-7 overflow-y-auto" @submit.prevent="salvar">
+            <!-- Body: 2-column layout -->
+            <div class="flex flex-1 overflow-hidden">
 
-              <!-- Nome -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Nome *</label>
-                <input
-                  v-model="form.nome"
-                  type="text"
-                  maxlength="100"
-                  placeholder="Nome do produto"
-                  class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
-                  :class="formErrors.nome ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
-                />
-                <p v-if="formErrors.nome" class="text-xs text-red-500 font-semibold">{{ formErrors.nome }}</p>
-              </div>
+              <!-- Left Column: Form (scrollable) -->
+              <form id="produto-form" class="flex-1 flex flex-col gap-6 px-7 py-6 overflow-y-auto" @submit.prevent="salvar">
 
-              <!-- Categoria -->
-              <!-- Categoria -->
-              <div class="flex flex-col gap-1.5">
-                <div class="flex items-center justify-between">
-                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Categoria *</label>
-                  <button
-                    type="button"
-                    class="text-[10px] font-bold text-teal-600 hover:text-teal-800 transition-colors"
-                    @click="showCategoriasModal = true"
-                  >
-                    + Gerenciar
-                  </button>
-                </div>
-                <select
-                  v-model="form.categoria_id"
-                  class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
-                  :class="formErrors.categoria ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
-                >
-                  <option :value="null">Selecione uma categoria...</option>
-                  <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.nome }}</option>
-                </select>
-                <p v-if="formErrors.categoria" class="text-xs text-red-500 font-semibold">{{ formErrors.categoria }}</p>
-              </div>
-
-              <!-- ═══ Composição de Materiais ═══ -->
-              <div class="flex flex-col gap-3">
-                <div class="flex items-center justify-between">
-                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Composição de Materiais *</label>
-                  <button
-                    type="button"
-                    class="inline-flex items-center gap-1 text-xs font-bold text-teal-600 hover:text-teal-800 transition-colors"
-                    @click="adicionarComposicao"
-                  >
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-                    Adicionar Material
-                  </button>
+                <!-- ═══ Section 1: Dados do produto ═══ -->
+                <div class="flex items-center gap-3 mb-1">
+                  <span class="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-black flex items-center justify-center shrink-0">1</span>
+                  <h3 class="text-sm font-bold text-gray-800">Dados do produto</h3>
                 </div>
 
-                <p v-if="formErrors.composicoes" class="text-xs text-red-500 font-semibold -mt-1">{{ formErrors.composicoes }}</p>
-
-                <!-- Empty state -->
-                <div v-if="form.composicoes.length === 0" class="border-2 border-dashed border-gray-200 rounded-xl px-4 py-6 text-center">
-                  <p class="text-sm text-gray-400">Nenhum material adicionado. Clique em "Adicionar Material" acima.</p>
+                <!-- Nome -->
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Nome *</label>
+                  <input
+                    v-model="form.nome"
+                    type="text"
+                    maxlength="100"
+                    placeholder="Nome do produto"
+                    class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
+                    :class="formErrors.nome ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
+                  />
+                  <p v-if="formErrors.nome" class="text-xs text-red-500 font-semibold">{{ formErrors.nome }}</p>
                 </div>
 
-                <!-- Composition rows -->
-                <div
-                  v-for="(comp, idx) in form.composicoes"
-                  :key="idx"
-                  class="relative border border-gray-200 rounded-xl p-4 bg-gray-50/50 space-y-3"
-                >
-                  <!-- Delete button -->
-                  <button
-                    type="button"
-                    class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
-                    title="Remover material"
-                    @click="removerComposicao(idx)"
-                  >
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
-                  </button>
-
-                  <!-- Material select -->
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Material {{ idx + 1 }}</label>
-                    <select
-                      v-model="comp.material_id"
-                      class="w-full rounded-lg border px-3 py-2 text-sm font-semibold text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-teal-400 transition-all"
-                      :class="comp.errors?.material_id ? 'border-red-400 bg-red-50' : 'border-gray-200'"
+                <!-- Categoria -->
+                <div class="flex flex-col gap-1.5">
+                  <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Categoria *</label>
+                    <button
+                      type="button"
+                      class="text-[10px] font-bold text-teal-600 hover:text-teal-800 transition-colors"
+                      @click="showCategoriasModal = true"
                     >
-                      <option :value="null">Selecione o material...</option>
-                      <option v-for="m in materiaisAtivos" :key="m.id" :value="m.id">{{ m.nome }}</option>
-                    </select>
-                    <p v-if="comp.errors?.material_id" class="text-[10px] text-red-500 font-semibold">{{ comp.errors.material_id }}</p>
+                      + Gerenciar
+                    </button>
+                  </div>
+                  <select
+                    v-model="form.categoria_id"
+                    class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
+                    :class="formErrors.categoria ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
+                  >
+                    <option :value="null">Selecione uma categoria...</option>
+                    <option v-for="cat in categorias" :key="cat.id" :value="cat.id">{{ cat.nome }}</option>
+                  </select>
+                  <p v-if="formErrors.categoria" class="text-xs text-red-500 font-semibold">{{ formErrors.categoria }}</p>
+                </div>
+
+                <!-- Composição de Materiais -->
+                <div class="flex flex-col gap-3">
+                  <div class="flex items-center justify-between">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Composição de Materiais *</label>
+                    <button
+                      type="button"
+                      class="inline-flex items-center gap-1 text-xs font-bold text-teal-600 hover:text-teal-800 transition-colors"
+                      @click="adicionarComposicao"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                      Adicionar Material
+                    </button>
                   </div>
 
-                  <!-- Formula input -->
-                  <div class="flex flex-col gap-1">
-                    <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Fórmula de Consumo</label>
-                    <input
-                      v-model="comp.formula_consumo"
-                      type="text"
-                      placeholder="Ex: largura * altura / 10000"
-                      class="w-full rounded-lg border px-3 py-2 text-sm font-mono text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-teal-400 transition-all"
-                      :class="comp.errors?.formula ? 'border-red-400 bg-red-50' : 'border-gray-200'"
-                      @input="validarFormulaRow(idx)"
-                    />
-                    <p v-if="comp.errors?.formula" class="text-[10px] text-red-500 font-semibold">{{ comp.errors.formula }}</p>
+                  <p v-if="formErrors.composicoes" class="text-xs text-red-500 font-semibold -mt-1">{{ formErrors.composicoes }}</p>
 
-                    <!-- Variable badges -->
-                    <div v-if="comp.detectedVars.length > 0" class="flex flex-wrap gap-1 mt-0.5">
-                      <span
-                        v-for="v in comp.detectedVars"
-                        :key="v"
-                        class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-md"
-                        :class="VARIAVEIS_PERMITIDAS.includes(v as any) ? 'bg-teal-100 text-teal-700' : 'bg-red-100 text-red-600'"
+                  <!-- Empty state -->
+                  <div v-if="form.composicoes.length === 0" class="border-2 border-dashed border-gray-200 rounded-xl px-4 py-6 text-center">
+                    <p class="text-sm text-gray-400">Nenhum material adicionado. Clique em "Adicionar Material" acima.</p>
+                  </div>
+
+                  <!-- Composition rows -->
+                  <div
+                    v-for="(comp, idx) in form.composicoes"
+                    :key="idx"
+                    class="relative border border-gray-200 rounded-xl p-4 bg-gray-50/50 space-y-3"
+                  >
+                    <!-- Delete button -->
+                    <button
+                      type="button"
+                      class="absolute top-2 right-2 w-6 h-6 flex items-center justify-center rounded-full text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                      title="Remover material"
+                      @click="removerComposicao(idx)"
+                    >
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+
+                    <!-- Material select -->
+                    <div class="flex flex-col gap-1">
+                      <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Material {{ idx + 1 }}</label>
+                      <select
+                        v-model="comp.material_id"
+                        class="w-full rounded-lg border px-3 py-2 text-sm font-semibold text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-teal-400 transition-all"
+                        :class="comp.errors?.material_id ? 'border-red-400 bg-red-50' : 'border-gray-200'"
                       >
-                        {{ v }}
-                      </span>
+                        <option :value="null">Selecione o material...</option>
+                        <option v-for="m in materiaisAtivos" :key="m.id" :value="m.id">{{ m.nome }}</option>
+                      </select>
+                      <p v-if="comp.errors?.material_id" class="text-[10px] text-red-500 font-semibold">{{ comp.errors.material_id }}</p>
+                    </div>
+
+                    <!-- Formula input -->
+                    <div class="flex flex-col gap-1">
+                      <label class="text-[9px] font-bold text-gray-400 uppercase tracking-wider">Fórmula de Consumo</label>
+                      <input
+                        v-model="comp.formula_consumo"
+                        type="text"
+                        placeholder="Ex: largura * altura / 10000"
+                        class="w-full rounded-lg border px-3 py-2 text-sm font-mono text-gray-800 bg-white focus:outline-none focus:ring-1 focus:ring-teal-400 transition-all"
+                        :class="comp.errors?.formula ? 'border-red-400 bg-red-50' : 'border-gray-200'"
+                        @input="validarFormulaRow(idx)"
+                      />
+                      <p v-if="comp.errors?.formula" class="text-[10px] text-red-500 font-semibold">{{ comp.errors.formula }}</p>
+
+                      <!-- Variable badges -->
+                      <div v-if="comp.detectedVars.length > 0" class="flex flex-wrap gap-1 mt-0.5">
+                        <span
+                          v-for="v in comp.detectedVars"
+                          :key="v"
+                          class="inline-flex items-center text-[10px] font-bold px-1.5 py-0.5 rounded-md"
+                          :class="VARIAVEIS_PERMITIDAS.includes(v as any) ? 'bg-teal-100 text-teal-700' : 'bg-red-100 text-red-600'"
+                        >
+                          {{ v }}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              <!-- ═══ Fim Composição ═══ -->
 
-              <!-- Dimensões (opcionais - medidas padrão para exibição) -->
-              <div class="grid grid-cols-2 gap-4">
-                <div class="flex flex-col gap-1.5">
-                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Largura (cm)</label>
-                  <input
-                    v-model.number="form.largura_cm"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="9999"
-                    placeholder="Opcional"
-                    class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all border-gray-200 focus:border-teal-400"
-                  />
-                </div>
-                <div class="flex flex-col gap-1.5">
-                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Altura (cm)</label>
-                  <input
-                    v-model.number="form.altura_cm"
-                    type="number"
-                    step="0.1"
-                    min="0"
-                    max="9999"
-                    placeholder="Opcional"
-                    class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all border-gray-200 focus:border-teal-400"
-                  />
-                </div>
-              </div>
-
-              <!-- Tipo de Precificação -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Tipo de Precificação *</label>
-                <select v-model="form.tipo_precificacao" class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all border-gray-200 focus:border-teal-400">
-                  <option value="unidade">Por Unidade (padrão)</option>
-                  <option value="m2">Por m² (largura × altura)</option>
-                  <option value="metro_linear">Por Metro Linear</option>
-                </select>
-                <p class="text-[10px] text-gray-400">Define como o preço é calculado nos orçamentos</p>
-              </div>
-
-              <!-- Preço -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Preço de Venda (R$) *</label>
-                <input
-                  v-model.number="form.preco_venda"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  max="999999.99"
-                  placeholder="0.00"
-                  class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
-                  :class="formErrors.preco_venda ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
-                />
-                <p v-if="formErrors.preco_venda" class="text-xs text-red-500 font-semibold">{{ formErrors.preco_venda }}</p>
-              </div>
-
-              <!-- Descrição -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Descrição</label>
-                <textarea
-                  v-model="form.descricao"
-                  rows="3"
-                  maxlength="500"
-                  placeholder="Descrição opcional do produto (máx 500 caracteres)"
-                  class="w-full rounded-xl border-2 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 bg-gray-50 focus:outline-none focus:border-teal-400 transition-colors resize-none"
-                  :class="formErrors.descricao ? 'border-red-400 bg-red-50' : 'border-gray-200'"
-                />
-                <p v-if="formErrors.descricao" class="text-xs text-red-500 font-semibold">{{ formErrors.descricao }}</p>
-              </div>
-
-              <!-- Upload Imagem -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Imagem de Referência</label>
-                <div class="flex items-center gap-4">
-                  <!-- Preview -->
-                  <div v-if="imagemPreview || form.imagem_url" class="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 border-2 border-gray-200 shrink-0">
-                    <img :src="imagemPreview || form.imagem_url!" alt="Preview" class="w-full h-full object-cover" />
+                <!-- Dimensões -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Largura (cm)</label>
+                    <input
+                      v-model.number="form.largura_cm"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="9999"
+                      placeholder="Opcional"
+                      class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all border-gray-200 focus:border-teal-400"
+                    />
                   </div>
-                  <!-- Input -->
-                  <div class="flex-1">
-                    <label
-                      class="flex items-center justify-center gap-2 w-full rounded-xl border-2 border-dashed px-4 py-4 text-sm font-semibold cursor-pointer transition-all"
-                      :class="formErrors.imagem_url ? 'border-red-300 text-red-400 hover:border-red-400 bg-red-50' : 'border-gray-200 text-gray-400 hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50/30'"
-                    >
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
-                      <span>{{ imagemArquivo ? imagemArquivo.name : 'Selecionar imagem (PNG, JPG, WEBP - max 5MB)' }}</span>
-                      <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" @change="onImagemSelecionada" />
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Altura (cm)</label>
+                    <input
+                      v-model.number="form.altura_cm"
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="9999"
+                      placeholder="Opcional"
+                      class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all border-gray-200 focus:border-teal-400"
+                    />
+                  </div>
+                </div>
+
+                <!-- Tipo de Precificação -->
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Tipo de Precificação *</label>
+                  <select v-model="form.tipo_precificacao" class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all border-gray-200 focus:border-teal-400">
+                    <option value="unidade">Por Unidade (padrão)</option>
+                    <option value="m2">Por m² (largura × altura)</option>
+                    <option value="metro_linear">Por Metro Linear</option>
+                  </select>
+                  <p class="text-[10px] text-gray-400">Define como o preço é calculado nos orçamentos</p>
+                </div>
+
+                <!-- Preço -->
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Preço de Venda (R$) *</label>
+                  <input
+                    v-model.number="form.preco_venda"
+                    type="number"
+                    step="0.01"
+                    min="0.01"
+                    max="999999.99"
+                    placeholder="0.00"
+                    class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
+                    :class="formErrors.preco_venda ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-teal-400'"
+                  />
+                  <p v-if="formErrors.preco_venda" class="text-xs text-red-500 font-semibold">{{ formErrors.preco_venda }}</p>
+                </div>
+
+                <!-- Descrição -->
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Descrição</label>
+                  <textarea
+                    v-model="form.descricao"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Descrição opcional do produto (máx 500 caracteres)"
+                    class="w-full rounded-xl border-2 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 bg-gray-50 focus:outline-none focus:border-teal-400 transition-colors resize-none"
+                    :class="formErrors.descricao ? 'border-red-400 bg-red-50' : 'border-gray-200'"
+                  />
+                  <p v-if="formErrors.descricao" class="text-xs text-red-500 font-semibold">{{ formErrors.descricao }}</p>
+                </div>
+
+                <!-- ═══ Section 2: Mídia e referência ═══ -->
+                <div class="flex items-center gap-3 mb-1 mt-2">
+                  <span class="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-black flex items-center justify-center shrink-0">2</span>
+                  <h3 class="text-sm font-bold text-gray-800">Mídia e referência</h3>
+                </div>
+
+                <!-- Upload Imagem -->
+                <div class="flex flex-col gap-1.5">
+                  <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Imagem de Referência</label>
+                  <div class="flex items-center gap-4">
+                    <!-- Preview -->
+                    <div v-if="imagemPreview || form.imagem_url" class="w-20 h-20 rounded-xl overflow-hidden bg-gray-100 border-2 border-gray-200 shrink-0">
+                      <img :src="imagemPreview || form.imagem_url!" alt="Preview" class="w-full h-full object-cover" />
+                    </div>
+                    <!-- Input -->
+                    <div class="flex-1">
+                      <label
+                        class="flex items-center justify-center gap-2 w-full rounded-xl border-2 border-dashed px-4 py-4 text-sm font-semibold cursor-pointer transition-all"
+                        :class="formErrors.imagem_url ? 'border-red-300 text-red-400 hover:border-red-400 bg-red-50' : 'border-gray-200 text-gray-400 hover:border-teal-400 hover:text-teal-600 hover:bg-teal-50/30'"
+                      >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+                        <span>{{ imagemArquivo ? imagemArquivo.name : 'Selecionar imagem (PNG, JPG, WEBP - max 5MB)' }}</span>
+                        <input type="file" accept="image/png,image/jpeg,image/webp" class="hidden" @change="onImagemSelecionada" />
+                      </label>
+                    </div>
+                  </div>
+                  <p v-if="formErrors.imagem_url" class="text-xs text-red-500 font-semibold">{{ formErrors.imagem_url }}</p>
+                </div>
+
+                <!-- ═══ Section 3: Processos de produção ═══ -->
+                <div class="flex items-center gap-3 mb-1 mt-2">
+                  <span class="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-black flex items-center justify-center shrink-0">3</span>
+                  <h3 class="text-sm font-bold text-gray-800">Processos de produção</h3>
+                </div>
+
+                <!-- Processos de Produção -->
+                <div>
+                  <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Processos de Produção</label>
+                  <div v-if="processosDisponiveis.length > 0" class="space-y-1.5 max-h-32 overflow-y-auto rounded-xl border border-gray-200 p-3">
+                    <label v-for="p in processosDisponiveis" :key="p.id" class="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 px-2 py-1.5 rounded-lg transition-colors">
+                      <input type="checkbox" :value="p.id" v-model="processosSelecionados" class="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
+                      <span class="text-sm text-gray-700">{{ p.nome }}</span>
+                      <span class="text-[10px] text-gray-400">({{ p.etapas?.length ?? 0 }} etapas)</span>
                     </label>
                   </div>
-                </div>
-                <p v-if="formErrors.imagem_url" class="text-xs text-red-500 font-semibold">{{ formErrors.imagem_url }}</p>
-              </div>
+                  <p v-else class="text-[10px] text-gray-400 mt-1">Nenhum processo cadastrado. Crie em Processos de Produção.</p>
 
-              <!-- Processos de Produção -->
-              <div>
-                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5 block">Processos de Produção</label>
-                <div v-if="processosDisponiveis.length > 0" class="space-y-1.5 max-h-32 overflow-y-auto rounded-xl border border-gray-200 p-3">
-                  <label v-for="p in processosDisponiveis" :key="p.id" class="flex items-center gap-2.5 cursor-pointer hover:bg-gray-50 px-2 py-1.5 rounded-lg transition-colors">
-                    <input type="checkbox" :value="p.id" v-model="processosSelecionados" class="w-4 h-4 rounded border-gray-300 text-purple-600 focus:ring-purple-500" />
-                    <span class="text-sm text-gray-700">{{ p.nome }}</span>
-                    <span class="text-[10px] text-gray-400">({{ p.etapas?.length ?? 0 }} etapas)</span>
-                  </label>
+                  <!-- Ordem dos processos selecionados -->
+                  <div v-if="processosSelecionados.length > 1" class="mt-3 space-y-2">
+                    <label class="text-[10px] font-bold text-gray-400 uppercase">Ordem de execução</label>
+                    <div class="space-y-1 rounded-lg border border-gray-200 p-2">
+                      <div v-for="(pid, idx) in processosSelecionados" :key="pid" class="flex items-center gap-2 px-2 py-2 rounded-md bg-gray-50">
+                        <span class="text-[10px] font-black text-gray-400 w-4">{{ idx + 1 }}</span>
+                        <span class="text-xs font-medium text-gray-700 flex-1">{{ processosDisponiveis.find(p => p.id === pid)?.nome }}</span>
+                        <label v-if="idx > 0" class="flex items-center gap-1 cursor-pointer" :title="processosDepende[idx] ? 'Depende do anterior (sequencial)' : 'Independente (paralelo)'">
+                          <input type="checkbox" :checked="processosDepende[idx]" class="w-3.5 h-3.5 rounded border-gray-300 text-red-500 focus:ring-red-400" @change="processosDepende[idx] = !processosDepende[idx]" />
+                          <svg class="w-3.5 h-3.5" :class="processosDepende[idx] ? 'text-red-500' : 'text-gray-300'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                        </label>
+                        <button v-if="idx > 0" type="button" class="w-5 h-5 rounded bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-100" @click="moverProcesso(idx, -1)">
+                          <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>
+                        </button>
+                        <button v-if="idx < processosSelecionados.length - 1" type="button" class="w-5 h-5 rounded bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-100" @click="moverProcesso(idx, 1)">
+                          <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="text-[9px] text-gray-400">🔒 = depende do anterior estar concluído</p>
+                  </div>
                 </div>
-                <p v-else class="text-[10px] text-gray-400 mt-1">Nenhum processo cadastrado. Crie em Processos de Produção.</p>
 
-                <!-- Ordem dos processos selecionados -->
-                <div v-if="processosSelecionados.length > 1" class="mt-3 space-y-2">
-                  <label class="text-[10px] font-bold text-gray-400 uppercase">Ordem de execução</label>
-                  <div class="space-y-1 rounded-lg border border-gray-200 p-2">
-                    <div v-for="(pid, idx) in processosSelecionados" :key="pid" class="flex items-center gap-2 px-2 py-2 rounded-md bg-gray-50">
-                      <span class="text-[10px] font-black text-gray-400 w-4">{{ idx + 1 }}</span>
-                      <span class="text-xs font-medium text-gray-700 flex-1">{{ processosDisponiveis.find(p => p.id === pid)?.nome }}</span>
-                      <label v-if="idx > 0" class="flex items-center gap-1 cursor-pointer" :title="processosDepende[idx] ? 'Depende do anterior (sequencial)' : 'Independente (paralelo)'">
-                        <input type="checkbox" :checked="processosDepende[idx]" class="w-3.5 h-3.5 rounded border-gray-300 text-red-500 focus:ring-red-400" @change="processosDepende[idx] = !processosDepende[idx]" />
-                        <svg class="w-3.5 h-3.5" :class="processosDepende[idx] ? 'text-red-500' : 'text-gray-300'" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
-                      </label>
-                      <button v-if="idx > 0" type="button" class="w-5 h-5 rounded bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-100" @click="moverProcesso(idx, -1)">
-                        <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 15.75l7.5-7.5 7.5 7.5" /></svg>
-                      </button>
-                      <button v-if="idx < processosSelecionados.length - 1" type="button" class="w-5 h-5 rounded bg-white border border-gray-200 flex items-center justify-center hover:bg-gray-100" @click="moverProcesso(idx, 1)">
-                        <svg class="w-3 h-3 text-gray-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" /></svg>
-                      </button>
+                <!-- Erro geral -->
+                <p v-if="modalError" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{{ modalError }}</p>
+
+                <!-- Mobile action buttons (visible only on small screens) -->
+                <div class="flex gap-3 pb-1 sm:hidden">
+                  <button
+                    type="button"
+                    class="flex-1 py-3.5 rounded-xl border-2 border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-colors text-sm font-bold"
+                    @click="fecharModal"
+                  >
+                    Cancelar
+                  </button>
+                  <AppButton variant="primary" size="md" type="submit" :loading="saving" class="flex-1">
+                    {{ editandoProduto ? 'Salvar Alterações' : 'Cadastrar Produto' }}
+                  </AppButton>
+                </div>
+              </form>
+
+              <!-- Right Sidebar -->
+              <div class="hidden sm:flex flex-col w-[320px] border-l border-gray-100 bg-gray-50/50 overflow-y-auto">
+                <div class="sticky top-0 p-5 space-y-5">
+                  <!-- Resumo do produto card -->
+                  <div class="bg-white rounded-xl border border-gray-100 p-4 space-y-3 shadow-sm">
+                    <h4 class="text-xs font-black text-gray-500 uppercase tracking-wider">Resumo do produto</h4>
+                    <div class="space-y-2.5">
+                      <div class="flex items-center justify-between"><span class="text-xs text-gray-500">Nome</span><span class="text-xs font-bold text-gray-800 truncate max-w-[160px]">{{ form.nome || 'Novo produto' }}</span></div>
+                      <div class="flex items-center justify-between"><span class="text-xs text-gray-500">Categoria</span><span class="text-xs font-bold text-gray-800">{{ categoriaNomeSelecionada || 'Não definida' }}</span></div>
+                      <div class="flex items-center justify-between"><span class="text-xs text-gray-500">Materiais</span><span class="text-xs font-bold text-gray-800">{{ form.composicoes.length }} adicionados</span></div>
+                      <div class="flex items-center justify-between"><span class="text-xs text-gray-500">Precificação</span><span class="text-xs font-bold text-gray-800">{{ form.tipo_precificacao === 'm2' ? 'Por m²' : form.tipo_precificacao === 'metro_linear' ? 'Metro linear' : 'Por unidade' }}</span></div>
+                      <div class="flex items-center justify-between"><span class="text-xs text-gray-500">Preço</span><span class="text-xs font-bold text-gray-800">{{ formatCurrency(form.preco_venda ?? 0) }}</span></div>
+                      <div class="flex items-center justify-between"><span class="text-xs text-gray-500">Processos</span><span class="text-xs font-bold text-gray-800">{{ processosSelecionados.length }} selecionáveis</span></div>
+                      <div class="flex items-center justify-between"><span class="text-xs text-gray-500">Status</span><span class="text-xs font-bold text-orange-600">Rascunho</span></div>
                     </div>
                   </div>
-                  <p class="text-[9px] text-gray-400">🔒 = depende do anterior estar concluído</p>
+
+                  <!-- Info notice -->
+                  <div class="flex items-start gap-2 text-xs text-orange-600 bg-orange-50 rounded-lg px-3 py-2 border border-orange-100">
+                    <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/></svg>
+                    <span>Antes de cadastrar, revise os materiais, preço e processos vinculados ao produto.</span>
+                  </div>
+
+                  <!-- Action buttons -->
+                  <div class="space-y-2.5">
+                    <AppButton variant="primary" size="md" type="submit" form="produto-form" :loading="saving" class="w-full">
+                      {{ editandoProduto ? 'Salvar Alterações' : 'Cadastrar produto' }}
+                    </AppButton>
+                    <button type="button" class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium text-gray-600 border border-gray-200 hover:bg-gray-50 transition-colors" @click="fecharModal">
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <!-- Erro geral -->
-              <p v-if="modalError" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{{ modalError }}</p>
-
-              <!-- Ações -->
-              <div class="flex gap-3 pb-1">
-                <button
-                  type="button"
-                  class="flex-1 py-3.5 rounded-xl border-2 border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-colors text-sm font-bold"
-                  @click="fecharModal"
-                >
-                  Cancelar
-                </button>
-                <AppButton variant="primary" size="md" type="submit" :loading="saving" class="flex-1">
-                  {{ editandoProduto ? 'Salvar Alterações' : 'Cadastrar Produto' }}
-                </AppButton>
-              </div>
-            </form>
+            </div><!-- end flex body -->
           </div>
         </div>
       </Transition>

@@ -212,119 +212,233 @@
           class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md px-4 py-4"
           @click.self="fecharModal"
         >
-          <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg flex flex-col overflow-hidden" style="max-height:92vh">
+          <div class="bg-white rounded-2xl shadow-2xl w-full sm:max-w-5xl flex flex-col overflow-hidden" style="max-height:92vh">
 
-            <!-- Header escuro -->
-            <div class="relative bg-gradient-to-br from-gray-950 via-gray-900 to-gray-800 px-8 py-6 shrink-0">
-              <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(124,58,237,0.12),transparent_60%)] pointer-events-none" />
-              <div class="relative flex items-center justify-between">
-                <div class="flex items-center gap-4">
-                  <div class="w-11 h-11 rounded-2xl bg-purple-500/20 border border-purple-400/30 flex items-center justify-center shadow-lg">
-                    <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m0 0l-4-4m4 4l4-4" />
+            <!-- Header -->
+            <div class="px-6 py-5 border-b border-gray-100 shrink-0">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center">
+                    <svg class="w-5 h-5 text-orange-500" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
                     </svg>
                   </div>
                   <div>
-                    <p class="text-[10px] font-bold text-purple-400 uppercase tracking-[0.2em] mb-0.5">Estoque</p>
-                    <h2 class="text-xl font-black text-white leading-none">Registrar Entrada</h2>
+                    <h2 class="text-lg font-bold text-gray-900 leading-tight">Registrar entrada</h2>
+                    <p class="text-sm text-gray-500 flex items-center gap-2 mt-0.5">
+                      Adicione material ao estoque
+                      <span class="inline-flex items-center px-2 py-0.5 rounded-md bg-orange-50 text-orange-600 text-[11px] font-semibold">Estoque</span>
+                    </p>
                   </div>
                 </div>
-                <button type="button" class="w-9 h-9 flex items-center justify-center rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors" @click="fecharModal">
+                <button type="button" class="w-8 h-8 flex items-center justify-center rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors" @click="fecharModal">
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
                 </button>
               </div>
             </div>
 
-            <!-- Form -->
-            <form class="flex flex-col gap-5 px-8 py-7 overflow-y-auto" @submit.prevent="confirmarEntrada">
-              <!-- Material -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Material *</label>
-                <select
-                  v-model.number="entradaForm.material_id"
-                  class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
-                  :class="entradaErrors.material_id ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-purple-400'"
-                >
-                  <option :value="null" disabled>Selecione o material</option>
-                  <option v-for="mat in materiais" :key="mat.id" :value="mat.id">{{ mat.nome }}</option>
-                </select>
-                <p v-if="entradaErrors.material_id" class="text-xs text-red-500 font-semibold flex items-center gap-1.5">
-                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
-                  {{ entradaErrors.material_id }}
-                </p>
-              </div>
+            <!-- Body: 2-column -->
+            <div class="flex flex-1 overflow-hidden">
 
-              <!-- Quantidade -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Quantidade (m²) *</label>
-                <input
-                  v-model.number="entradaForm.quantidade_m2"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  max="9999.99"
-                  placeholder="0,00"
-                  class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
-                  :class="entradaErrors.quantidade_m2 ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-purple-400'"
-                />
-                <p v-if="entradaErrors.quantidade_m2" class="text-xs text-red-500 font-semibold flex items-center gap-1.5">
-                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
-                  {{ entradaErrors.quantidade_m2 }}
-                </p>
-              </div>
+              <!-- Left: Scrollable form -->
+              <form id="entrada-form" class="flex-1 overflow-y-auto px-6 py-6 flex flex-col gap-6" @submit.prevent="confirmarEntrada">
 
-              <!-- Custo da Compra -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Custo da Compra (R$) *</label>
-                <input
-                  v-model.number="entradaForm.custo_compra"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  placeholder="0,00"
-                  class="w-full rounded-xl border-2 px-4 py-3 text-sm font-semibold text-gray-800 bg-gray-50 focus:outline-none focus:ring-0 transition-all"
-                  :class="entradaErrors.custo_compra ? 'border-red-400 bg-red-50' : 'border-gray-200 focus:border-purple-400'"
-                />
-                <p v-if="entradaErrors.custo_compra" class="text-xs text-red-500 font-semibold flex items-center gap-1.5">
-                  <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
-                  {{ entradaErrors.custo_compra }}
-                </p>
-              </div>
+                <!-- Section 1: Dados da entrada -->
+                <div class="flex flex-col gap-5">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center">1</span>
+                    <h3 class="text-sm font-bold text-gray-900">Dados da entrada</h3>
+                  </div>
 
-              <!-- Observações -->
-              <div class="flex flex-col gap-1.5">
-                <label class="text-[10px] font-black text-gray-400 uppercase tracking-[0.15em]">Observações</label>
-                <textarea
-                  v-model="entradaForm.observacoes"
-                  rows="3"
-                  maxlength="500"
-                  placeholder="Observações opcionais..."
-                  class="w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-sm text-gray-800 placeholder:text-gray-400 bg-gray-50 focus:outline-none focus:border-purple-400 transition-colors resize-none"
-                />
-              </div>
+                  <!-- Material -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-gray-600">Material *</label>
+                    <select
+                      v-model.number="entradaForm.material_id"
+                      class="w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all"
+                      :class="entradaErrors.material_id ? 'border-red-400 bg-red-50' : 'border-gray-200'"
+                    >
+                      <option :value="null" disabled>Selecione o material</option>
+                      <option v-for="mat in materiais" :key="mat.id" :value="mat.id">{{ mat.nome }}</option>
+                    </select>
+                    <p v-if="entradaErrors.material_id" class="text-xs text-red-500 font-medium flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+                      {{ entradaErrors.material_id }}
+                    </p>
+                  </div>
 
-              <!-- Erro geral do modal -->
-              <p v-if="modalError" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl px-4 py-3">{{ modalError }}</p>
+                  <!-- Quantidade -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-gray-600">Quantidade ({{ unidadeMaterialSelecionado }}) *</label>
+                    <input
+                      v-model.number="entradaForm.quantidade_m2"
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      max="9999.99"
+                      placeholder="0,00"
+                      class="w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all"
+                      :class="entradaErrors.quantidade_m2 ? 'border-red-400 bg-red-50' : 'border-gray-200'"
+                    />
+                    <p v-if="entradaErrors.quantidade_m2" class="text-xs text-red-500 font-medium flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+                      {{ entradaErrors.quantidade_m2 }}
+                    </p>
+                  </div>
 
-              <!-- Botões -->
-              <div class="flex gap-3 pb-1">
-                <button
-                  type="button"
-                  class="flex-1 py-3.5 rounded-xl border-2 border-gray-200 text-gray-500 hover:bg-gray-50 hover:border-gray-300 transition-colors text-sm font-bold"
-                  @click="fecharModal"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  class="flex-1 py-3.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-sm transition-colors shadow-sm shadow-purple-200 disabled:opacity-60"
-                  :disabled="saving"
-                >
-                  <span v-if="saving" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1" />
-                  {{ saving ? 'Registrando...' : 'Confirmar Entrada' }}
-                </button>
-              </div>
-            </form>
+                  <!-- Custo da Compra -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-gray-600">Custo da compra (R$) *</label>
+                    <input
+                      v-model.number="entradaForm.custo_compra"
+                      type="number"
+                      step="0.01"
+                      min="0.01"
+                      placeholder="0,00"
+                      class="w-full rounded-lg border px-3.5 py-2.5 text-sm text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all"
+                      :class="entradaErrors.custo_compra ? 'border-red-400 bg-red-50' : 'border-gray-200'"
+                    />
+                    <p v-if="entradaErrors.custo_compra" class="text-xs text-red-500 font-medium flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5a.75.75 0 01.75.75v4.5a.75.75 0 01-1.5 0v-4.5A.75.75 0 0110 5zm0 10a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd"/></svg>
+                      {{ entradaErrors.custo_compra }}
+                    </p>
+                    <p class="text-[11px] text-gray-400 mt-0.5">Informe o valor pago para atualizar o custo médio do material.</p>
+                  </div>
+
+                  <!-- Observações -->
+                  <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-gray-600">Observações</label>
+                    <textarea
+                      v-model="entradaForm.observacoes"
+                      rows="3"
+                      maxlength="500"
+                      placeholder="Observações opcionais..."
+                      class="w-full rounded-lg border border-gray-200 px-3.5 py-2.5 text-sm text-gray-800 placeholder:text-gray-400 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-400 transition-all resize-none"
+                    />
+                  </div>
+                </div>
+
+                <!-- Section 2: Atualização no estoque -->
+                <div class="flex flex-col gap-4">
+                  <div class="flex items-center gap-2.5">
+                    <span class="w-6 h-6 rounded-full bg-orange-500 text-white text-xs font-bold flex items-center justify-center">2</span>
+                    <h3 class="text-sm font-bold text-gray-900">Atualização no estoque</h3>
+                  </div>
+
+                  <div class="flex flex-col gap-3 pl-8">
+                    <label class="flex items-center gap-2.5 text-sm text-gray-700">
+                      <input type="checkbox" checked disabled class="w-4 h-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500/20" />
+                      Atualizar custo médio
+                    </label>
+                    <label class="flex items-center gap-2.5 text-sm text-gray-700">
+                      <input type="checkbox" checked disabled class="w-4 h-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500/20" />
+                      Gerar movimentação de entrada
+                    </label>
+                    <label class="flex items-center gap-2.5 text-sm text-gray-700">
+                      <input type="checkbox" checked disabled class="w-4 h-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500/20" />
+                      Vincular ao histórico do material
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Erro geral do modal -->
+                <p v-if="modalError" class="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-4 py-3">{{ modalError }}</p>
+
+                <!-- Botões mobile -->
+                <div class="flex gap-3 pb-1 sm:hidden">
+                  <button
+                    type="button"
+                    class="flex-1 py-3 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors text-sm font-semibold"
+                    @click="fecharModal"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    type="submit"
+                    class="flex-1 py-3 rounded-lg bg-gray-900 hover:bg-gray-800 text-white font-semibold text-sm transition-colors disabled:opacity-60"
+                    :disabled="saving"
+                  >
+                    <span v-if="saving" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1" />
+                    {{ saving ? 'Registrando...' : 'Confirmar entrada' }}
+                  </button>
+                </div>
+              </form>
+
+              <!-- Right sidebar -->
+              <aside class="w-[320px] hidden sm:flex flex-col border-l border-gray-100 bg-gray-50/50 p-5 overflow-y-auto gap-5">
+
+                <!-- Resumo da entrada -->
+                <div class="bg-white rounded-xl border border-gray-100 p-4 flex flex-col gap-3">
+                  <h4 class="text-xs font-bold text-gray-500 uppercase tracking-wide">Resumo da entrada</h4>
+
+                  <div class="flex flex-col gap-2.5 text-sm">
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Material</span>
+                      <span class="font-medium text-gray-800 text-right max-w-[160px] truncate">{{ materiais.find(m => m.id === entradaForm.material_id)?.nome || 'Não definido' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Quantidade</span>
+                      <span class="font-medium text-gray-800">{{ entradaForm.quantidade_m2 || '0,00' }} {{ unidadeMaterialSelecionado }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Custo</span>
+                      <span class="font-medium text-gray-800">{{ formatCurrency(entradaForm.custo_compra ?? 0) }}</span>
+                    </div>
+                    <div class="border-t border-gray-100 my-1" />
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Movimento</span>
+                      <span class="font-medium text-gray-800">Entrada</span>
+                    </div>
+                    <div class="flex justify-between">
+                      <span class="text-gray-500">Impacto no estoque</span>
+                      <span class="font-semibold text-green-600">+{{ entradaForm.quantidade_m2 || '0,00' }} {{ unidadeMaterialSelecionado }}</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-500">Status</span>
+                      <span class="flex items-center gap-1.5 text-sm font-medium text-orange-600">
+                        <span class="w-2 h-2 rounded-full bg-orange-400" />
+                        Rascunho
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Info notice -->
+                <div class="flex gap-2.5 bg-orange-50 border border-orange-100 rounded-lg px-3.5 py-3">
+                  <svg class="w-4 h-4 text-orange-400 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z" clip-rule="evenodd" />
+                  </svg>
+                  <p class="text-[12px] text-orange-700 leading-relaxed">Revise material, quantidade e custo antes de confirmar a entrada no estoque.</p>
+                </div>
+
+                <!-- Sidebar buttons -->
+                <div class="flex flex-col gap-2.5 mt-auto">
+                  <button
+                    type="submit"
+                    form="entrada-form"
+                    class="w-full py-2.5 rounded-lg bg-gray-900 hover:bg-gray-800 text-white font-semibold text-sm transition-colors disabled:opacity-60"
+                    :disabled="saving"
+                  >
+                    <span v-if="saving" class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-1" />
+                    {{ saving ? 'Registrando...' : 'Confirmar entrada' }}
+                  </button>
+                  <button
+                    type="button"
+                    class="w-full py-2.5 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors text-sm font-semibold"
+                  >
+                    Salvar rascunho
+                  </button>
+                  <button
+                    type="button"
+                    class="w-full py-2.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 transition-colors text-sm font-medium flex items-center justify-center gap-1.5"
+                    @click="fecharModal"
+                  >
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                    Cancelar
+                  </button>
+                </div>
+              </aside>
+            </div>
           </div>
         </div>
       </Transition>
@@ -354,6 +468,7 @@ interface Material {
   nome: string
   estoque_atual: number
   estoque_minimo: number
+  unidade_medida?: string | null
 }
 
 interface Movimentacao {
@@ -402,6 +517,12 @@ const entradaErrors = reactive({
   custo_compra: '',
 })
 
+const unidadeMaterialSelecionado = computed(() => {
+  if (!entradaForm.material_id) return 'm²'
+  const mat = materiais.value.find(m => m.id === entradaForm.material_id)
+  return mat?.unidade_medida || 'm²'
+})
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 function formatNumber(val: number | null | undefined): string {
   if (val == null) return '0,00'
@@ -423,7 +544,7 @@ onMounted(async () => {
 async function fetchMateriais() {
   const { data, error: fetchError } = await supabase
     .from('materiais_adesivo')
-    .select('id, nome, estoque_atual, estoque_minimo')
+    .select('id, nome, estoque_atual, estoque_minimo, unidade_medida')
     .eq('empresa_id', empresaId.value!)
     .order('nome', { ascending: true })
 

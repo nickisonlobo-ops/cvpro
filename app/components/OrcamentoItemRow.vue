@@ -14,7 +14,7 @@
           :class="!expanded ? 'bg-gray-100 text-gray-500' : ''">{{ index + 1 }}</span>
         <div class="min-w-0">
           <p class="text-sm font-semibold text-gray-800 truncate">
-            {{ materialSelecionado ? materialSelecionado.nome : 'Novo item' }}
+            {{ materialSelecionado ? materialSelecionado.nome : (item.descricao || 'Novo item') }}
           </p>
           <p v-if="!expanded && valorCalculado > 0" class="text-[11px] text-gray-400">
             {{ item.modalidade_preco === 'm2' ? `${item.quantidade}× · ${item.largura_cm}×${item.altura_cm}cm` : `${item.quantidade}×` }}

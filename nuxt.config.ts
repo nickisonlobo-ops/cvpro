@@ -38,7 +38,10 @@ export default defineNuxtConfig({
     },
   },
   components: {
-    dirs: [],
+    dirs: [
+      '~/components',
+      '~/components/kanban',
+    ],
   },
   runtimeConfig: {
     public: {

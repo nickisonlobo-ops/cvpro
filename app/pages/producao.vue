@@ -319,83 +319,181 @@
     <!-- Modal Checklist + Itens OS -->
     <Teleport to="body">
       <div v-if="instanciaSelecionada" class="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-3" @click.self="instanciaSelecionada = null">
-        <div class="bg-white rounded-[2rem] max-w-2xl w-full max-h-[92vh] shadow-2xl ring-1 ring-black/5 flex flex-col overflow-hidden">
+        <div class="bg-white rounded-2xl sm:max-w-5xl w-full max-h-[92vh] shadow-2xl ring-1 ring-black/5 flex flex-col overflow-hidden">
 
-          <!-- Header Premium -->
-          <div class="relative overflow-hidden rounded-t-[2rem] px-6 py-5" style="background: var(--color-primary-bg, linear-gradient(135deg, #1e293b, #334155))">
-            <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.08),transparent_60%)]"></div>
-            <div class="relative flex items-center justify-between">
-              <div>
-                <p class="text-xs font-bold text-white/50 uppercase tracking-widest">{{ instanciaSelecionada.os_numero }}</p>
-                <h2 class="text-lg font-black text-white mt-0.5">{{ instanciaSelecionada.template_nome }}</h2>
-                <p class="text-sm text-white/60 mt-0.5">{{ instanciaSelecionada.titulo }}</p>
+          <!-- Header -->
+          <div class="px-6 py-4 border-b border-gray-100 flex-shrink-0">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center">
+                  <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15a2.25 2.25 0 012.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" /></svg>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <h2 class="text-base font-bold text-gray-900">{{ instanciaSelecionada.template_nome }}</h2>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" :class="instanciaSelecionada.progresso === 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'">
+                      <span class="w-1.5 h-1.5 rounded-full" :class="instanciaSelecionada.progresso === 100 ? 'bg-emerald-500' : 'bg-orange-500'"></span>
+                      {{ instanciaSelecionada.progresso === 100 ? 'Concluído' : 'Em andamento' }}
+                    </span>
+                  </div>
+                  <p class="text-xs text-gray-500 mt-0.5">{{ instanciaSelecionada.os_numero }} · {{ instanciaSelecionada.titulo }}</p>
+                </div>
               </div>
-              <button type="button" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-all" @click="instanciaSelecionada = null">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+              <button type="button" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-all" @click="instanciaSelecionada = null">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
               </button>
             </div>
             <!-- Progress bar -->
-            <div class="mt-4 flex items-center gap-3">
-              <div class="flex-1 h-2.5 bg-white/20 rounded-full overflow-hidden">
-                <div class="h-full rounded-full transition-all duration-500 bg-white" :style="{ width: instanciaSelecionada.progresso + '%' }"></div>
+            <div class="mt-3 flex items-center gap-3">
+              <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-500 bg-orange-500" :style="{ width: instanciaSelecionada.progresso + '%' }"></div>
               </div>
-              <span class="text-sm font-black text-white">{{ instanciaSelecionada.progresso }}%</span>
+              <span class="text-xs font-bold text-gray-600">{{ instanciaSelecionada.progresso }}%</span>
             </div>
           </div>
 
-          <!-- Itens da OS (fixo, não scroll) -->
-          <div v-if="itensOS.length > 0" class="px-6 py-5 border-b border-gray-100 flex-shrink-0 overflow-y-auto max-h-[40vh]">
-            <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-wider mb-4">Itens da OS</h3>
-            <div class="space-y-4">
-              <div v-for="(item, idx) in itensOS" :key="item.id" class="rounded-2xl border border-gray-100 overflow-hidden">
-                <!-- Item header -->
-                <div class="flex items-center justify-between px-4 py-3 bg-gray-50/50">
-                  <div class="flex items-center gap-2">
-                    <span class="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-black text-white bg-gray-800">{{ idx + 1 }}</span>
-                    <span class="text-sm font-bold text-gray-900">{{ item.descricao }}</span>
-                  </div>
+          <!-- 2-Column Body -->
+          <div class="flex flex-1 overflow-hidden min-h-0">
+            <!-- Left Column (scrollable content) -->
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+
+              <!-- Section 1: Itens da OS -->
+              <div v-if="itensOS.length > 0">
+                <div class="flex items-center gap-2 mb-4">
+                  <span class="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center text-[10px] font-bold text-orange-600">1</span>
+                  <h3 class="text-sm font-bold text-gray-900">Itens da OS</h3>
                 </div>
-                <!-- Item details -->
-                <div class="px-4 py-3 space-y-3">
-                  <div class="flex flex-wrap gap-3 text-xs text-gray-500">
-                    <span class="bg-gray-100 px-2 py-1 rounded-md font-medium">{{ item.material_nome ?? `Material #${item.material_id}` }}</span>
-                    <span class="bg-gray-100 px-2 py-1 rounded-md font-medium">{{ item.largura_cm }} × {{ item.altura_cm }} cm</span>
-                    <span class="bg-gray-100 px-2 py-1 rounded-md font-medium">Qtd: {{ item.quantidade }}</span>
-                  </div>
-                  <!-- Fotos grandes -->
-                  <div v-if="item.foto_arte_url || item.foto_local_url || item.arquivo_url" class="flex flex-wrap gap-3">
-                    <img v-if="item.foto_arte_url" :src="item.foto_arte_url" alt="Arte" class="w-32 h-32 sm:w-40 sm:h-40 rounded-xl object-cover border border-gray-200 cursor-pointer hover:shadow-lg transition-all" @click="lightboxUrl = item.foto_arte_url" />
-                    <img v-if="item.foto_local_url" :src="item.foto_local_url" alt="Local" class="w-32 h-32 sm:w-40 sm:h-40 rounded-xl object-cover border border-gray-200 cursor-pointer hover:shadow-lg transition-all" @click="lightboxUrl = item.foto_local_url" />
-                    <a v-if="item.arquivo_url" :href="item.arquivo_url" target="_blank" rel="noopener" class="flex items-center gap-2 px-4 py-3 rounded-xl bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 transition-colors text-xs font-bold">
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
-                      Arquivo
-                    </a>
+                <div class="space-y-3">
+                  <div v-for="(item, idx) in itensOS" :key="item.id" class="rounded-xl border border-gray-100 overflow-hidden">
+                    <!-- Item header -->
+                    <div class="flex items-center gap-2 px-4 py-3 bg-gray-50/50">
+                      <span class="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-black text-white bg-gray-800">{{ idx + 1 }}</span>
+                      <span class="text-sm font-bold text-gray-900">{{ item.descricao }}</span>
+                    </div>
+                    <!-- Item details -->
+                    <div class="px-4 py-3 space-y-3">
+                      <div class="flex flex-wrap gap-2 text-xs">
+                        <span class="bg-orange-50 text-orange-700 px-2 py-1 rounded-md font-medium">{{ item.material_nome ?? `Material #${item.material_id}` }}</span>
+                        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-medium">{{ item.largura_cm }} × {{ item.altura_cm }} cm</span>
+                        <span class="bg-gray-100 text-gray-600 px-2 py-1 rounded-md font-medium">Qtd: {{ item.quantidade }}</span>
+                      </div>
+                      <!-- Fotos Arte/Local -->
+                      <div v-if="item.foto_arte_url || item.foto_local_url || item.arquivo_url" class="flex flex-wrap gap-3">
+                        <div v-if="item.foto_arte_url" class="relative group">
+                          <img :src="item.foto_arte_url" alt="Arte" class="w-28 h-28 rounded-lg object-cover border border-gray-200 cursor-pointer hover:shadow-lg transition-all" @click="lightboxUrl = item.foto_arte_url" />
+                          <span class="absolute bottom-1 left-1 px-1.5 py-0.5 bg-black/60 text-white text-[9px] font-bold rounded">Arte</span>
+                        </div>
+                        <div v-if="item.foto_local_url" class="relative group">
+                          <img :src="item.foto_local_url" alt="Local" class="w-28 h-28 rounded-lg object-cover border border-gray-200 cursor-pointer hover:shadow-lg transition-all" @click="lightboxUrl = item.foto_local_url" />
+                          <span class="absolute bottom-1 left-1 px-1.5 py-0.5 bg-black/60 text-white text-[9px] font-bold rounded">Local</span>
+                        </div>
+                        <a v-if="item.arquivo_url" :href="item.arquivo_url" target="_blank" rel="noopener" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-100 border border-gray-200 text-gray-700 hover:bg-gray-200 transition-colors text-xs font-bold self-end">
+                          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m.75 12l3 3m0 0l3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                          Arquivo
+                        </a>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              <!-- Section 2: Checklist -->
+              <div>
+                <div class="flex items-center gap-2 mb-4">
+                  <span class="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center text-[10px] font-bold text-orange-600">2</span>
+                  <h3 class="text-sm font-bold text-gray-900">Checklist</h3>
+                </div>
+
+                <!-- Aviso bloqueado -->
+                <div v-if="instanciaSelecionada && isBloqueada(instanciaSelecionada)" class="mb-4 flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-amber-50 border border-amber-200">
+                  <svg class="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
+                  <p class="text-xs font-semibold text-amber-700">Processo bloqueado — conclua o processo anterior para liberar o checklist.</p>
+                </div>
+
+                <div class="space-y-1">
+                  <div v-for="item in checklistAtual" :key="item.id" class="flex items-center gap-2.5 px-3 py-2.5 rounded-lg transition-all" :class="item.concluida ? 'bg-emerald-50/50' : 'hover:bg-gray-50'">
+                    <button type="button" class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all flex-shrink-0" :class="item.concluida ? 'bg-emerald-500 border-emerald-500' : 'border-gray-300 hover:border-emerald-400'" :disabled="instanciaSelecionada && isBloqueada(instanciaSelecionada)" @click="toggleCheck(item)">
+                      <svg v-if="item.concluida" class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                    </button>
+                    <span class="text-xs" :class="item.concluida ? 'text-gray-400 line-through' : 'text-gray-700 font-medium'">{{ item.titulo }}</span>
+                  </div>
+                  <div v-if="checklistAtual.length === 0" class="text-center py-4 text-xs text-gray-400">Nenhuma etapa</div>
+                </div>
+              </div>
+
             </div>
-          </div>
 
-          <!-- Checklist compacto (scrollável) -->
-          <div class="px-6 py-5 flex-1 overflow-y-auto min-h-0">
-            <h3 class="text-[11px] font-black text-gray-400 uppercase tracking-wider mb-3">Checklist</h3>
+            <!-- Right Sidebar -->
+            <div class="w-[300px] flex-shrink-0 bg-gray-50/50 border-l border-gray-100 p-5 overflow-y-auto hidden sm:flex flex-col gap-5">
 
-            <!-- Aviso bloqueado -->
-            <div v-if="instanciaSelecionada && isBloqueada(instanciaSelecionada)" class="mb-4 flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-amber-50 border border-amber-200">
-              <svg class="w-4 h-4 text-amber-500 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>
-              <p class="text-xs font-semibold text-amber-700">Processo bloqueado — conclua o processo anterior para liberar o checklist.</p>
-            </div>
+              <!-- Resumo da etapa -->
+              <div class="rounded-xl border border-gray-200 bg-white p-4 space-y-3">
+                <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Resumo da etapa</h4>
+                <div class="space-y-2 text-xs">
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">OS</span>
+                    <span class="font-semibold text-gray-900">{{ instanciaSelecionada.os_numero }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Cliente</span>
+                    <span class="font-semibold text-gray-900 text-right max-w-[140px] truncate">{{ instanciaSelecionada.titulo }}</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Etapa</span>
+                    <span class="font-semibold text-gray-900">{{ instanciaSelecionada.template_nome }}</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-500">Status</span>
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold" :class="instanciaSelecionada.progresso === 100 ? 'bg-emerald-100 text-emerald-700' : 'bg-orange-100 text-orange-700'">
+                      <span class="w-1.5 h-1.5 rounded-full" :class="instanciaSelecionada.progresso === 100 ? 'bg-emerald-500' : 'bg-orange-500'"></span>
+                      {{ instanciaSelecionada.progresso === 100 ? 'Concluído' : 'Em andamento' }}
+                    </span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span class="text-gray-500">Itens</span>
+                    <span class="font-semibold text-gray-900">{{ itensOS.length }}</span>
+                  </div>
+                  <div class="flex justify-between items-center">
+                    <span class="text-gray-500">Progresso</span>
+                    <div class="flex items-center gap-2">
+                      <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div class="h-full rounded-full bg-orange-500" :style="{ width: instanciaSelecionada.progresso + '%' }"></div>
+                      </div>
+                      <span class="font-semibold text-gray-900">{{ instanciaSelecionada.progresso }}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
-            <div class="space-y-1">
-              <div v-for="item in checklistAtual" :key="item.id" class="flex items-center gap-2.5 px-2 py-2 rounded-lg transition-all" :class="item.concluida ? 'bg-emerald-50/50' : 'hover:bg-gray-50'">
-                <button type="button" class="w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all flex-shrink-0" :class="item.concluida ? 'bg-emerald-500 border-emerald-500' : 'border-gray-300 hover:border-emerald-400'" :disabled="instanciaSelecionada && isBloqueada(instanciaSelecionada)" @click="toggleCheck(item)">
-                  <svg v-if="item.concluida" class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+              <!-- Dependência warning -->
+              <div v-if="instanciaSelecionada && isBloqueada(instanciaSelecionada)" class="rounded-xl border border-amber-200 bg-amber-50 p-4">
+                <div class="flex items-center gap-2 mb-1.5">
+                  <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126z" /></svg>
+                  <span class="text-xs font-bold text-amber-800">Dependência</span>
+                </div>
+                <p class="text-[11px] text-amber-700">Conclua o processo anterior para liberar esta etapa.</p>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="space-y-2 mt-auto">
+                <button v-if="instanciaSelecionada && isBloqueada(instanciaSelecionada)" type="button" class="w-full px-4 py-2.5 rounded-xl bg-amber-100 text-amber-700 text-xs font-bold cursor-not-allowed opacity-70" disabled>
+                  <span class="flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75" /></svg>
+                    Aguardar liberação
+                  </span>
                 </button>
-                <span class="text-xs" :class="item.concluida ? 'text-gray-400 line-through' : 'text-gray-700 font-medium'">{{ item.titulo }}</span>
+                <button v-else type="button" class="w-full px-4 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold transition-colors" @click="instanciaSelecionada = null">
+                  <span class="flex items-center justify-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>
+                    Salvar progresso
+                  </span>
+                </button>
+                <p class="text-[10px] text-gray-400 text-center">O progresso é salvo automaticamente ao marcar itens.</p>
               </div>
-              <div v-if="checklistAtual.length === 0" class="text-center py-4 text-xs text-gray-400">Nenhuma etapa</div>
+
             </div>
           </div>
+
         </div>
       </div>
 
