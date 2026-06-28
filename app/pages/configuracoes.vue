@@ -383,6 +383,70 @@
         </div>
       </section>
 
+      <!-- Preview -->
+      <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-4">
+        <h2 class="text-base font-bold text-gray-800">Preview</h2>
+        <div class="rounded-xl overflow-hidden border border-gray-200 shadow-md">
+          <div class="h-10 flex items-center justify-between px-4" :style="{ background: previewSidebarBg }">
+            <div class="flex items-center gap-2">
+              <img v-if="form.logo_url" :src="form.logo_url" class="w-5 h-5 object-contain rounded" alt="Logo" />
+              <div v-else class="w-5 h-5 rounded-md flex items-center justify-center" :style="{ background: previewPrimaryBg }">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" :style="{ color: form.cor_primaria_texto }"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" /></svg>
+              </div>
+              <span class="text-xs font-bold" :style="{ color: form.cor_card_texto }">{{ form.nome_empresa || 'SignPRO' }}</span>
+            </div>
+            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black" :style="{ background: previewPrimaryBg, color: form.cor_primaria_texto }">A</div>
+          </div>
+          <div class="flex" :style="{ background: previewFundoBg }">
+            <div class="w-10 shrink-0 flex flex-col items-center py-3 gap-2.5 border-r" :style="{ background: previewSidebarBg, borderColor: 'rgba(128,128,128,0.1)' }">
+              <div v-for="i in 4" :key="i" class="w-4 h-4 rounded" :style="{ background: i === 1 ? previewPrimaryBg : 'rgba(128,128,128,0.15)' }" />
+            </div>
+            <div class="flex-1 p-3 space-y-2.5">
+              <div class="h-7 rounded-lg" :style="{ background: previewPrimaryBg }" />
+              <div class="grid grid-cols-3 gap-2">
+                <div v-for="i in 3" :key="i" class="rounded-lg p-2 space-y-1" :style="{ background: previewCardBg, border: '1px solid rgba(128,128,128,0.1)' }">
+                  <div class="h-1.5 rounded-full w-10" :style="{ background: 'rgba(128,128,128,0.2)' }" />
+                  <div class="h-3 rounded w-8 font-black text-[8px] flex items-center" :style="{ color: form.cor_card_texto }">{{ ['€ 400', '12', '3'][i-1] }}</div>
+                  <div class="h-1 rounded-full w-12" :style="{ background: 'rgba(128,128,128,0.12)' }" />
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <div class="px-3 py-1.5 rounded-lg text-[10px] font-bold" :style="{ background: previewPrimaryBg, color: form.cor_primaria_texto }">Salvar</div>
+                <div class="px-3 py-1.5 rounded-lg text-[10px] font-bold" :style="{ background: 'rgba(128,128,128,0.1)', color: form.cor_card_texto }">Cancelar</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Ações (salvar personalização) -->
+      <div class="flex items-center justify-between pb-6">
+        <button
+          type="button"
+          class="text-sm text-gray-400 hover:text-gray-600 transition-colors underline"
+          @click="handleReset"
+        >
+          Restaurar padrões
+        </button>
+
+        <div class="flex items-center gap-3">
+          <span v-if="savedFeedback" class="text-sm text-green-600 font-medium">✓ Salvo!</span>
+          <button
+            type="button"
+            :disabled="saving"
+            class="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60"
+            :style="{ background: form.cor_primaria, color: form.cor_primaria_texto }"
+            @click="handleSave"
+          >
+            <svg v-if="saving" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+            </svg>
+            {{ saving ? 'Salvando…' : 'Salvar personalização' }}
+          </button>
+        </div>
+      </div>
+
       </div><!-- end TAB: VISUAL -->
 
       <!-- ═══ TAB: HORÁRIOS ═══ -->
@@ -534,50 +598,6 @@
         </div>
       </section>
 
-      <!-- Preview -->
-      <section class="bg-white rounded-2xl border border-primary-10 shadow-sm p-6 space-y-4">
-        <h2 class="text-base font-bold text-gray-800">Preview</h2>
-        <div class="rounded-xl overflow-hidden border border-gray-200 shadow-md">
-          <!-- Mini header -->
-          <div class="h-10 flex items-center justify-between px-4" :style="{ background: previewSidebarBg }">
-            <div class="flex items-center gap-2">
-              <img v-if="form.logo_url" :src="form.logo_url" class="w-5 h-5 object-contain rounded" alt="Logo" />
-              <div v-else class="w-5 h-5 rounded-md flex items-center justify-center" :style="{ background: previewPrimaryBg }">
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" :style="{ color: form.cor_primaria_texto }">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
-                </svg>
-              </div>
-              <span class="text-xs font-bold" :style="{ color: form.cor_card_texto }">{{ form.nome_empresa || 'UpStudio' }}</span>
-            </div>
-            <div class="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-black" :style="{ background: previewPrimaryBg, color: form.cor_primaria_texto }">A</div>
-          </div>
-
-          <!-- Mini conteúdo -->
-          <div class="flex" :style="{ background: previewFundoBg }">
-            <div class="w-10 shrink-0 flex flex-col items-center py-3 gap-2.5 border-r" :style="{ background: previewSidebarBg, borderColor: 'rgba(128,128,128,0.1)' }">
-              <div v-for="i in 4" :key="i" class="w-4 h-4 rounded" :style="{ background: i === 1 ? previewPrimaryBg : 'rgba(128,128,128,0.15)' }" />
-            </div>
-            <div class="flex-1 p-3 space-y-2.5">
-              <!-- Mini banner -->
-              <div class="h-7 rounded-lg" :style="{ background: previewPrimaryBg }" />
-              <!-- Mini cards -->
-              <div class="grid grid-cols-3 gap-2">
-                <div v-for="i in 3" :key="i" class="rounded-lg p-2 space-y-1" :style="{ background: previewCardBg, border: '1px solid rgba(128,128,128,0.1)' }">
-                  <div class="h-1.5 rounded-full w-10" :style="{ background: 'rgba(128,128,128,0.2)' }" />
-                  <div class="h-3 rounded w-8 font-black text-[8px] flex items-center" :style="{ color: form.cor_card_texto }">{{ ['R$ 400', '12', '3'][i-1] }}</div>
-                  <div class="h-1 rounded-full w-12" :style="{ background: 'rgba(128,128,128,0.12)' }" />
-                </div>
-              </div>
-              <!-- Mini botões -->
-              <div class="flex gap-2">
-                <div class="px-3 py-1.5 rounded-lg text-[10px] font-bold" :style="{ background: previewPrimaryBg, color: form.cor_primaria_texto }">Salvar</div>
-                <div class="px-3 py-1.5 rounded-lg text-[10px] font-bold" :style="{ background: 'rgba(128,128,128,0.1)', color: form.cor_card_texto }">Cancelar</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       </div><!-- end TAB: HORÁRIOS -->
 
       <!-- Empresa tab continues: Dados da Empresa -->
@@ -705,33 +725,6 @@
         <p v-if="dadosEmpresaSaved" class="text-xs text-green-600 font-medium text-right">✓ Dados salvos!</p>
       </section>
 
-      <!-- Ações -->
-      <div class="flex items-center justify-between pb-6">
-        <button
-          type="button"
-          class="text-sm text-gray-400 hover:text-gray-600 transition-colors underline"
-          @click="handleReset"
-        >
-          Restaurar padrões
-        </button>
-
-        <div class="flex items-center gap-3">
-          <span v-if="savedFeedback" class="text-sm text-green-600 font-medium">✓ Salvo!</span>
-          <button
-            type="button"
-            :disabled="saving"
-            class="flex items-center gap-2 px-6 py-2.5 rounded-xl text-sm font-bold transition-colors disabled:opacity-60"
-            :style="{ background: form.cor_primaria, color: form.cor_primaria_texto }"
-            @click="handleSave"
-          >
-            <svg v-if="saving" class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-            </svg>
-            {{ saving ? 'Salvando…' : 'Salvar personalização' }}
-          </button>
-        </div>
-      </div>
       </div><!-- end empresa tab second half (Dados) -->
 
     </template>
