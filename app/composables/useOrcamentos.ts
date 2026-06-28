@@ -414,7 +414,7 @@ export function useOrcamentos() {
 
   // ─── Status editável (edição de orçamento) ───────────────
   function isStatusEditavel(status: string): boolean {
-    return status === 'rascunho' || status === 'enviado' || status === 'aprovado'
+    return status === 'rascunho' || status === 'enviado' || status === 'aprovado' || status === 'vencido'
   }
 
   // ─── Diff de itens para sincronização ───────────────────
