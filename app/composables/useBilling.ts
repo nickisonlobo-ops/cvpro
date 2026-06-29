@@ -46,12 +46,16 @@ export function useBilling() {
     billingLoading.value = true
     billingError.value = null
     try {
-      const { data, error } = await supabase.rpc('get_billing_status', {
-        p_empresa_id: empresaId.value,
-      })
+      const { data, error } = await supabase
+        .from('billing_accounts')
+        .select('account_name, status, default_tax_name, default_doc_type')
+        .eq('empresa_id', empresaId.value)
+        .eq('provider', 'invoicexpress')
+        .maybeSingle()
+
       if (error) throw error
-      if (data && data.length > 0) {
-        billingStatus.value = data[0]
+      if (data && data.status === 'connected') {
+        billingStatus.value = { connected: true, ...data }
       } else {
         billingStatus.value = null
       }
@@ -63,30 +67,28 @@ export function useBilling() {
     }
   }
 
-  // Ligar conta InvoiceXpress (chama webhook n8n)
+  // Ligar conta InvoiceXpress (grava direto no Supabase — sem n8n)
   async function connectAccount(accountName: string, apiKey: string): Promise<{ ok: boolean; error?: string }> {
     billingLoading.value = true
     billingError.value = null
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return { ok: false, error: 'Não autenticado' }
+      if (!empresaId.value) return { ok: false, error: 'Empresa não carregada' }
 
-      const res = await fetch(`${N8N_BASE}/billing-connect`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      // Upsert na tabela billing_accounts
+      const { error } = await supabase
+        .from('billing_accounts')
+        .upsert({
           empresa_id: empresaId.value,
+          provider: 'invoicexpress',
           account_name: accountName,
-          api_key: apiKey,
-          user_id: session.user.id,
-        }),
-      })
+          api_key_encrypted: apiKey,
+          status: 'connected',
+          updated_at: new Date().toISOString(),
+        }, { onConflict: 'empresa_id,provider' })
 
-      const result = await res.json()
-      if (!res.ok || result.error) {
-        const msg = result.error || result.message || 'Erro ao conectar'
-        billingError.value = msg
-        return { ok: false, error: msg }
+      if (error) {
+        billingError.value = error.message
+        return { ok: false, error: error.message }
       }
 
       await loadBillingStatus()
@@ -111,7 +113,7 @@ export function useBilling() {
     return true
   }
 
-  // Emitir fatura (chama webhook n8n)
+  // Emitir fatura (chama webhook n8n — ele busca credenciais do banco)
   async function emitInvoice(params: {
     orderId: number
     orderType?: 'orcamento' | 'os'
@@ -120,9 +122,6 @@ export function useBilling() {
     items: { name: string; unitPrice: number; quantity: number; taxName?: string }[]
   }): Promise<{ ok: boolean; invoice?: Invoice; error?: string }> {
     try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (!session) return { ok: false, error: 'Não autenticado' }
-
       const res = await fetch(`${N8N_BASE}/billing-emit`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -138,7 +137,6 @@ export function useBilling() {
             quantity: i.quantity,
             taxName: i.taxName ?? 'IVA23',
           })),
-          user_id: session.user.id,
         }),
       })
 
