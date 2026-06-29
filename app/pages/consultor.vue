@@ -1564,6 +1564,8 @@ async function fetchAll() {
     { data: orcamentosData },
     { data: osData },
     { data: processosData },
+    { data: materiaisData },
+    { data: catalogoData },
   ] = await Promise.all([
     supabase
       .from('agendamentos')
@@ -1611,6 +1613,14 @@ async function fetchAll() {
       .from('processos_instancia')
       .select('id, status, progresso, data_prazo, titulo')
       .eq('empresa_id', empresaId.value),
+    supabase
+      .from('materiais_adesivo')
+      .select('id, nome, estoque_atual, estoque_minimo, preco_m2, ativo')
+      .eq('empresa_id', empresaId.value),
+    supabase
+      .from('catalogo_adesivos')
+      .select('id, nome, preco_venda, ativo, created_at')
+      .eq('empresa_id', empresaId.value),
   ])
 
   agendamentos.value = [
@@ -1624,6 +1634,29 @@ async function fetchAll() {
   orcamentos.value  = orcamentosData ?? []
   ordensServico.value = osData ?? []
   processos.value   = processosData ?? []
+
+  // Merge materiais into produtos for estoque analysis (if produtos is empty)
+  if (produtos.value.length === 0 && (materiaisData ?? []).length > 0) {
+    produtos.value = (materiaisData ?? []).map((m: any) => ({
+      id: m.id,
+      nome: m.nome,
+      preco: m.preco_m2 ?? 0,
+      estoque: m.estoque_atual ?? 0,
+      ativo: m.ativo,
+      created_at: null,
+    }))
+  }
+  // Also merge catalogo if available and produtos still empty
+  if (produtos.value.length === 0 && (catalogoData ?? []).length > 0) {
+    produtos.value = (catalogoData ?? []).map((c: any) => ({
+      id: c.id,
+      nome: c.nome,
+      preco: c.preco_venda ?? 0,
+      estoque: 0,
+      ativo: c.ativo,
+      created_at: c.created_at,
+    }))
+  }
 
   loading.value = false
 }
