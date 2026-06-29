@@ -920,8 +920,10 @@ async function handleApprove() {
 
 // ─── Approve: New flow (RPC gerar_ordem_servico) ───
 async function handleApproveNewFlow() {
+  const token = route.params.token as string
   const { error: rpcError } = await supabase.rpc('gerar_ordem_servico', {
     p_orcamento_id: orcamento.value.id,
+    p_token: token,
     p_forma_pagamento: null,
     p_origem: 'link_externo',
   })
@@ -932,6 +934,8 @@ async function handleApproveNewFlow() {
       actionError.value = 'Este orçamento já foi aprovado anteriormente.'
     } else if (rpcError.message?.includes('não está em status válido')) {
       actionError.value = 'Este orçamento não pode mais ser aprovado.'
+    } else if (rpcError.message?.includes('Token')) {
+      actionError.value = 'Token de aprovação inválido.'
     } else {
       actionError.value = 'Erro ao aprovar o orçamento. Tente novamente.'
     }
@@ -955,62 +959,22 @@ async function handleApproveNewFlow() {
   triggerFeedback('approved')
 }
 
-// ─── Approve: Legacy flow (pedido update) ──────────
+// ─── Approve: Legacy flow (RPC aprovar_pedido_legacy) ──────────
 async function handleApproveLegacy() {
-  const agora = new Date().toISOString()
-  const eId = orcamento.value.pedido_empresa_id ?? orcamento.value.empresa_id
+  const token = route.params.token as string
+  const { error: rpcError } = await supabase.rpc('aprovar_pedido_legacy', {
+    p_orcamento_id: orcamento.value.id,
+    p_token: token,
+  })
 
-  // Get next posicao_fila for this empresa
-  const { data: maxPosData } = await supabase
-    .from('pedidos_adesivo')
-    .select('posicao_fila')
-    .eq('empresa_id', eId)
-    .in('status', ['aprovado', 'em_producao'])
-    .order('posicao_fila', { ascending: false, nullsFirst: false })
-    .limit(1)
-
-  const nextPosicao = (maxPosData && maxPosData.length > 0 && maxPosData[0].posicao_fila)
-    ? maxPosData[0].posicao_fila + 1
-    : 1
-
-  // Update pedido: status → aprovado, enter production queue
-  const { error: pedidoErr } = await supabase
-    .from('pedidos_adesivo')
-    .update({
-      status: 'aprovado',
-      data_entrada_fila: agora,
-      posicao_fila: nextPosicao,
-    })
-    .eq('id', orcamento.value.pedido_id)
-
-  if (pedidoErr) {
-    actionError.value = 'Erro ao aprovar. Tente novamente.'
+  if (rpcError) {
+    if (rpcError.message?.includes('Token')) {
+      actionError.value = 'Token de aprovação inválido.'
+    } else {
+      actionError.value = 'Erro ao aprovar. Tente novamente.'
+    }
     return
   }
-
-  // Update orçamento: register origem_aprovacao + sync etapa_id kanban
-  let etapaAprovadoId: number | null = null
-  try {
-    const { data: etapaData } = await supabase
-      .from('pipeline_etapas')
-      .select('id')
-      .eq('pipeline_tipo', 'orcamentos')
-      .eq('nome', 'Aprovado')
-      .limit(1)
-      .single()
-    if (etapaData) etapaAprovadoId = etapaData.id
-  } catch {}
-
-  const orcApprovePayload: Record<string, unknown> = {
-    origem_aprovacao: 'link_externo',
-    status: 'aprovado',
-  }
-  if (etapaAprovadoId) orcApprovePayload.etapa_id = etapaAprovadoId
-
-  await supabase
-    .from('orcamentos_adesivo')
-    .update(orcApprovePayload)
-    .eq('id', orcamento.value.id)
 
   actionDone.value = true
   triggerFeedback('approved')
@@ -1041,35 +1005,24 @@ async function confirmReject() {
 
 // ─── Reject: New flow ──────────────────────────────
 async function confirmRejectNewFlow() {
+  const token = route.params.token as string
   const motivo = rejectReason.value.trim().slice(0, 500) || null
 
-  // Buscar etapa "Reprovado" para sincronizar kanban
-  let etapaId: number | null = null
-  try {
-    const { data: etapaData } = await supabase
-      .from('pipeline_etapas')
-      .select('id')
-      .eq('pipeline_tipo', 'orcamentos')
-      .eq('nome', 'Reprovado')
-      .limit(1)
-      .single()
-    if (etapaData) etapaId = etapaData.id
-  } catch {}
+  const { error: rpcError } = await supabase.rpc('rejeitar_orcamento', {
+    p_orcamento_id: orcamento.value.id,
+    p_token: token,
+    p_motivo: motivo,
+    p_origem: 'link_externo',
+  })
 
-  const updatePayload: Record<string, unknown> = {
-    status: 'rejeitado',
-    motivo_rejeicao: motivo,
-    origem_aprovacao: 'link_externo',
-  }
-  if (etapaId) updatePayload.etapa_id = etapaId
-
-  const { error: updateErr } = await supabase
-    .from('orcamentos_adesivo')
-    .update(updatePayload)
-    .eq('id', orcamento.value.id)
-
-  if (updateErr) {
-    actionError.value = 'Erro ao rejeitar o orçamento. Tente novamente.'
+  if (rpcError) {
+    if (rpcError.message?.includes('Token')) {
+      actionError.value = 'Token de aprovação inválido.'
+    } else if (rpcError.message?.includes('não está em status válido')) {
+      actionError.value = 'Este orçamento não pode mais ser rejeitado.'
+    } else {
+      actionError.value = 'Erro ao rejeitar o orçamento. Tente novamente.'
+    }
     return
   }
 
@@ -1080,34 +1033,23 @@ async function confirmRejectNewFlow() {
 
 // ─── Reject: Legacy flow ───────────────────────────
 async function confirmRejectLegacy() {
-  const agora = new Date().toISOString()
+  const token = route.params.token as string
   const motivo = rejectReason.value.trim().slice(0, 500) || null
 
-  const updatePayload: any = {
-    status: 'cancelado',
-    data_cancelamento: agora,
-    posicao_fila: null,
-    data_entrada_fila: null,
-  }
-  if (motivo) {
-    updatePayload.motivo_cancelamento = motivo
-  }
+  const { error: rpcError } = await supabase.rpc('rejeitar_pedido_legacy', {
+    p_orcamento_id: orcamento.value.id,
+    p_token: token,
+    p_motivo: motivo,
+  })
 
-  const { error: pedidoErr } = await supabase
-    .from('pedidos_adesivo')
-    .update(updatePayload)
-    .eq('id', orcamento.value.pedido_id)
-
-  if (pedidoErr) {
-    actionError.value = 'Erro ao rejeitar. Tente novamente.'
+  if (rpcError) {
+    if (rpcError.message?.includes('Token')) {
+      actionError.value = 'Token de aprovação inválido.'
+    } else {
+      actionError.value = 'Erro ao rejeitar. Tente novamente.'
+    }
     return
   }
-
-  // Update orçamento: register origem_aprovacao
-  await supabase
-    .from('orcamentos_adesivo')
-    .update({ origem_aprovacao: 'link_externo' })
-    .eq('id', orcamento.value.id)
 
   actionDone.value = true
   showRejectReason.value = false

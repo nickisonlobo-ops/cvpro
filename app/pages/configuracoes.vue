@@ -5,7 +5,7 @@
     <aside class="hidden lg:flex flex-col w-[240px] shrink-0 border-r border-gray-100 bg-white p-4 space-y-1 sticky top-0 self-start h-fit">
       <h1 class="text-lg font-bold text-gray-900 px-3 mb-4">Configurações</h1>
       <button
-        v-for="tab in tabs"
+        v-for="tab in tabsComputed"
         :key="tab.id"
         type="button"
         class="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left"
@@ -22,7 +22,7 @@
     <!-- MOBILE TAB BAR -->
     <div class="lg:hidden fixed top-0 left-0 right-0 z-20 bg-white border-b border-gray-100 px-4 py-3 overflow-x-auto flex gap-2">
       <button
-        v-for="tab in tabs"
+        v-for="tab in tabsComputed"
         :key="tab.id"
         type="button"
         class="px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all"
@@ -727,6 +727,145 @@
 
       </div><!-- end empresa tab second half (Dados) -->
 
+      <!-- ═══ TAB: FATURAÇÃO (só Portugal) ═══ -->
+      <div v-show="activeTab === 'faturacao'" class="space-y-6">
+
+        <!-- Status da conexão -->
+        <section class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-base font-bold text-gray-800">Faturação Certificada</h2>
+              <p class="text-xs text-gray-500 mt-1">Integração com InvoiceXpress para emissão de faturas comunicadas à AT.</p>
+            </div>
+            <div v-if="billingStatus?.connected && billingStatus.status === 'connected'" class="flex items-center gap-2 px-3 py-1.5 bg-green-50 border border-green-200 rounded-full">
+              <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              <span class="text-[11px] font-bold text-green-700">Conectado</span>
+            </div>
+            <div v-else class="flex items-center gap-2 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-full">
+              <span class="w-2 h-2 rounded-full bg-gray-400"></span>
+              <span class="text-[11px] font-bold text-gray-500">Não configurado</span>
+            </div>
+          </div>
+
+          <!-- Formulário de conexão -->
+          <div v-if="!billingStatus?.connected || billingStatus.status !== 'connected'" class="space-y-4 pt-3 border-t border-gray-100">
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4">
+              <p class="text-xs text-blue-700 leading-relaxed">
+                <strong>Como obter as credenciais:</strong><br>
+                1. Acesse <a href="https://www.app.invoicexpress.com/users/api" target="_blank" class="underline font-semibold">invoicexpress.com → API</a><br>
+                2. Gere uma nova API Key<br>
+                3. O "Nome da conta" é o subdomínio (ex: se a URL é <code>minhaempresa.app.invoicexpress.com</code>, o nome é <code>minhaempresa</code>)
+              </p>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="space-y-1">
+                <label class="text-xs font-bold text-gray-500">Nome da Conta</label>
+                <input v-model="billingForm.accountName" type="text" placeholder="ex: minhaempresa" class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all" />
+              </div>
+              <div class="space-y-1">
+                <label class="text-xs font-bold text-gray-500">API Key</label>
+                <input v-model="billingForm.apiKey" type="password" placeholder="Cole a API key aqui" class="w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm bg-gray-50/80 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all font-mono" />
+              </div>
+            </div>
+
+            <div v-if="billingError" class="text-xs text-red-600 font-medium bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+              {{ billingError }}
+            </div>
+
+            <button
+              type="button"
+              class="w-full sm:w-auto px-6 py-2.5 rounded-xl text-sm font-bold text-white transition-all disabled:opacity-50"
+              style="background: var(--color-primary, #f97316)"
+              :disabled="billingLoading || !billingForm.accountName || !billingForm.apiKey"
+              @click="handleConnectBilling"
+            >
+              <span v-if="billingLoading" class="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin mr-2"></span>
+              {{ billingLoading ? 'Validando...' : 'Conectar Conta' }}
+            </button>
+          </div>
+
+          <!-- Conta conectada -->
+          <div v-else class="space-y-4 pt-3 border-t border-gray-100">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div class="bg-gray-50 rounded-xl p-4">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Conta InvoiceXpress</p>
+                <p class="text-sm font-bold text-gray-800">{{ billingStatus.account_name }}</p>
+              </div>
+              <div class="bg-gray-50 rounded-xl p-4">
+                <p class="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-1">Taxa Padrão</p>
+                <p class="text-sm font-bold text-gray-800">{{ billingStatus.default_tax_name ?? 'IVA23' }}</p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="px-4 py-2 rounded-lg text-xs font-bold text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors"
+              @click="handleDisconnectBilling"
+            >
+              Desconectar
+            </button>
+          </div>
+        </section>
+
+        <!-- Faturas emitidas -->
+        <section v-if="billingStatus?.connected && billingStatus.status === 'connected'" class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-gray-800">Faturas Emitidas</h2>
+            <button type="button" class="text-xs font-bold text-orange-600 hover:text-orange-700" @click="loadInvoices()">Atualizar</button>
+          </div>
+
+          <div v-if="invoicesLoading" class="flex items-center justify-center py-8">
+            <span class="w-5 h-5 border-2 border-orange-300 border-t-orange-600 rounded-full animate-spin"></span>
+          </div>
+
+          <div v-else-if="invoices.length === 0" class="text-center py-8">
+            <p class="text-sm text-gray-400">Nenhuma fatura emitida ainda.</p>
+            <p class="text-xs text-gray-300 mt-1">As faturas são geradas automaticamente ao aprovar orçamentos.</p>
+          </div>
+
+          <div v-else class="overflow-x-auto rounded-xl border border-gray-100">
+            <table class="w-full text-xs">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="text-left px-4 py-3 font-bold text-gray-500 uppercase tracking-widest">Nº</th>
+                  <th class="text-left px-4 py-3 font-bold text-gray-500 uppercase tracking-widest">Cliente</th>
+                  <th class="text-left px-4 py-3 font-bold text-gray-500 uppercase tracking-widest">Estado</th>
+                  <th class="text-right px-4 py-3 font-bold text-gray-500 uppercase tracking-widest">Total</th>
+                  <th class="text-center px-4 py-3 font-bold text-gray-500 uppercase tracking-widest">Ações</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-50">
+                <tr v-for="inv in invoices" :key="inv.id" class="hover:bg-gray-50/50">
+                  <td class="px-4 py-3 font-mono font-bold text-gray-700">{{ inv.sequence_number || '—' }}</td>
+                  <td class="px-4 py-3">
+                    <p class="font-semibold text-gray-700">{{ inv.client_name || '—' }}</p>
+                    <p class="text-[10px] text-gray-400">{{ inv.client_nif }}</p>
+                  </td>
+                  <td class="px-4 py-3">
+                    <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full"
+                      :class="{
+                        'bg-green-100 text-green-700': inv.state === 'finalized',
+                        'bg-yellow-100 text-yellow-700': inv.state === 'pending',
+                        'bg-red-100 text-red-700': inv.state === 'error',
+                      }">
+                      {{ inv.state === 'finalized' ? '✓ Finalizada' : inv.state === 'pending' ? '⏳ Pendente' : '✗ Erro' }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-3 text-right font-bold text-gray-800">{{ inv.total ? formatCurrency(inv.total) : '—' }}</td>
+                  <td class="px-4 py-3 text-center">
+                    <a v-if="inv.pdf_url" :href="inv.pdf_url" target="_blank" class="text-orange-600 hover:text-orange-700 font-bold">PDF</a>
+                    <a v-else-if="inv.permalink" :href="inv.permalink" target="_blank" class="text-blue-600 hover:text-blue-700 font-bold">Ver</a>
+                    <span v-else class="text-gray-300">—</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </div><!-- end TAB: FATURAÇÃO -->
+
     </template>
   </main>
   </div>
@@ -737,17 +876,26 @@ import { ref, reactive, computed, onMounted, watch, nextTick } from 'vue'
 import { usePersonalizacao, type PersonalizacaoConfig } from '~/composables/usePersonalizacao'
 import { createSupabaseClient } from '~/lib/supabase'
 import { useEmpresa } from '~/composables/useEmpresa'
+import { useLocale } from '~/composables/useLocale'
+import { useBilling } from '~/composables/useBilling'
 
 defineOptions({ name: 'ConfiguracoesPage' })
 
 // ── Tab Navigation ───────────────────────────────────────────────────────────
-const activeTab = ref<'empresa' | 'visual' | 'horarios'>('empresa')
+const activeTab = ref<'empresa' | 'visual' | 'horarios' | 'faturacao'>('empresa')
 
 const tabs = [
   { id: 'empresa' as const, label: 'Empresa', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />' },
   { id: 'visual' as const, label: 'Personalização', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M4.098 19.902a3.75 3.75 0 005.304 0l6.401-6.402M6.75 21A3.75 3.75 0 013 17.25V4.125C3 3.504 3.504 3 4.125 3h5.25c.621 0 1.125.504 1.125 1.125v4.072M6.75 21a3.75 3.75 0 003.75-3.75V8.197M6.75 21h13.125c.621 0 1.125-.504 1.125-1.125v-5.25c0-.621-.504-1.125-1.125-1.125h-4.072M10.5 8.197l2.88-2.88c.438-.439 1.15-.439 1.59 0l3.712 3.713c.44.44.44 1.152 0 1.59l-2.879 2.88M6.75 17.25h.008v.008H6.75v-.008z" />' },
   { id: 'horarios' as const, label: 'Horários', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />' },
 ]
+
+// Tab faturação (só aparece quando pais = PT)
+const tabFaturacao = { id: 'faturacao' as const, label: 'Faturação', icon: '<path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />' }
+const tabsComputed = computed(() => {
+  if (dadosEmpresa.pais === 'PT') return [...tabs, tabFaturacao]
+  return tabs
+})
 
 const supabase = createSupabaseClient()
 const { empresaId, loadEmpresa } = useEmpresa()
@@ -981,6 +1129,28 @@ const dadosEmpresa = reactive({
 const salvandoDadosEmpresa = ref(false)
 const dadosEmpresaSaved = ref(false)
 
+// ── Billing / Faturação (InvoiceXpress) ──────────────────────────────────────
+const { formatCurrency } = useLocale()
+const {
+  billingStatus, billingLoading, billingError, invoices, invoicesLoading,
+  loadBillingStatus, connectAccount, disconnectAccount, loadInvoices,
+} = useBilling()
+
+const billingForm = reactive({ accountName: '', apiKey: '' })
+
+async function handleConnectBilling() {
+  const { ok, error } = await connectAccount(billingForm.accountName.trim(), billingForm.apiKey.trim())
+  if (ok) {
+    billingForm.accountName = ''
+    billingForm.apiKey = ''
+  }
+}
+
+async function handleDisconnectBilling() {
+  if (!confirm('Desconectar a conta de faturação? As faturas já emitidas não serão afetadas.')) return
+  await disconnectAccount()
+}
+
 async function carregarDadosEmpresa() {
   await loadEmpresa()
   if (!empresaId.value) return
@@ -1047,6 +1217,11 @@ onMounted(async () => {
   usarGradFundo.value    = !!form.cor_fundo_grad
   usarGradSidebar.value  = !!form.cor_sidebar_grad
   usarGradCard.value     = !!form.cor_card_grad
+  // Carrega billing se PT
+  if (dadosEmpresa.pais === 'PT') {
+    await loadBillingStatus()
+    await loadInvoices()
+  }
   // Só habilita o watcher de preview depois de carregar os dados salvos
   nextTick(() => { formLoaded.value = true })
 })

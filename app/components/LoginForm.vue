@@ -208,8 +208,10 @@ function validateRegister(): boolean {
 
   if (!register.password) {
     registerErrors.password = 'A senha é obrigatória.'
-  } else if (register.password.length < 6) {
-    registerErrors.password = 'A senha deve ter no mínimo 6 caracteres.'
+  } else if (register.password.length < 8) {
+    registerErrors.password = 'A senha deve ter no mínimo 8 caracteres.'
+  } else if (!/[A-Z]/.test(register.password) || !/[0-9]/.test(register.password)) {
+    registerErrors.password = 'A senha deve conter pelo menos 1 letra maiúscula e 1 número.'
   }
 
   if (!register.confirmPassword) {

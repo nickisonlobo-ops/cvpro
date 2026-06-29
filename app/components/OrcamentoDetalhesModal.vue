@@ -675,6 +675,7 @@ async function aprovarInternamente() {
   try {
     const { data, error } = await supabase.rpc('gerar_ordem_servico', {
       p_orcamento_id: props.orcamento.id,
+      p_token: null,
       p_forma_pagamento: formaPagamentoAprovacao.value,
       p_origem: 'interno',
     })

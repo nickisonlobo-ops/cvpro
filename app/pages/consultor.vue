@@ -177,7 +177,7 @@
               <div class="absolute top-0 left-0 w-1 h-full rounded-l-xl" :style="{ background: 'var(--color-primary, #6366f1)' }"></div>
               <p class="text-[9px] font-black uppercase tracking-[0.18em] text-gray-400 mb-1.5 pl-2">Ticket Médio</p>
               <p class="text-lg font-black text-gray-900 leading-tight truncate pl-2">{{ formatCurrency(fin.ticketMedio) }}</p>
-              <p class="text-[10px] text-gray-400 mt-1 pl-2">{{ fin.totalAtendimentos }} atend.</p>
+              <p class="text-[10px] text-gray-400 mt-1 pl-2">{{ fin.totalAtendimentos }} vendas</p>
             </div>
 
             <div class="relative rounded-xl overflow-hidden p-4 bg-gray-50 border border-gray-100 shadow-sm">
@@ -308,7 +308,7 @@
                 <div class="relative">
                   <p class="text-[9px] font-black uppercase tracking-[0.18em] text-white/60 mb-1.5">Vendas no Mês</p>
                   <p class="text-3xl font-black text-white leading-none">{{ fin.totalAtendimentos }}</p>
-                  <p class="text-[10px] text-white/50 mt-1.5">atendimentos concluídos</p>
+                  <p class="text-[10px] text-white/50 mt-1.5">vendas realizadas</p>
                 </div>
               </div>
 
@@ -323,7 +323,7 @@
                 <div class="absolute top-0 left-0 w-1 h-full rounded-l-xl" :style="{ background: 'var(--color-primary, #6366f1)' }"></div>
                 <p class="text-[9px] font-black uppercase tracking-[0.18em] text-gray-400 mb-1.5 pl-2">Ticket Médio</p>
                 <p class="text-xl font-black text-gray-900 leading-none pl-2">{{ formatCurrency(fin.ticketMedio) }}</p>
-                <p class="text-[10px] text-gray-400 mt-1.5 pl-2">por atendimento</p>
+                <p class="text-[10px] text-gray-400 mt-1.5 pl-2">por venda</p>
               </div>
 
               <div class="relative rounded-xl overflow-hidden p-4 bg-gray-50 border border-gray-100 shadow-sm">
@@ -374,7 +374,7 @@
               </div>
 
               <div v-if="fin.totalAtendimentos === 0" class="rounded-xl border border-red-200 bg-red-50 p-4 text-center">
-                <p class="text-sm font-bold text-red-600">Nenhuma venda registrada este mês. Verifique se os agendamentos estão sendo concluídos.</p>
+                <p class="text-sm font-bold text-red-600">Nenhuma venda registrada este mês. Verifique se há orçamentos aprovados, agendamentos concluídos ou contas a receber.</p>
               </div>
 
             </div>
@@ -1672,25 +1672,84 @@ const fin = computed(() => {
   const mIni = startOfMonth(now)
   const mFim = endOfMonth(now)
 
+  // 1) Receita de agendamentos concluídos no mês
   const agMes  = agendamentos.value.filter(a => !a._prev && new Date(a.data_hora) >= mIni && new Date(a.data_hora) <= mFim && a.status === 'concluido')
   const agPrev = agendamentos.value.filter(a => a._prev && a.status === 'concluido')
+  const receitaAgendamentos = agMes.reduce((s, a) => s + (Number(a.valor_total) || 0), 0)
+  const receitaAgPrev       = agPrev.reduce((s, a) => s + (Number(a.valor_total) || 0), 0)
 
-  const receitaMes  = agMes.reduce((s, a) => s + (Number(a.valor_total) || 0), 0)
-  const receitaPrev = agPrev.reduce((s, a) => s + (Number(a.valor_total) || 0), 0)
+  // 2) Receita de orçamentos aprovados no mês
+  const orcAprovadosMes = orcamentos.value.filter(o => {
+    if (o.status !== 'aprovado') return false
+    const d = new Date(o.created_at)
+    return d >= mIni && d <= mFim
+  })
+  const receitaOrcamentos = orcAprovadosMes.reduce((s, o) => s + (Number(o.valor_total) || 0), 0)
+
+  // Orçamentos aprovados mês anterior (para comparativo)
+  const pmIni = startOfPrevMonth(now)
+  const pmFim = endOfPrevMonth(now)
+  const orcAprovadosPrev = orcamentos.value.filter(o => {
+    if (o.status !== 'aprovado') return false
+    const d = new Date(o.created_at)
+    return d >= pmIni && d <= pmFim
+  })
+  const receitaOrcPrev = orcAprovadosPrev.reduce((s, o) => s + (Number(o.valor_total) || 0), 0)
+
+  // 3) Receita de contas a receber pagas no mês
+  const contasRecebidasMes = contasPagar.value.filter(c => {
+    if ((c.tipo ?? 'pagar') !== 'receber') return false
+    if (c.status !== 'pago') return false
+    const dp = c.data_pagamento ? new Date(c.data_pagamento + 'T00:00:00') : null
+    if (dp) return dp >= mIni && dp <= mFim
+    const dv = new Date(c.data_vencimento + 'T00:00:00')
+    return dv >= mIni && dv <= mFim
+  })
+  const receitaContas = contasRecebidasMes.reduce((s, c) => s + (Number(c.valor) || 0), 0)
+
+  // Contas recebidas mês anterior
+  const contasRecebidasPrev = contasPagar.value.filter(c => {
+    if ((c.tipo ?? 'pagar') !== 'receber') return false
+    if (c.status !== 'pago') return false
+    const dp = c.data_pagamento ? new Date(c.data_pagamento + 'T00:00:00') : null
+    if (dp) return dp >= pmIni && dp <= pmFim
+    const dv = new Date(c.data_vencimento + 'T00:00:00')
+    return dv >= pmIni && dv <= pmFim
+  })
+  const receitaContasPrev = contasRecebidasPrev.reduce((s, c) => s + (Number(c.valor) || 0), 0)
+
+  // Receita total consolidada (sem duplicar: usa orçamentos OU agendamentos conforme disponibilidade)
+  const receitaMes  = receitaOrcamentos + receitaAgendamentos + receitaContas
+  const receitaPrev = receitaOrcPrev + receitaAgPrev + receitaContasPrev
+
   const crescimentoMoM = receitaPrev > 0 ? ((receitaMes - receitaPrev) / receitaPrev) * 100 : 0
-  const totalAtendimentos = agMes.length
+  const totalAtendimentos = agMes.length + orcAprovadosMes.length
   const ticketMedio = totalAtendimentos > 0 ? receitaMes / totalAtendimentos : 0
 
+  // Despesas: somente contas com tipo 'pagar' (ou sem tipo definido)
   const despesasMes = contasPagar.value
-    .filter(c => { const d = new Date(c.data_vencimento + 'T00:00:00'); return d >= mIni && d <= mFim && c.status !== 'cancelado' })
+    .filter(c => {
+      if ((c.tipo ?? 'pagar') === 'receber') return false
+      const d = new Date(c.data_vencimento + 'T00:00:00')
+      return d >= mIni && d <= mFim && c.status !== 'cancelado'
+    })
     .reduce((s, c) => s + Number(c.valor), 0)
 
   const despesasPagas = contasPagar.value
-    .filter(c => { if (c.status !== 'pago' || !c.data_pagamento) return false; const d = new Date(c.data_pagamento + 'T00:00:00'); return d >= mIni && d <= mFim })
+    .filter(c => {
+      if ((c.tipo ?? 'pagar') === 'receber') return false
+      if (c.status !== 'pago' || !c.data_pagamento) return false
+      const d = new Date(c.data_pagamento + 'T00:00:00')
+      return d >= mIni && d <= mFim
+    })
     .reduce((s, c) => s + Number(c.valor), 0)
 
   const today = new Date(); today.setHours(0, 0, 0, 0)
-  const contasVencidas = contasPagar.value.filter(c => { const d = new Date(c.data_vencimento + 'T00:00:00'); return d < today && c.status === 'pendente' })
+  const contasVencidas = contasPagar.value.filter(c => {
+    if ((c.tipo ?? 'pagar') === 'receber') return false
+    const d = new Date(c.data_vencimento + 'T00:00:00')
+    return d < today && c.status === 'pendente'
+  })
   const inadimplencia  = contasVencidas.reduce((s, c) => s + Number(c.valor), 0)
 
   const lucro       = receitaMes - despesasMes
@@ -1879,10 +1938,10 @@ const diagnosticosFinanceiros = computed(() => {
     list.push({
       prioridade: 'Alta',
       categoria: 'Sem Receita',
-      diagnostico: `Nenhuma receita registrada neste mês. Verifique se os agendamentos estão sendo marcados como "concluído".`,
+      diagnostico: `Nenhuma receita registrada neste mês. Verifique se os orçamentos foram aprovados, agendamentos concluídos ou contas a receber registradas.`,
       impacto: `Sem dados de receita não é possível gerar análises precisas.`,
       valorImpacto: null,
-      acoes: ['Conferir se agendamentos do mês foram concluídos.', 'Registrar todas as receitas no módulo financeiro.', 'Verificar se o período está correto no sistema.'],
+      acoes: ['Conferir se orçamentos aprovados estão com status correto.', 'Verificar se agendamentos do mês foram concluídos.', 'Registrar contas a receber no módulo financeiro.', 'Verificar se o período está correto no sistema.'],
     })
   }
 
