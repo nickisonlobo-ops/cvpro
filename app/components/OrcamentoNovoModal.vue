@@ -228,6 +228,21 @@
                         Reprovar
                       </button>
                     </div>
+
+                    <!-- Emitir Fatura (só Portugal + aprovado) -->
+                    <button
+                      v-if="locale.pais === 'PT' && props.orcamentoParaEditar?.status === 'aprovado'"
+                      type="button"
+                      class="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold border transition-colors"
+                      :class="faturaEmitida ? 'border-green-200 bg-green-50 text-green-700' : emitindoFatura ? 'border-orange-200 bg-orange-50 text-orange-600' : 'border-violet-200 text-violet-700 bg-violet-50 hover:bg-violet-100'"
+                      :disabled="emitindoFatura || faturaEmitida"
+                      @click="emitirFatura"
+                    >
+                      <span v-if="emitindoFatura" class="w-4 h-4 border-2 border-violet-300 border-t-violet-700 rounded-full animate-spin"></span>
+                      <svg v-else-if="faturaEmitida" class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                      <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+                      {{ faturaEmitida ? 'Fatura emitida ✓' : emitindoFatura ? 'Emitindo...' : 'Emitir Fatura' }}
+                    </button>
                   </template>
 
                   <!-- Cancelar -->
@@ -825,6 +840,71 @@ async function reprovarOrcamento() {
     emit('updated', { id: props.orcamentoParaEditar.id, status: 'rejeitado' })
   } catch (e) {
     showFeedback('Erro ao reprovar', 'error')
+  }
+}
+
+// ─── Emitir Fatura (InvoiceXpress — só Portugal) ─────────────────────────────
+const { emitInvoice } = useBilling()
+const emitindoFatura = ref(false)
+const faturaEmitida = ref(false)
+
+async function emitirFatura() {
+  if (!props.orcamentoParaEditar) return
+  const orc = props.orcamentoParaEditar
+
+  // Buscar dados do cliente
+  const cliente = props.clientes.find(c => c.id === orc.cliente_id)
+  if (!cliente) {
+    showFeedback('Cliente não encontrado', 'error')
+    return
+  }
+
+  // NIF do cliente é obrigatório para faturação PT
+  const nif = (cliente as any).cpf_cnpj || (cliente as any).nif
+  if (!nif) {
+    showFeedback('NIF do cliente é obrigatório para emitir fatura', 'error')
+    return
+  }
+
+  // Montar itens da fatura a partir dos itens do orçamento
+  const itensOrc = (orc as any).itens || []
+  let items: { name: string; unitPrice: number; quantity: number; taxName: string }[] = []
+
+  if (itensOrc.length > 0) {
+    items = itensOrc.map((item: any) => ({
+      name: item.descricao || item.nome || 'Serviço',
+      unitPrice: Number(item.valor_item ?? item.preco ?? 0) / Math.max(Number(item.quantidade ?? 1), 1),
+      quantity: Number(item.quantidade ?? 1),
+      taxName: 'IVA23',
+    }))
+  } else {
+    // Fallback: usar valor total como item único
+    items = [{
+      name: `Orçamento ${orc.numero_orcamento}`,
+      unitPrice: Number(orc.valor_total ?? 0),
+      quantity: 1,
+      taxName: 'IVA23',
+    }]
+  }
+
+  emitindoFatura.value = true
+  const { ok, error } = await emitInvoice({
+    orderId: orc.id,
+    orderType: 'orcamento',
+    client: {
+      name: cliente.nome,
+      nif: nif,
+      email: (cliente as any).email || undefined,
+    },
+    items,
+  })
+  emitindoFatura.value = false
+
+  if (ok) {
+    faturaEmitida.value = true
+    showFeedback('Fatura emitida com sucesso!')
+  } else {
+    showFeedback(error || 'Erro ao emitir fatura', 'error')
   }
 }
 
