@@ -309,13 +309,87 @@
             </div>
           </div>
 
-          <!-- Mobile footer (shown only on small screens where sidebar is hidden) -->
-          <div class="sm:hidden flex-shrink-0 px-4 py-3 border-t border-gray-100 bg-white flex items-center justify-between gap-3">
-            <button type="button" class="px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600" @click="fechar">Cancelar</button>
-            <button type="submit" form="orcamento-form" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white bg-gray-900" :disabled="salvando">
-              <span v-if="salvando" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
-              {{ actionButtonLabel }}
-            </button>
+          <!-- Mobile actions + footer (shown only on small screens) -->
+          <div class="sm:hidden flex-shrink-0 border-t border-gray-100 bg-white px-4 py-3 space-y-3 max-h-[45vh] overflow-y-auto">
+
+            <!-- Ações rápidas mobile (edição) -->
+            <template v-if="isEditMode && !orcamentoBloqueado">
+              <div class="flex flex-wrap gap-2">
+                <button type="button" class="flex-1 min-w-[70px] flex items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-bold border border-gray-200 text-gray-600" @click="copiarLinkAprovacao">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m9.86-2.06a4.5 4.5 0 00-1.242-7.244l-4.5-4.5a4.5 4.5 0 00-6.364 6.364L4.34 8.374"/></svg>
+                  Link
+                </button>
+                <button type="button" class="flex-1 min-w-[70px] flex items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-bold border border-gray-200 text-gray-600" @click="enviarOrcamento">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5"/></svg>
+                  Enviar
+                </button>
+                <button type="button" class="flex-1 min-w-[70px] flex items-center justify-center gap-1 py-2 rounded-lg text-[11px] font-bold border border-gray-200 text-gray-600" :disabled="gerandoPdf" @click="gerarPdf">PDF</button>
+              </div>
+
+              <!-- Aprovar/Reprovar mobile -->
+              <template v-if="props.orcamentoParaEditar?.status !== 'aprovado' && props.orcamentoParaEditar?.status !== 'rejeitado'">
+                <select v-model="formaPagamento" class="w-full rounded-lg border border-gray-200 px-3 py-2 text-xs bg-white">
+                  <option value="">Forma de pagamento...</option>
+                  <template v-if="locale.pais === 'PT'">
+                    <option value="mbway">MB Way</option>
+                    <option value="multibanco">Multibanco</option>
+                    <option value="transferencia">Transferência</option>
+                    <option value="cartao">Cartão</option>
+                    <option value="dinheiro">Dinheiro</option>
+                  </template>
+                  <template v-else>
+                    <option value="pix">PIX</option>
+                    <option value="dinheiro">Dinheiro</option>
+                    <option value="cartao_credito">Cartão Crédito</option>
+                    <option value="cartao_debito">Cartão Débito</option>
+                    <option value="boleto">Boleto</option>
+                    <option value="transferencia">Transferência</option>
+                  </template>
+                </select>
+                <div class="grid grid-cols-2 gap-2">
+                  <button type="button" class="py-2.5 rounded-xl text-xs font-bold text-green-700 bg-green-50 border border-green-200 disabled:opacity-50" :disabled="!formaPagamento" @click="aprovarOrcamento">✓ Aprovar</button>
+                  <button type="button" class="py-2.5 rounded-xl text-xs font-bold text-red-700 bg-red-50 border border-red-200" @click="reprovarOrcamento">✗ Reprovar</button>
+                </div>
+              </template>
+
+              <!-- Status badge mobile -->
+              <div v-if="props.orcamentoParaEditar?.status === 'aprovado'" class="flex items-center justify-between py-2 px-3 rounded-xl bg-green-50 border border-green-200">
+                <span class="text-xs font-bold text-green-700">✓ Aprovado</span>
+                <button type="button" class="text-[10px] font-bold text-orange-600 underline" @click="reverterAprovacao">Reverter</button>
+              </div>
+              <div v-else-if="props.orcamentoParaEditar?.status === 'rejeitado'" class="py-2 px-3 rounded-xl bg-red-50 border border-red-200 text-center">
+                <span class="text-xs font-bold text-red-700">✗ Reprovado</span>
+              </div>
+
+              <!-- Emitir Fatura mobile -->
+              <button
+                v-if="locale.pais === 'PT' && props.orcamentoParaEditar?.status === 'aprovado' && !faturaEmitida"
+                type="button"
+                class="w-full py-2.5 rounded-xl text-xs font-bold text-violet-700 bg-violet-50 border border-violet-200"
+                :disabled="emitindoFatura"
+                @click="emitirFatura"
+              >{{ emitindoFatura ? 'Emitindo...' : '📄 Emitir Fatura' }}</button>
+              <div v-if="locale.pais === 'PT' && faturaEmitida" class="py-2 px-3 rounded-xl bg-green-50 border border-green-200 text-center text-xs font-bold text-green-700">
+                ✓ Fatura emitida <a v-if="faturaPdfUrl" :href="faturaPdfUrl" target="_blank" class="ml-1 underline">Ver PDF</a>
+              </div>
+            </template>
+
+            <!-- Faturado (bloqueado) mobile -->
+            <div v-if="orcamentoBloqueado" class="py-2 px-3 rounded-xl bg-amber-50 border border-amber-200 text-center text-xs font-bold text-amber-700">
+              🔒 Faturado <a v-if="faturaPdfUrl" :href="faturaPdfUrl" target="_blank" class="ml-1 underline text-green-700">Ver PDF</a>
+            </div>
+
+            <!-- Botões principais mobile -->
+            <div class="flex items-center gap-3">
+              <button type="button" class="px-4 py-2.5 rounded-lg text-sm font-medium text-gray-600" @click="fechar">{{ orcamentoBloqueado ? 'Fechar' : 'Cancelar' }}</button>
+              <button v-if="!orcamentoBloqueado" type="submit" form="orcamento-form" class="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-bold text-white bg-gray-900" :disabled="salvando">
+                <span v-if="salvando" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"/>
+                {{ actionButtonLabel }}
+              </button>
+            </div>
+
+            <!-- Feedback mobile -->
+            <p v-if="actionFeedback" class="text-xs font-medium text-center py-2 rounded-lg" :class="actionFeedback.type === 'success' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'">{{ actionFeedback.msg }}</p>
           </div>
         </div>
       </div>
