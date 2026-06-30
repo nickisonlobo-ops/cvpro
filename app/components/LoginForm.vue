@@ -1,23 +1,15 @@
-﻿<template>
+<template>
   <div class="w-full max-w-md">
-    <!-- Cabeçalho fora do card -->
+    <!-- Logo acima do card -->
     <div class="flex flex-col items-center gap-3 mb-8">
-      <!-- Ícone SignPRO -->
-      <div class="w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg shadow-violet-500/30 bg-gradient-to-br from-violet-500 to-indigo-600">
-        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.4 2.245 4.5 4.5 0 008.4-2.245c0-.399-.078-.78-.22-1.128zm0 0a15.998 15.998 0 003.388-1.62m-5.043-.025a15.994 15.994 0 011.622-3.395m3.42 3.42a15.995 15.995 0 004.764-4.648l3.876-5.814a1.151 1.151 0 00-1.597-1.597L14.146 6.32a15.996 15.996 0 00-4.649 4.763m3.42 3.42a6.776 6.776 0 00-3.42-3.42"/>
-        </svg>
-      </div>
-      <div class="text-center">
-        <h1 class="text-2xl font-bold tracking-tight">Sign<span style="background: linear-gradient(135deg, #7c3aed, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text">PRO</span></h1>
-        <p class="text-sm text-gray-500 mt-0.5">Sistema para comunicação visual</p>
-      </div>
+      <img src="/logo-signpro.png" alt="SignPRO" class="h-12 w-auto" />
+      <p class="text-sm text-white/50">Sistema para comunicação visual</p>
     </div>
 
-    <!-- Card -->
-    <div class="rounded-2xl border border-indigo-100 shadow-xl shadow-indigo-100/60 p-8" style="background: #ffffff">
+    <!-- Card (dark) -->
+    <div class="rounded-2xl border border-white/10 shadow-2xl shadow-black/40 p-8 bg-[#1a1a24]">
       <!-- Abas -->
-      <div class="flex rounded-xl p-1 mb-6" style="background: #eef2ff">
+      <div class="flex rounded-xl p-1 mb-6 bg-white/5">
         <button
           v-for="tab in tabs"
           :key="tab.key"
@@ -26,10 +18,10 @@
             'flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200',
             activeTab === tab.key
               ? 'text-white shadow-sm'
-              : 'text-gray-400 hover:text-gray-600',
+              : 'text-white/50 hover:text-white/70',
           activeTab === tab.key ? '' : '',
           ]"
-          :style="activeTab === tab.key ? 'background: linear-gradient(135deg, #1e40af, #4f46e5)' : ''"
+          :style="activeTab === tab.key ? 'background: linear-gradient(135deg, #ea580c, #f97316)' : ''"
           @click="activeTab = tab.key"
         >
           {{ tab.label }}
@@ -37,7 +29,7 @@
       </div>
 
       <!-- Título dinâmico -->
-      <p class="text-base font-semibold text-gray-700 text-center mb-6">
+      <p class="text-base font-semibold text-white/90 text-center mb-6">
         {{ activeTab === 'login' ? 'Entre na sua conta' : 'Crie sua conta' }}
       </p>
 
@@ -69,7 +61,7 @@
       <p v-if="authError" class="text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-2.5 text-center">
         {{ authError }}
       </p>
-      <AppButton variant="secondary" size="lg" type="submit" :loading="authLoading" class="mt-2 w-full font-bold !text-white !border-0" style="background: linear-gradient(135deg, #1e40af, #4f46e5)">
+      <AppButton variant="secondary" size="lg" type="submit" :loading="authLoading" class="mt-2 w-full font-bold !text-white !border-0" style="background: linear-gradient(135deg, #ea580c, #f97316)">
         Entrar
       </AppButton>
     </form>
@@ -129,7 +121,7 @@
       <p v-if="registerSuccess" class="text-sm text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-lg px-4 py-2.5 text-center">
         Cadastro realizado! Verifique seu e-mail para confirmar a conta.
       </p>
-      <AppButton variant="secondary" size="lg" type="submit" :loading="authLoading" class="mt-2 w-full font-bold !text-white !border-0" style="background: linear-gradient(135deg, #1e40af, #4f46e5)">
+      <AppButton variant="secondary" size="lg" type="submit" :loading="authLoading" class="mt-2 w-full font-bold !text-white !border-0" style="background: linear-gradient(135deg, #ea580c, #f97316)">
         Criar conta
       </AppButton>
     </form>
@@ -173,13 +165,13 @@ function validateLogin(): boolean {
   formErrors.password = ''
 
   if (!login.email) {
-    formErrors.email = 'O e-mail é obrigatório.'
+    formErrors.email = 'O e-mail � obrigat�rio.'
   } else if (!emailRegex.test(login.email)) {
-    formErrors.email = 'Informe um e-mail válido.'
+    formErrors.email = 'Informe um e-mail v�lido.'
   }
 
   if (!login.password) {
-    formErrors.password = 'A senha é obrigatória.'
+    formErrors.password = 'A senha � obrigat�ria.'
   }
 
   return !formErrors.email && !formErrors.password
@@ -193,31 +185,31 @@ function validateRegister(): boolean {
   registerErrors.confirmPassword = ''
 
   if (!register.name.trim()) {
-    registerErrors.name = 'O nome é obrigatório.'
+    registerErrors.name = 'O nome � obrigat�rio.'
   }
 
   if (!register.nomeEmpresa.trim()) {
-    registerErrors.nomeEmpresa = 'O nome da empresa é obrigatório.'
+    registerErrors.nomeEmpresa = 'O nome da empresa � obrigat�rio.'
   }
 
   if (!register.email) {
-    registerErrors.email = 'O e-mail é obrigatório.'
+    registerErrors.email = 'O e-mail � obrigat�rio.'
   } else if (!emailRegex.test(register.email)) {
-    registerErrors.email = 'Informe um e-mail válido.'
+    registerErrors.email = 'Informe um e-mail v�lido.'
   }
 
   if (!register.password) {
-    registerErrors.password = 'A senha é obrigatória.'
+    registerErrors.password = 'A senha � obrigat�ria.'
   } else if (register.password.length < 8) {
-    registerErrors.password = 'A senha deve ter no mínimo 8 caracteres.'
+    registerErrors.password = 'A senha deve ter no m�nimo 8 caracteres.'
   } else if (!/[A-Z]/.test(register.password) || !/[0-9]/.test(register.password)) {
-    registerErrors.password = 'A senha deve conter pelo menos 1 letra maiúscula e 1 número.'
+    registerErrors.password = 'A senha deve conter pelo menos 1 letra mai�scula e 1 n�mero.'
   }
 
   if (!register.confirmPassword) {
     registerErrors.confirmPassword = 'Confirme sua senha.'
   } else if (register.password !== register.confirmPassword) {
-    registerErrors.confirmPassword = 'As senhas não coincidem.'
+    registerErrors.confirmPassword = 'As senhas n�o coincidem.'
   }
 
   return !registerErrors.name && !registerErrors.nomeEmpresa && !registerErrors.email && !registerErrors.password && !registerErrors.confirmPassword
@@ -240,7 +232,7 @@ async function handleRegister() {
     if (needsConfirmation) {
       registerSuccess.value = true
     } else {
-      // Limpa tema do usuário anterior para não herdar cores de outra empresa
+      // Limpa tema do usu�rio anterior para n�o herdar cores de outra empresa
       try { localStorage.removeItem('empresa_tema') } catch {}
       await router.push('/')
     }
