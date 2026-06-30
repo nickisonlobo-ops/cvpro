@@ -79,10 +79,7 @@
         <label class="block text-xs font-semibold text-gray-500 uppercase tracking-widest mb-1.5">Categoria</label>
         <select v-model="filtro.categoria" class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary">
           <option value="">Todas</option>
-          <option value="cilios">Cílios</option>
-          <option value="unhas">Unhas</option>
-          <option value="combo">Combo</option>
-          <option value="outro">Outro</option>
+          <option v-for="cat in categoriasDisponiveis" :key="cat" :value="cat">{{ cat }}</option>
         </select>
       </div>
       <div class="min-w-[140px]">
@@ -265,16 +262,15 @@
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-widest mb-1.5">Categoria <span class="text-red-500">*</span></label>
-                <select
+                <input
                   v-model="form.categoria"
+                  list="categorias-list"
+                  placeholder="Digite ou selecione..."
                   class="w-full rounded-xl border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary,#6b7280)] focus:border-[var(--color-primary,#6b7280)]"
-                >
-                  <option value="" disabled>Selecione</option>
-                  <option value="cilios">Cílios</option>
-                  <option value="unhas">Unhas</option>
-                  <option value="combo">Combo</option>
-                  <option value="outro">Outro</option>
-                </select>
+                />
+                <datalist id="categorias-list">
+                  <option v-for="cat in categoriasDisponiveis" :key="cat" :value="cat">{{ cat }}</option>
+                </datalist>
               </div>
               <div>
                 <label class="block text-xs font-semibold text-gray-600 uppercase tracking-widest mb-1.5">Duração (min) <span class="text-red-500">*</span></label>
@@ -503,6 +499,12 @@ const servicosFiltrados = computed(() =>
     return true
   })
 )
+
+// Categorias disponíveis: apenas categorias já cadastradas nos serviços
+const categoriasDisponiveis = computed(() => {
+  const existentes = servicos.value.map(s => s.categoria).filter(Boolean)
+  return [...new Set(existentes)].sort()
+})
 
 function formatPreco(v: number) {
   return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(v)
