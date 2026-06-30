@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="min-h-full bg-transparent p-3 sm:p-8">
 
     <!-- �.��.��.��.��.��.��.��.��.��.��.� VIS�fO FUNCIONÁRIO �.��.��.��.��.��.��.��.��.��.��.� -->
@@ -378,249 +378,368 @@
     <!-- �.��.��.��.��.��.��.��.��.��.��.� VIS�fO ADMIN �.��.��.��.��.��.��.��.��.��.��.� -->
     <template v-if="!adminLoading && isAdminOrGerente">
 
-      <!-- Header compacto -->
-      <section class="relative overflow-hidden rounded-3xl shadow-xl mb-6" :style="{ background: 'var(--color-primary-bg)' }">
-        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_60%)]" />
-        <div class="relative px-6 sm:px-10 py-6 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p class="text-[11px] font-bold uppercase tracking-[0.25em] text-white/80 mb-1">UpStudio · Painel Admin</p>
-            <h1 class="text-xl sm:text-3xl font-black text-white leading-tight">Visão Geral do Negócio</h1>
-            <p class="text-sm text-gray-300/70 mt-1">{{ dataHoje }}</p>
-          </div>
-          <div class="flex items-center gap-2">
+      <!-- HEADER CARD — Estilo premium como outras páginas -->
+      <div class="relative rounded-3xl overflow-hidden mb-6 shadow-xl">
+        <div class="absolute inset-0" :style="{ background: 'var(--color-primary-bg, linear-gradient(135deg, #6366f1, #8b5cf6))' }" />
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.1),transparent_60%)]" />
+        <div class="absolute -top-16 -right-16 w-72 h-72 rounded-full bg-white/[0.03] pointer-events-none" />
+        <div class="absolute -bottom-20 left-1/4 w-96 h-96 rounded-full bg-white/[0.02] pointer-events-none" />
+
+        <div class="relative px-4 sm:px-8 pt-5 sm:pt-7 pb-5 sm:pb-7">
+          <div class="flex flex-wrap items-start justify-between gap-3 sm:gap-6">
+            <div class="flex items-center gap-3 sm:gap-5">
+              <div class="flex items-center justify-center w-10 sm:w-14 h-10 sm:h-14 rounded-2xl bg-white/[0.12] backdrop-blur-sm border border-white/20 shadow-lg">
+                <svg class="w-5 sm:w-7 h-5 sm:h-7 text-white" fill="none" stroke="currentColor" stroke-width="1.75" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                </svg>
+              </div>
+              <div>
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-xs font-semibold text-white/80 uppercase tracking-widest">Gestão</span>
+                  <span class="w-1 h-1 rounded-full bg-white/40" />
+                  <span class="text-xs text-white/50 hidden sm:inline">Visão Geral</span>
+                </div>
+                <h1 class="text-xl sm:text-3xl font-bold text-white tracking-tight leading-none">Dashboard</h1>
+                <p class="text-sm text-gray-300/80 mt-1.5">{{ periodoLabel }}</p>
+              </div>
+            </div>
+
+            <!-- Botão Filtros -->
             <button
               type="button"
-              class="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all"
-              :class="filtroAberto ? 'bg-white text-primary shadow-lg' : 'bg-white/10 text-white hover:bg-white/20 border border-white/15'"
+              class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/95 text-sm font-bold shadow-lg transition-all duration-200 hover:scale-[1.02] backdrop-blur-sm"
+              :style="{ color: 'var(--color-primary, #6366f1)' }"
               @click="filtroAberto = !filtroAberto"
             >
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
               Filtros
-              <span v-if="filtroPeriodo !== 'mes_atual'" class="w-2 h-2 rounded-full bg-primary" />
+              <span v-if="periodoFiltro !== 'mes_atual'" class="w-2 h-2 rounded-full bg-current" />
             </button>
-            <div class="shrink-0 w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center">
-              <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
-              </svg>
-            </div>
           </div>
+        </div>
+      </div>
+
+      <!-- 1. ALERTAS — Compact horizontal bar -->
+      <section
+        v-if="alertas.temAlertas"
+        class="flex items-center gap-3 rounded-xl border border-primary-10 bg-theme-card px-4 py-2.5 mb-5 shadow-sm"
+      >
+        <div class="flex items-center gap-2 shrink-0">
+          <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"/></svg>
+          <span class="text-xs font-bold" style="color: var(--color-card-texto)">Alertas e Prazos</span>
+        </div>
+        <div class="flex-1 flex items-center justify-center">
+          <span class="inline-flex items-center gap-2 text-xs font-semibold text-amber-500 bg-amber-500/10 border border-amber-500/30 px-3 py-1 rounded-full">
+            <template v-if="alertas.osAtrasadas > 0">{{ alertas.osAtrasadas }} OS atrasada{{ alertas.osAtrasadas > 1 ? 's' : '' }} • Prazo vencido</template>
+            <template v-else-if="alertas.contasVencidas > 0">{{ alertas.contasVencidas }} conta{{ alertas.contasVencidas > 1 ? 's' : '' }} vencida{{ alertas.contasVencidas > 1 ? 's' : '' }}</template>
+            <template v-else>{{ alertas.orcamentosExpirando }} orçamento{{ alertas.orcamentosExpirando > 1 ? 's' : '' }} expirando</template>
+            <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
+          </span>
         </div>
       </section>
 
-      <!-- FILTRO AVANÇADO -->
+      <!-- FILTRO DE PERÍODO (slide-down panel) -->
       <Transition name="slide-down">
-        <div v-if="filtroAberto" class="bg-white rounded-3xl border border-gray-100 shadow-md mb-6 overflow-hidden">
-          <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/60">
-            <div class="flex items-center gap-2">
-              <svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L13 13.414V19a1 1 0 01-.553.894l-4 2A1 1 0 017 21v-7.586L3.293 6.707A1 1 0 013 6V4z"/></svg>
-              <span class="text-sm font-black text-gray-700">Filtro Avançado</span>
-            </div>
+        <div v-if="filtroAberto" class="bg-theme-card rounded-2xl border border-primary-10 shadow-md mb-5 overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-3 border-b border-primary-10 bg-primary-5">
+            <span class="text-xs font-black" style="color: var(--color-card-texto)">Filtro de Período</span>
             <button type="button" class="text-xs font-bold text-primary hover:text-primary" @click="resetarFiltros">Redefinir</button>
           </div>
-          <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <!-- Período financeiro -->
+          <div class="px-5 py-4 grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <p class="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Período</p>
+              <p class="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Período</p>
               <div class="grid grid-cols-2 gap-2">
                 <button
                   v-for="opt in periodoOpcoes"
                   :key="opt.value"
                   type="button"
-                  class="flex items-center gap-2 px-3 py-2.5 rounded-xl border text-sm font-semibold transition-all text-left"
-                  :class="filtroPeriodo === opt.value ? 'bg-primary-5 border-primary-border text-primary' : 'border-gray-200 text-gray-600 hover:border-primary-border hover:text-primary'"
-                  @click="filtroPeriodo = opt.value; aplicarFiltros()"
+                  class="flex items-center gap-2 px-3 py-2 rounded-lg border text-xs font-semibold transition-all text-left"
+                  :class="periodoFiltro === opt.value ? 'bg-primary-5 border-primary-border text-primary' : 'border-primary-10 hover:border-primary-border hover:text-primary'"
+                  :style="periodoFiltro !== opt.value ? { color: 'var(--color-card-texto)' } : {}"
+                  @click="periodoFiltro = opt.value"
                 >
-                  <span class="w-3.5 h-3.5 rounded-full border-2 flex items-center justify-center shrink-0" :class="filtroPeriodo === opt.value ? 'border-primary' : 'border-gray-300'">
-                    <span v-if="filtroPeriodo === opt.value" class="w-1.5 h-1.5 rounded-full bg-primary" />
+                  <span class="w-3 h-3 rounded-full border-2 flex items-center justify-center shrink-0" :class="periodoFiltro === opt.value ? 'border-primary' : 'border-primary-30'">
+                    <span v-if="periodoFiltro === opt.value" class="w-1.5 h-1.5 rounded-full bg-primary" />
                   </span>
                   {{ opt.label }}
                 </button>
               </div>
             </div>
-
-            <!-- Mês/Ano específico -->
             <div>
-              <p class="text-[10px] font-black uppercase tracking-widest text-primary mb-3">Mês / Ano Específico</p>
-              <div class="grid grid-cols-2 gap-3">
+              <p class="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Mês / Ano Específico</p>
+              <div class="grid grid-cols-2 gap-3" :class="periodoFiltro !== 'personalizado' ? 'opacity-40 pointer-events-none' : ''">
                 <div>
-                  <label class="block text-xs font-semibold text-gray-500 mb-1.5">Mês</label>
+                  <label class="block text-xs font-semibold mb-1" style="color: var(--color-card-texto); opacity: 0.75">Mês</label>
                   <select
-                    v-model="filtroMes"
-                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                    @change="filtroPeriodo = 'personalizado'; aplicarFiltros()"
+                    :value="periodoCustom.mes"
+                    class="w-full rounded-lg border border-primary-10 bg-primary-5 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    @change="periodoFiltro = 'personalizado'; periodoCustom = { ...periodoCustom, mes: Number(($event.target as HTMLSelectElement).value) }"
                   >
                     <option v-for="m in mesesOpcoes" :key="m.value" :value="m.value">{{ m.label }}</option>
                   </select>
                 </div>
                 <div>
-                  <label class="block text-xs font-semibold text-gray-500 mb-1.5">Ano</label>
+                  <label class="block text-xs font-semibold mb-1" style="color: var(--color-card-texto); opacity: 0.75">Ano</label>
                   <select
-                    v-model="filtroAno"
-                    class="w-full rounded-xl border border-gray-200 bg-gray-50 px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                    @change="filtroPeriodo = 'personalizado'; aplicarFiltros()"
+                    :value="periodoCustom.ano"
+                    class="w-full rounded-lg border border-primary-10 bg-primary-5 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                    @change="periodoFiltro = 'personalizado'; periodoCustom = { ...periodoCustom, ano: Number(($event.target as HTMLSelectElement).value) }"
                   >
                     <option v-for="a in anosOpcoes" :key="a" :value="a">{{ a }}</option>
                   </select>
                 </div>
-              </div>
-              <div class="mt-3 flex items-center gap-1.5 text-xs text-gray-400">
-                <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                Exibindo: <span class="font-bold text-gray-600 ml-0.5">{{ periodoLabelAtual }}</span>
               </div>
             </div>
           </div>
         </div>
       </Transition>
 
-      <!-- Financeiro -->
-      <div class="mb-3 flex items-center gap-2 px-1">
-        <span class="text-[11px] font-black uppercase tracking-widest text-gray-400">Financeiro</span>
-        <div class="flex-1 h-px bg-primary-10" />
-        <span class="text-[10px] font-bold text-primary">{{ periodoLabelAtual }}</span>
+      <!-- 2. FINANCIAL METRIC CARDS with sparklines -->
+      <div v-if="loading" class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <div v-for="i in 4" :key="i" class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm animate-pulse">
+          <div class="h-4 w-24 bg-primary-10 rounded mb-3" />
+          <div class="h-7 w-32 bg-primary-10 rounded mb-2" />
+          <div class="h-3 w-20 bg-primary-5 rounded" />
+        </div>
       </div>
-      <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6">
 
+      <div v-else class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-6">
         <!-- Faturamento -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
-
-
-          <div class="relative flex items-center gap-2 mb-3">
-            <svg class="w-5 h-5 shrink-0" style="color: var(--color-card-texto, #374151); opacity: 0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Faturamento / Mês</span>
+        <div class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Faturamento</span>
           </div>
-          <p class="relative text-lg sm:text-2xl font-black text-gray-900 truncate">{{ resumoLoading ? '...' : formatCurrency(faturamentoMes) }}</p>
-          <p class="relative text-[11px] text-gray-500 mt-1">agendamentos confirmados</p>
+          <p class="text-xl sm:text-2xl font-black truncate" style="color: var(--color-card-texto)">{{ formatCurrency(financeiro.faturamento) }}</p>
+          <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">orçamentos aprovados</p>
+          <svg class="w-full h-8 mt-2" viewBox="0 0 100 30" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#10b981" stroke-width="1.5" :points="sparklineFaturamento" />
+          </svg>
         </div>
 
-        <!-- Agendamentos do mês -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
-
-
-          <div class="relative flex items-center gap-2 mb-3">
-            <svg class="w-5 h-5 shrink-0" style="color: var(--color-card-texto, #374151); opacity: 0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Agendamentos / Mês</span>
+        <!-- Despesas -->
+        <div class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Despesas</span>
           </div>
-          <p class="relative text-2xl font-black text-gray-900">{{ resumoLoading ? '...' : agendamentosMes }}</p>
-          <p class="relative text-[11px] text-gray-500 mt-1">este mês</p>
+          <p class="text-xl sm:text-2xl font-black truncate" style="color: var(--color-card-texto)">{{ formatCurrency(financeiro.despesas) }}</p>
+          <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">contas no período</p>
+          <svg class="w-full h-8 mt-2" viewBox="0 0 100 30" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#f97316" stroke-width="1.5" :points="sparklineDespesas" />
+          </svg>
         </div>
 
-        <!-- Contas a pagar -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
-
-
-          <div class="relative flex items-center gap-2 mb-3">
-            <svg class="w-5 h-5 shrink-0" style="color: var(--color-card-texto, #374151); opacity: 0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Contas a Pagar</span>
+        <!-- Lucro Estimado -->
+        <div class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941"/></svg>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Lucro Estimado</span>
           </div>
-          <p class="relative text-lg sm:text-xl font-black text-gray-900 truncate">{{ resumoLoading ? '...' : formatCurrency(valorContasPagar) }}</p>
-          <div class="relative flex items-center gap-1.5 mt-1">
-            <span class="text-[11px] text-gray-500">em aberto</span>
-            <span class="inline-flex items-center justify-center text-[10px] font-black px-1.5 py-0.5 rounded-full bg-primary-5 text-gray-600 border border-primary-10">
-              {{ resumoLoading ? '...' : totalContasPagar }} conta{{ totalContasPagar !== 1 ? 's' : '' }}
-            </span>
-          </div>
+          <p class="text-xl sm:text-2xl font-black truncate" style="color: var(--color-card-texto)">{{ formatCurrency(financeiro.lucroEstimado) }}</p>
+          <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">faturamento - despesas</p>
+          <svg class="w-full h-8 mt-2" viewBox="0 0 100 30" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#059669" stroke-width="1.5" :points="sparklineLucro" />
+          </svg>
         </div>
 
-        <!-- Contas vencidas -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
-
-
-          <div class="relative flex items-center gap-2 mb-3">
-            <svg class="w-5 h-5 shrink-0" :class="contasVencidas > 0 ? 'text-red-400' : ''" :style="contasVencidas > 0 ? {} : { color: 'var(--color-card-texto, #374151)', opacity: '0.5' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Vencidas</span>
+        <!-- Contas Vencidas -->
+        <div class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm" :class="financeiro.contasVencidas > 0 ? 'ring-2 ring-red-100' : ''">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div
+              class="w-10 h-10 rounded-full flex items-center justify-center"
+              :class="financeiro.contasVencidas > 0 ? 'bg-red-100' : ''"
+              :style="financeiro.contasVencidas > 0 ? {} : { background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }"
+            >
+              <svg
+                class="w-5 h-5"
+                :class="financeiro.contasVencidas > 0 ? 'text-red-600' : ''"
+                :style="financeiro.contasVencidas > 0 ? {} : { color: 'var(--color-primary)' }"
+                fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+              ><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Contas Vencidas</span>
           </div>
-          <p class="relative text-2xl font-black text-gray-900 flex items-center gap-2">
-            {{ resumoLoading ? '...' : contasVencidas }}
-            <span v-if="contasVencidas > 0" class="inline-block w-2 h-2 rounded-full bg-red-400 animate-ping" />
+          <p class="text-xl sm:text-2xl font-black" style="color: var(--color-card-texto)">{{ financeiro.contasVencidas }}</p>
+          <p class="text-[11px] mt-0.5" :class="financeiro.contasVencidas > 0 ? 'text-red-500' : ''" :style="financeiro.contasVencidas > 0 ? {} : { color: 'var(--color-card-texto)', opacity: 0.75 }">
+            {{ financeiro.contasVencidas > 0 ? formatCurrency(financeiro.valorContasVencidas) + ' em atraso' : 'tudo em dia ✅' }}
           </p>
-          <p class="relative text-[11px] mt-1" :class="contasVencidas > 0 ? 'text-red-500' : 'text-gray-500'">
-            {{ contasVencidas > 0 ? 'atenção necessária' : 'tudo em dia ✅' }}
-          </p>
         </div>
       </div>
 
-      <!-- Operacional -->
-      <div class="mb-3 flex items-center gap-2 px-1">
-        <span class="text-[11px] font-black uppercase tracking-widest text-gray-400">Operacional</span>
-        <div class="flex-1 h-px bg-primary-10" />
-        <span class="text-[10px] font-bold text-primary">{{ periodoLabelAtual }}</span>
+      <!-- 3. PIPELINE DE ORÇAMENTOS — Horizontal inline section -->
+      <div class="mb-5">
+        <div class="flex items-center gap-2 px-1 mb-3">
+          <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Pipeline de Orçamentos</span>
+          <div class="flex-1 h-px bg-primary-10" />
+        </div>
+
+        <div v-if="loading" class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm animate-pulse">
+          <div class="flex gap-3">
+            <div v-for="i in 5" :key="i" class="h-8 w-20 bg-primary-5 rounded-full" />
+          </div>
+        </div>
+
+        <div v-else-if="pipelineTotal === 0" class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm">
+          <div class="flex flex-col items-center py-4 gap-2">
+            <svg class="w-8 h-8" style="color: var(--color-card-texto); opacity: 0.5" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>
+            <p class="text-sm font-semibold" style="color: var(--color-card-texto); opacity: 0.75">Nenhum orçamento no período</p>
+          </div>
+        </div>
+
+        <div v-else class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm">
+          <!-- Status badges row -->
+          <div class="flex flex-wrap items-center gap-4 mb-3">
+            <div class="flex items-center gap-1.5 text-xs">
+              <span class="w-2.5 h-2.5 rounded-full bg-gray-400" />
+              <span style="color: var(--color-card-texto); opacity: 0.8">Rascunho</span>
+              <span class="font-black" style="color: var(--color-card-texto)">{{ pipeline.rascunho }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs">
+              <svg class="w-3.5 h-3.5 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"/></svg>
+              <span style="color: var(--color-card-texto); opacity: 0.8">Enviado</span>
+              <span class="font-black" style="color: var(--color-card-texto)">{{ pipeline.enviado }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs">
+              <svg class="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              <span style="color: var(--color-card-texto); opacity: 0.8">Aprovado</span>
+              <span class="font-black" style="color: var(--color-card-texto)">{{ pipeline.aprovado }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs">
+              <span class="w-2.5 h-2.5 rounded-full bg-red-500" />
+              <span style="color: var(--color-card-texto); opacity: 0.8">Rejeitado</span>
+              <span class="font-black" style="color: var(--color-card-texto)">{{ pipeline.rejeitado }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs">
+              <svg class="w-3.5 h-3.5 text-orange-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span style="color: var(--color-card-texto); opacity: 0.8">Vencido</span>
+              <span class="font-black" style="color: var(--color-card-texto)">{{ pipeline.vencido }}</span>
+            </div>
+
+            <!-- Em Negociação CTA card -->
+            <div class="ml-auto shrink-0 inline-flex items-center gap-2 rounded-xl px-4 py-2" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <span class="text-xs font-semibold" :style="{ color: 'var(--color-primary)' }">Em Negociação</span>
+              <span class="text-sm font-black" style="color: var(--color-card-texto)">{{ formatCurrency(pipeline.valorEmNegociacao) }}</span>
+            </div>
+          </div>
+
+          <!-- Pipeline progress bar -->
+          <div class="w-full h-1.5 rounded-full bg-primary-5 flex overflow-hidden">
+            <div v-if="pipeline.rascunho > 0" class="bg-gray-400 transition-all" :style="{ width: (pipeline.rascunho / pipelineTotal * 100) + '%' }" />
+            <div v-if="pipeline.enviado > 0" class="bg-blue-500 transition-all" :style="{ width: (pipeline.enviado / pipelineTotal * 100) + '%' }" />
+            <div v-if="pipeline.aprovado > 0" class="bg-green-500 transition-all" :style="{ width: (pipeline.aprovado / pipelineTotal * 100) + '%' }" />
+            <div v-if="pipeline.rejeitado > 0" class="bg-red-500 transition-all" :style="{ width: (pipeline.rejeitado / pipelineTotal * 100) + '%' }" />
+            <div v-if="pipeline.vencido > 0" class="bg-orange-400 transition-all" :style="{ width: (pipeline.vencido / pipelineTotal * 100) + '%' }" />
+          </div>
+        </div>
       </div>
-      <div class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-8">
 
-        <!-- Ticket Médio -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
-
-
-          <div class="relative flex items-center gap-2 mb-3">
-            <svg class="w-5 h-5 shrink-0" style="color: var(--color-card-texto, #374151); opacity: 0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Ticket Médio</span>
-          </div>
-          <p class="relative text-lg sm:text-2xl font-black text-gray-900 truncate">{{ resumoLoading ? '...' : formatCurrency(ticketMedio) }}</p>
-          <p class="relative text-[11px] text-gray-500 mt-1">por agendamento este mês</p>
+      <!-- 4. STATUS DE PRODUÇÃO — Cards with highlighted alert -->
+      <div class="mb-5">
+        <div class="flex items-center gap-2 px-1 mb-3">
+          <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Status de Produção</span>
+          <div class="flex-1 h-px bg-primary-10" />
+          <span v-if="producao.osAtrasadas > 0" class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/30">
+            ↓ {{ producao.osAtrasadas }} atrasada{{ producao.osAtrasadas > 1 ? 's' : '' }}
+          </span>
         </div>
 
-        <!-- Produtos em estoque -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
-
-
-          <div class="relative flex items-center gap-2 mb-3">
-            <svg class="w-5 h-5 shrink-0" style="color: var(--color-card-texto, #374151); opacity: 0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125z"/></svg>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Produtos</span>
-          </div>
-          <p class="relative text-2xl font-black text-gray-900">{{ resumoLoading ? '...' : produtosTotal }}</p>
-          <div class="relative flex items-center gap-2 mt-1 flex-wrap">
-            <span v-if="produtosBaixoEstoque > 0" class="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-primary-10 text-primary">
-              <span class="w-1.5 h-1.5 rounded-full bg-primary" />{{ produtosBaixoEstoque }} estoque baixo
-            </span>
-            <span v-else class="text-[11px] text-gray-500">todos ok</span>
-          </div>
+        <div v-if="loading" class="grid grid-cols-2 xl:grid-cols-4 gap-3 animate-pulse">
+          <div v-for="i in 4" :key="i" class="h-24 bg-theme-card border border-primary-10 rounded-2xl" />
         </div>
 
-        <!-- Tarefas Hoje -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
-
-
-          <div class="relative flex items-center gap-2 mb-3">
-            <svg class="w-5 h-5 shrink-0" style="color: var(--color-card-texto, #374151); opacity: 0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Tarefas Hoje</span>
+        <div v-else class="grid grid-cols-2 xl:grid-cols-4 gap-3">
+          <!-- OS em Produção -->
+          <div class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center gap-3">
+            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-5.1-5.1m0 0L11.42 4.97m-5.1 5.1H21M3 21h18"/></svg>
+            </div>
+            <div>
+              <p class="text-2xl font-black" style="color: var(--color-card-texto)">{{ producao.osEmProducao }}</p>
+              <p class="text-[11px] font-semibold" :style="{ color: 'var(--color-primary)' }">OS em Produção</p>
+            </div>
           </div>
-          <p class="relative text-2xl font-black text-gray-900">{{ resumoLoading ? '...' : tarefasHoje }}</p>
-          <p class="relative text-[11px] text-gray-500 mt-1">{{ resumoLoading ? '' : tarefasConcluidasHoje + ' concluídas hoje' }}</p>
-        </div>
 
-        <!-- Clientes -->
-        <div class="relative overflow-hidden rounded-2xl bg-white border border-primary-10 p-4 shadow-sm">
-
-
-          <div class="relative flex items-center gap-2 mb-3">
-            <svg class="w-5 h-5 shrink-0" style="color: var(--color-card-texto, #374151); opacity: 0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
-            <span class="text-[10px] font-black uppercase tracking-widest text-gray-400">Clientes</span>
+          <!-- OS Prontas -->
+          <div class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center gap-3">
+            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div>
+              <p class="text-2xl font-black" style="color: var(--color-card-texto)">{{ producao.osProntas }}</p>
+              <p class="text-[11px] font-semibold" :style="{ color: 'var(--color-primary)' }">OS Prontas</p>
+            </div>
           </div>
-          <p class="relative text-2xl font-black text-gray-900">{{ resumoLoading ? '...' : totalClientes }}</p>
-          <p class="relative text-[11px] text-gray-500 mt-1">cadastrados</p>
+
+          <!-- Processos Ativos -->
+          <div class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center gap-3">
+            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+            </div>
+            <div>
+              <p class="text-2xl font-black" style="color: var(--color-card-texto)">{{ producao.processosAtivos }}</p>
+              <p class="text-[11px] font-semibold" :style="{ color: 'var(--color-primary)' }">Processos Ativos</p>
+            </div>
+          </div>
+
+          <!-- Alert card: OS com prazo vencido -->
+          <div v-if="producao.osAtrasadas > 0" class="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 shadow-sm flex items-center gap-3">
+            <div class="shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+              <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <p class="text-xs font-black text-amber-500">{{ producao.osAtrasadas }} OS com prazo vencido</p>
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 mt-1">
+                Urgente
+              </span>
+            </div>
+          </div>
+          <!-- Placeholder when no OS atrasadas -->
+          <div v-else class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center justify-center">
+            <span class="text-xs font-semibold" style="color: var(--color-card-texto); opacity: 0.75">Sem atrasos ✅</span>
+          </div>
         </div>
       </div>
 
-      <!-- Atalhos -->
-      <div class="mb-3 flex items-center gap-2 px-1">
-        <span class="text-[11px] font-black uppercase tracking-widest text-gray-400">Atalhos</span>
-        <div class="flex-1 h-px bg-primary-10" />
+      <!-- 5 & 6. CHARTS SECTION -->
+      <DashboardCharts
+        v-if="!loading"
+        :financeiro="financeiro"
+        :pipeline="pipeline"
+        :producao="producao"
+        :top-clientes="topClientes"
+        :evolucao-mensal="evolucaoMensal"
+        :format-currency="formatCurrency"
+        :periodo-label="periodoLabel"
+      />
+
+      <!-- Loading skeleton for charts -->
+      <div v-if="loading" class="space-y-4 mb-6">
+        <div class="h-px bg-primary-10 my-4" />
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div v-for="i in 3" :key="i" class="rounded-2xl border border-primary-10 bg-theme-card p-5 shadow-sm animate-pulse">
+            <div class="h-4 w-32 bg-primary-10 rounded mb-4" />
+            <div class="h-[200px] bg-primary-5 rounded-xl" />
+          </div>
+        </div>
       </div>
-      <div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-2 sm:gap-3">
-        <NuxtLink
-          v-for="atalho in atalhosVisiveis"
-          :key="atalho.to"
-          :to="atalho.to"
-          class="group relative overflow-hidden flex flex-col items-center justify-center gap-2.5 py-5 px-2 rounded-2xl shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
-          :style="{ background: 'var(--color-primary-bg, var(--color-primary, #ec4899))' }"
+
+      <!-- Botão "Tentar novamente" após timeout de 10s -->
+      <div v-if="loading && loadingTimeout" class="flex justify-center mb-6">
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 px-5 py-3 rounded-2xl border border-primary-10 bg-theme-card shadow-sm text-sm font-bold text-primary hover:bg-primary-5 transition-colors"
+          @click="refresh()"
         >
-          <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,255,255,0.15),transparent_65%)] pointer-events-none" />
-          <AppNavIcon
-            :name="atalho.icon"
-            class="relative w-6 h-6 text-white transition-transform duration-200 group-hover:scale-110"
-          />
-          <span class="relative text-[11px] font-bold text-white/90 text-center leading-tight">{{ atalho.title }}</span>
-        </NuxtLink>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+          Tentar novamente
+        </button>
       </div>
 
     </template>
@@ -633,9 +752,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useAdmin } from '~/composables/useAdmin'
 import { useEmpresa } from '~/composables/useEmpresa'
+import { useDashboardAdmin } from '~/composables/useDashboardAdmin'
 import { createSupabaseClient } from '~/lib/supabase'
 import AppNavIcon from '~/components/AppNavIcon.vue'
 
@@ -644,38 +764,114 @@ const { isAdmin, isAdminOrGerente, adminLoading } = useAdmin()
 const { empresaId, userPerfil, loadEmpresa } = useEmpresa()
 const { formatCurrency } = useLocale()
 
-// �"?�"? ADMIN: resumo �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
-const resumoLoading      = ref(true)
-const totalClientes      = ref(0)
-const clientesAtivos     = ref(0)
-const agendamentosMes    = ref(0)
-const faturamentoMes     = ref(0)
-const totalContasPagar   = ref(0)
-const valorContasPagar   = ref(0)
-const contasVencidas     = ref(0)
-const tarefasHoje           = ref(0)
-const tarefasConcluidasHoje = ref(0)
-const tarefasPendentes      = ref(0)
-const produtosTotal         = ref(0)
-const produtosBaixoEstoque  = ref(0)
-const ticketMedio           = ref(0)
+// ── Dashboard Admin Composable ──────────────────────────────────────────────
+const { periodoFiltro, periodoCustom, periodoLabel, periodoRange, loading, financeiro, pipeline, producao, atividades: atividadesDashboard, alertas, topClientes, evolucaoMensal, comparativo, ticketMedio, proximosVencimentos, refresh } = useDashboardAdmin()
+
+// ── Loading timeout: botão "Tentar novamente" após 10s ──────────────────────
+const loadingTimeout = ref(false)
+let loadingTimer: ReturnType<typeof setTimeout> | null = null
+
+// ── Pipeline total (for progress bar) ───────────────────────────────────────
+const pipelineTotal = computed(() =>
+  pipeline.value.rascunho + pipeline.value.enviado + pipeline.value.aprovado + pipeline.value.rejeitado + pipeline.value.vencido
+)
+
+// ── Sparkline helpers ────────────────────────────────────────────────────────
+function buildSparklinePoints(values: number[]): string {
+  if (values.length === 0) return '0,15 100,15'
+  const max = Math.max(...values, 1)
+  const step = 100 / Math.max(values.length - 1, 1)
+  return values.map((v, i) => `${i * step},${30 - (v / max) * 28}`).join(' ')
+}
+
+const sparklineFaturamento = computed(() =>
+  buildSparklinePoints(evolucaoMensal.value.map(e => e.faturamento))
+)
+const sparklineDespesas = computed(() =>
+  buildSparklinePoints(evolucaoMensal.value.map(e => e.despesas))
+)
+const sparklineLucro = computed(() =>
+  buildSparklinePoints(evolucaoMensal.value.map(e => e.faturamento - e.despesas))
+)
+
+watch(loading, (isLoading) => {
+  if (isLoading) {
+    loadingTimeout.value = false
+    loadingTimer = setTimeout(() => {
+      if (loading.value) {
+        loadingTimeout.value = true
+      }
+    }, 10_000)
+  } else {
+    loadingTimeout.value = false
+    if (loadingTimer) {
+      clearTimeout(loadingTimer)
+      loadingTimer = null
+    }
+  }
+}, { immediate: true })
+
+onUnmounted(() => {
+  if (loadingTimer) {
+    clearTimeout(loadingTimer)
+    loadingTimer = null
+  }
+})
+// ── Tempo relativo helper ───────────────────────────────────────────────────
+function tempoRelativo(isoDate: string): string {
+  const agora = Date.now()
+  const data = new Date(isoDate).getTime()
+  const diffMs = agora - data
+  const diffMin = Math.floor(diffMs / 60000)
+  if (diffMin < 1) return 'agora mesmo'
+  if (diffMin < 60) return `há ${diffMin} minuto${diffMin > 1 ? 's' : ''}`
+  const diffHoras = Math.floor(diffMin / 60)
+  if (diffHoras < 24) return `há ${diffHoras} hora${diffHoras > 1 ? 's' : ''}`
+  const diffDias = Math.floor(diffHoras / 24)
+  if (diffDias < 30) return `há ${diffDias} dia${diffDias > 1 ? 's' : ''}`
+  const diffMeses = Math.floor(diffDias / 30)
+  return `há ${diffMeses} ${diffMeses > 1 ? 'meses' : 'mês'}`
+}
+
+// ── Atividade route helper ──────────────────────────────────────────────────
+function atividadeRoute(item: { id: number; tipo: string }): string {
+  switch (item.tipo) {
+    case 'orcamento_criado':
+    case 'orcamento_aprovado':
+      return '/adesivos-orcamentos'
+    case 'os_criada':
+      return '/adesivos-pedidos'
+    case 'conta_criada':
+      return '/financeiro'
+    default:
+      return '/'
+  }
+}
+
+// ── Atividade icon class helper ─────────────────────────────────────────────
+function atividadeIconClass(tipo: string): string {
+  switch (tipo) {
+    case 'orcamento_criado': return 'text-blue-500'
+    case 'orcamento_aprovado': return 'text-green-500'
+    case 'os_criada': return 'text-purple-500'
+    case 'conta_criada': return 'text-orange-500'
+    default: return 'text-gray-400'
+  }
+}
 
 // ── Filtros painel admin ────────────────────────────────────────────────────
 const filtroAberto = ref(false)
-const filtroPeriodo = ref<'mes_atual' | 'semana_atual' | 'trimestre' | 'ano_atual' | 'personalizado'>('mes_atual')
-const filtroMes = ref(new Date().getMonth() + 1)
-const filtroAno = ref(new Date().getFullYear())
-const filtroOp = reactive({ agendamentos: true, contas: true, estoque: true, tarefas: true })
 
 const periodoOpcoes = [
-  { value: 'mes_atual',    label: 'Mes Atual' },
-  { value: 'semana_atual', label: 'Semana Atual' },
-  { value: 'trimestre',    label: 'Trimestre Atual' },
-  { value: 'ano_atual',    label: 'Ano Atual' },
+  { value: 'mes_atual',       label: 'Mês Atual' },
+  { value: 'semana_atual',    label: 'Semana Atual' },
+  { value: 'trimestre_atual', label: 'Trimestre Atual' },
+  { value: 'ano_atual',       label: 'Ano Atual' },
+  { value: 'personalizado',   label: 'Personalizado' },
 ]
 
 const mesesOpcoes = [
-  { value: 1, label: 'Janeiro' }, { value: 2, label: 'Fevereiro' }, { value: 3, label: 'Marco' },
+  { value: 1, label: 'Janeiro' }, { value: 2, label: 'Fevereiro' }, { value: 3, label: 'Março' },
   { value: 4, label: 'Abril' },   { value: 5, label: 'Maio' },      { value: 6, label: 'Junho' },
   { value: 7, label: 'Julho' },   { value: 8, label: 'Agosto' },    { value: 9, label: 'Setembro' },
   { value: 10, label: 'Outubro' },{ value: 11, label: 'Novembro' }, { value: 12, label: 'Dezembro' },
@@ -686,100 +882,13 @@ const anosOpcoes = computed(() => {
   return [y - 2, y - 1, y, y + 1]
 })
 
-const periodoLabelAtual = computed(() => {
-  if (filtroPeriodo.value === 'mes_atual') {
-    const now = new Date()
-    return now.toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
-  }
-  if (filtroPeriodo.value === 'semana_atual') return 'Esta semana'
-  if (filtroPeriodo.value === 'trimestre') {
-    const m = new Date().getMonth()
-    const q = Math.floor(m / 3) + 1
-    return String(q) + 'o Trimestre ' + String(new Date().getFullYear())
-  }
-  if (filtroPeriodo.value === 'ano_atual') return 'Ano ' + String(new Date().getFullYear())
-  if (filtroPeriodo.value === 'personalizado') {
-    const mes = mesesOpcoes.find(m => m.value === filtroMes.value)?.label ?? ''
-    return mes + ' ' + String(filtroAno.value)
-  }
-  return ''
-})
-
-function getPeriodoRange(): { inicio: string; fim: string } {
-  const now = new Date()
-  const y = now.getFullYear(), m = now.getMonth()
-  if (filtroPeriodo.value === 'mes_atual')
-    return { inicio: new Date(y, m, 1).toISOString().slice(0, 10), fim: new Date(y, m + 1, 0).toISOString().slice(0, 10) }
-  if (filtroPeriodo.value === 'semana_atual') {
-    const d = new Date(now); const day = d.getDay()
-    const mon = new Date(d); mon.setDate(d.getDate() + (day === 0 ? -6 : 1 - day))
-    const sun = new Date(mon); sun.setDate(mon.getDate() + 6)
-    return { inicio: mon.toISOString().slice(0, 10), fim: sun.toISOString().slice(0, 10) }
-  }
-  if (filtroPeriodo.value === 'trimestre') {
-    const q = Math.floor(m / 3)
-    return { inicio: new Date(y, q * 3, 1).toISOString().slice(0, 10), fim: new Date(y, q * 3 + 3, 0).toISOString().slice(0, 10) }
-  }
-  if (filtroPeriodo.value === 'ano_atual') return { inicio: y + '-01-01', fim: y + '-12-31' }
-  const pm = filtroMes.value - 1, py = filtroAno.value
-  return { inicio: new Date(py, pm, 1).toISOString().slice(0, 10), fim: new Date(py, pm + 1, 0).toISOString().slice(0, 10) }
-}
-
 function resetarFiltros() {
-  filtroPeriodo.value = 'mes_atual'
-  filtroMes.value = new Date().getMonth() + 1
-  filtroAno.value = new Date().getFullYear()
-  filtroOp.agendamentos = true; filtroOp.contas = true; filtroOp.estoque = true; filtroOp.tarefas = true
-  aplicarFiltros()
+  periodoFiltro.value = 'mes_atual'
+  periodoCustom.value = { mes: new Date().getMonth() + 1, ano: new Date().getFullYear() }
 }
 
-async function aplicarFiltros() {
-  resumoLoading.value = true
-  const { inicio, fim } = getPeriodoRange()
-  const todayIso = new Date().toISOString().slice(0, 10)
-
-  const [clientesResp, agendamentosResp, contasResp, tarefasResp, produtosResp] = await Promise.all([
-    supabase.from('clientes').select('ativo').eq('empresa_id', empresaId.value!),
-    filtroOp.agendamentos
-      ? supabase.from('agendamentos').select('valor_total, data_hora, status').eq('empresa_id', empresaId.value!).gte('data_hora', inicio).lte('data_hora', fim + 'T23:59:59')
-      : Promise.resolve({ data: [], error: null }),
-    filtroOp.contas
-      ? supabase.from('contas_pagar').select('valor, data_vencimento, status').eq('empresa_id', empresaId.value!).gte('data_vencimento', inicio).lte('data_vencimento', fim)
-      : Promise.resolve({ data: [], error: null }),
-    filtroOp.tarefas
-      ? supabase.from('atividades_funcionarios').select('status, data_atividade').eq('empresa_id', empresaId.value!).gte('data_atividade', inicio).lte('data_atividade', fim)
-      : Promise.resolve({ data: [], error: null }),
-    filtroOp.estoque
-      ? supabase.from('produtos_casa_racao').select('estoque, ativo').eq('empresa_id', empresaId.value!)
-      : Promise.resolve({ data: [], error: null }),
-  ])
-
-  const clientes = clientesResp.data ?? []
-  totalClientes.value = clientes.length
-  clientesAtivos.value = clientes.filter((c: any) => c.ativo !== false).length
-
-  const agendamentos = agendamentosResp.data ?? []
-  const confirmados = agendamentos.filter((a: any) => a.status !== 'cancelado')
-  agendamentosMes.value = agendamentos.length
-  faturamentoMes.value = confirmados.reduce((sum: number, a: any) => sum + Number(a.valor_total ?? 0), 0)
-  ticketMedio.value = confirmados.length > 0 ? faturamentoMes.value / confirmados.length : 0
-
-  const contas = (contasResp.data ?? []).filter((c: any) => c.status !== 'pago' && c.status !== 'cancelado')
-  totalContasPagar.value = contas.length
-  valorContasPagar.value = contas.reduce((sum: number, c: any) => sum + Number(c.valor ?? 0), 0)
-  contasVencidas.value = contas.filter((c: any) => c.data_vencimento && c.data_vencimento < todayIso).length
-
-  const tf = tarefasResp.data ?? []
-  tarefasHoje.value = tf.length
-  tarefasConcluidasHoje.value = tf.filter((t: any) => t.status === 'concluida').length
-  tarefasPendentes.value = tf.filter((t: any) => t.status === 'pendente').length
-
-  const prods = (produtosResp.data ?? []).filter((p: any) => p.ativo !== false)
-  produtosTotal.value = prods.length
-  produtosBaixoEstoque.value = prods.filter((p: any) => p.estoque <= 5).length
-
-  resumoLoading.value = false
-}
+// periodoLabelAtual now delegates to the composable's periodoLabel
+const periodoLabelAtual = periodoLabel
 
 // �"?�"? FUNCIONÁRIO: atividades �"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?�"?
 interface AtividadeFuncionario {
@@ -1191,13 +1300,12 @@ onMounted(async () => {
       }
     }
     loadingAtividades.value = false
-    resumoLoading.value = false
     return
   }
 
   // Admin: buscar resumo
   loadingAtividades.value = false
-  await aplicarFiltros()
+  // useDashboardAdmin handles its own data fetching via watch({ immediate: true })
 })
 
 const atalhos = [
