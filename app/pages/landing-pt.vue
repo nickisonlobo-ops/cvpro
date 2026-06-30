@@ -214,7 +214,7 @@
         <div class="text-center mb-16">
           <p class="text-xs font-semibold text-violet-400 uppercase tracking-widest mb-3">Planos</p>
           <h2 class="text-3xl sm:text-5xl font-bold tracking-tight mb-4">Investimento que se paga numa semana</h2>
-          <p class="text-white/50 max-w-sm mx-auto">A partir de €29/mês. Cancele quando quiser.</p>
+          <p class="text-white/50 max-w-sm mx-auto">A partir de €97/mês. Cancele quando quiser.</p>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-start">
           <div v-for="plan in plans" :key="plan.name"
@@ -385,8 +385,8 @@ const reviews = [
 ]
 
 const plans = [
-  { name: 'Starter', desc: 'Para quem está a começar', price: '€29', period: '/mês', featured: false, url: '/login', cta: 'Começar grátis', items: ['Até 2 utilizadores', 'Orçamentos ilimitados', 'OS e kanban', 'Financeiro básico', 'Suporte via WhatsApp'] },
-  { name: 'Profissional', desc: 'O mais completo', price: '€59', period: '/mês', featured: true, url: '/login', cta: 'Começar grátis', items: ['Até 10 utilizadores', 'Tudo do Starter', 'Dashboard avançado', 'Consultor IA', 'Comissões e equipa', 'Relatórios PDF'] },
+  { name: 'Starter', desc: 'Para quem está a começar', price: '€97', period: '/mês', featured: false, url: '/login', cta: 'Começar grátis', items: ['Até 2 utilizadores', 'Orçamentos ilimitados', 'OS e kanban', 'Financeiro básico', 'Suporte via WhatsApp'] },
+  { name: 'Profissional', desc: 'O mais completo', price: '€197', period: '/mês', featured: true, url: '/login', cta: 'Começar grátis', items: ['Até 10 utilizadores', 'Tudo do Starter', 'Dashboard avançado', 'Consultor IA', 'Comissões e equipa', 'Relatórios PDF'] },
   { name: 'Enterprise', desc: 'Para grandes operações', price: 'Sob consulta', period: '', featured: false, url: 'https://wa.me/5511940527609', cta: 'Falar com consultor', items: ['Utilizadores ilimitados', 'Tudo do Profissional', 'API e integrações', 'Onboarding dedicado', 'SLA prioritário'] },
 ]
 
