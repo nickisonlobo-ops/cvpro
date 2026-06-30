@@ -270,28 +270,35 @@ export function useDashboardAdmin(): DashboardAdminState {
   }
 
   async function fetchProducao(): Promise<void> {
-    // OS por status (production-related statuses)
-    const { data: osList } = await supabase
+    // OS em produção (NÃO finalizadas) — usar data_entrega para calcular atraso
+    // pois é o campo que o calendário de entregas gerencia
+    const { data: osEmAndamento } = await supabase
       .from('ordens_servico_adesivo')
-      .select('id, status, prazo_estimado')
+      .select('id, status, data_entrega')
       .eq('empresa_id', empresaId.value)
-      .in('status', ['aguardando_producao', 'em_producao', 'pronto'])
+      .in('status', ['aguardando_producao', 'em_producao'])
 
-    const items = osList ?? []
+    // OS prontas (separado, apenas contagem)
+    const { count: countProntas } = await supabase
+      .from('ordens_servico_adesivo')
+      .select('id', { count: 'exact', head: true })
+      .eq('empresa_id', empresaId.value)
+      .eq('status', 'pronto')
+
+    const items = osEmAndamento ?? []
     const hoje = new Date().toISOString().slice(0, 10)
 
-    const osEmProducao = items.filter(
-      (o) => o.status === 'aguardando_producao' || o.status === 'em_producao'
-    ).length
+    const osEmProducao = items.length
 
-    const osProntas = items.filter((o) => o.status === 'pronto').length
+    const osProntas = countProntas ?? 0
 
-    const osAtrasadas = items.filter(
-      (o) =>
-        (o.status === 'aguardando_producao' || o.status === 'em_producao') &&
-        o.prazo_estimado &&
-        o.prazo_estimado.slice(0, 10) <= hoje
-    ).length
+    // OS atrasadas: usar data_entrega (calendário de entregas) como referência
+    const osAtrasadas = items.filter((o) => {
+      const dataRef = o.data_entrega
+      if (!dataRef) return false
+      const dataStr = dataRef.includes('T') ? dataRef.split('T')[0] : dataRef
+      return dataStr < hoje
+    }).length
 
     // Processos ativos: data_conclusao is null
     const { count } = await supabase
@@ -588,18 +595,32 @@ export function useDashboardAdmin(): DashboardAdminState {
       .neq('status', 'pago')
       .neq('status', 'cancelado')
 
-    // OS com prazo (para calcular atrasadas)
-    const { data: osComPrazo } = await supabase
-      .from('ordens_servico_adesivo')
-      .select('prazo_estimado, status')
-      .eq('empresa_id', empresaId.value)
-      .in('status', ['aguardando_producao', 'em_producao'])
+    // Calcular orçamentos expirando
+    const hojeStart = new Date()
+    hojeStart.setHours(0, 0, 0, 0)
+    const sevenDaysFromNow = new Date(hojeStart.getTime() + 7 * 24 * 60 * 60 * 1000)
 
-    alertas.value = calcularAlertas({
-      orcamentosEnviados: orcEnviados ?? [],
-      contasVencidas: contasVencidasData ?? [],
-      osComPrazo: osComPrazo ?? [],
-    })
+    const orcamentosExpirando = (orcEnviados ?? []).filter((orc) => {
+      const createdAt = new Date(orc.created_at)
+      const expiryDate = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate() + orc.validade_dias)
+      return expiryDate >= hojeStart && expiryDate <= sevenDaysFromNow
+    }).length
+
+    const contasVencidas = (contasVencidasData ?? []).length
+    const valorContasVencidas = (contasVencidasData ?? []).reduce((sum, c) => sum + (c.valor ?? 0), 0)
+
+    // OS atrasadas: usar o MESMO valor calculado em fetchProducao para consistência
+    const osAtrasadas = producao.value.osAtrasadas
+
+    const temAlertas = orcamentosExpirando > 0 || contasVencidas > 0 || osAtrasadas > 0
+
+    alertas.value = {
+      orcamentosExpirando,
+      contasVencidas,
+      valorContasVencidas,
+      osAtrasadas,
+      temAlertas,
+    }
   }
 
   // ── Refresh ──────────────────────────────────────────────────────────────
@@ -610,18 +631,20 @@ export function useDashboardAdmin(): DashboardAdminState {
 
     loading.value = true
     try {
+      // Primeiro: buscar dados de produção (osAtrasadas é usado por alertas)
       await Promise.allSettled([
         fetchFinanceiro(),
         fetchPipeline(),
         fetchProducao(),
         fetchAtividade(),
-        fetchAlertas(),
         fetchTopClientes(),
         fetchEvolucaoMensal(),
         fetchComparativo(),
         fetchTicketMedio(),
         fetchProximosVencimentos(),
       ])
+      // Depois: calcular alertas (depende de producao.osAtrasadas)
+      await fetchAlertas()
     } finally {
       loading.value = false
     }

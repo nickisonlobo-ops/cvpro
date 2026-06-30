@@ -404,17 +404,27 @@
               </div>
             </div>
 
-            <!-- Botão Filtros -->
-            <button
-              type="button"
-              class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/95 text-sm font-bold shadow-lg transition-all duration-200 hover:scale-[1.02] backdrop-blur-sm"
-              :style="{ color: 'var(--color-primary, #6366f1)' }"
-              @click="filtroAberto = !filtroAberto"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
-              Filtros
-              <span v-if="periodoFiltro !== 'mes_atual'" class="w-2 h-2 rounded-full bg-current" />
-            </button>
+            <!-- Botões Header -->
+            <div class="flex items-center gap-2">
+              <button
+                type="button"
+                class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm border border-white/20 text-white hover:bg-white/30 transition-all duration-200"
+                title="Atualizar dados"
+                @click="refresh()"
+              >
+                <svg class="w-5 h-5" :class="loading ? 'animate-spin' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"/></svg>
+              </button>
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/95 text-sm font-bold shadow-lg transition-all duration-200 hover:scale-[1.02] backdrop-blur-sm"
+                :style="{ color: 'var(--color-primary, #6366f1)' }"
+                @click="filtroAberto = !filtroAberto"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
+                Filtros
+                <span v-if="periodoFiltro !== 'mes_atual'" class="w-2 h-2 rounded-full bg-current" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -816,7 +826,19 @@ onUnmounted(() => {
     clearTimeout(loadingTimer)
     loadingTimer = null
   }
+  // Limpar listener de visibilidade
+  document.removeEventListener('visibilitychange', handleVisibilityRefresh)
 })
+
+// ── Auto-refresh ao voltar para a página ────────────────────────────────────
+function handleVisibilityRefresh() {
+  if (document.visibilityState === 'visible' && !loading.value) {
+    refresh()
+  }
+}
+if (typeof document !== 'undefined') {
+  document.addEventListener('visibilitychange', handleVisibilityRefresh)
+}
 // ── Tempo relativo helper ───────────────────────────────────────────────────
 function tempoRelativo(isoDate: string): string {
   const agora = Date.now()

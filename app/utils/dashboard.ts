@@ -135,7 +135,7 @@ export function buildAtividadeFeed(events: RawEvent[], limit: number = 10): Ativ
 export interface AlertasInput {
   orcamentosEnviados: Array<{ created_at: string; validade_dias: number }>
   contasVencidas: Array<{ valor: number }>
-  osComPrazo: Array<{ prazo_estimado: string | null; status: string }>
+  osComPrazo: Array<{ data_entrega: string | null; status: string }>
 }
 
 export interface AlertasDashboard {
@@ -156,7 +156,7 @@ export interface AlertasDashboard {
  *   results in an expiry date within the next 7 days from `hoje`
  * - contasVencidas: count of items in the contasVencidas array (already filtered as overdue)
  * - valorContasVencidas: sum of valor from contasVencidas array
- * - osAtrasadas: count of OS where prazo_estimado <= hoje and status is active
+ * - osAtrasadas: count of OS where data_entrega < hoje and status is active
  *   (aguardando_producao or em_producao)
  * - temAlertas: true if any count > 0
  *
@@ -186,16 +186,16 @@ export function calcularAlertas(input: AlertasInput, hoje?: Date): AlertasDashbo
   const contasVencidas = input.contasVencidas.length
   const valorContasVencidas = input.contasVencidas.reduce((sum, conta) => sum + conta.valor, 0)
 
-  // Overdue OS: prazo_estimado <= hoje and status is active (aguardando_producao or em_producao)
+  // Overdue OS: usar data_entrega (calendário de entregas) como única referência
   const activeStatuses = ['aguardando_producao', 'em_producao']
   const osAtrasadas = input.osComPrazo.filter((os) => {
-    if (!os.prazo_estimado) return false
     if (!activeStatuses.includes(os.status)) return false
+    if (!os.data_entrega) return false
 
-    const prazo = new Date(os.prazo_estimado)
+    const prazo = new Date(os.data_entrega)
     const prazoDate = new Date(prazo.getFullYear(), prazo.getMonth(), prazo.getDate())
 
-    return prazoDate <= hojeStart
+    return prazoDate < hojeStart
   }).length
 
   const temAlertas = orcamentosExpirando > 0 || contasVencidas > 0 || osAtrasadas > 0
