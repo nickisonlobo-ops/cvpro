@@ -1,22 +1,22 @@
-ï»¿<template>
+<template>
   <div class="min-h-screen relative overflow-hidden font-sans antialiased bg-[#0a0a0f] text-white">
 
     <!-- Background effects -->
     <div class="absolute inset-0 pointer-events-none overflow-hidden">
-      <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full opacity-15 blur-[160px]" style="background: radial-gradient(circle, #7c3aed, transparent 70%)"></div>
+      <div class="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[800px] rounded-full opacity-15 blur-[160px]" style="background: radial-gradient(circle, #ea580c, transparent 70%)"></div>
       <div class="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full opacity-10 blur-[120px]" style="background: radial-gradient(circle, #3b82f6, transparent 70%)"></div>
-      <div class="absolute top-0 right-0 w-[400px] h-[400px] rounded-full opacity-8 blur-[100px]" style="background: radial-gradient(circle, #8b5cf6, transparent 70%)"></div>
+      <div class="absolute top-0 right-0 w-[400px] h-[400px] rounded-full opacity-8 blur-[100px]" style="background: radial-gradient(circle, #f97316, transparent 70%)"></div>
       <!-- Grid -->
       <div class="absolute inset-0 opacity-[0.02]" style="background-image: linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px); background-size: 60px 60px;"></div>
       <!-- Particles -->
-      <div class="particle" style="top:10%;right:15%;width:12px;height:12px;background:#7c3aed"></div>
-      <div class="particle" style="top:20%;right:35%;width:8px;height:8px;background:#6366f1;animation-delay:.7s"></div>
-      <div class="particle" style="top:55%;left:10%;width:10px;height:10px;background:#8b5cf6;animation-delay:1.3s"></div>
-      <div class="particle" style="bottom:25%;left:25%;width:7px;height:7px;background:#a78bfa;animation-delay:.4s"></div>
-      <div class="particle" style="bottom:35%;right:20%;width:9px;height:9px;background:#6366f1;animation-delay:1s"></div>
+      <div class="particle" style="top:10%;right:15%;width:12px;height:12px;background:#ea580c"></div>
+      <div class="particle" style="top:20%;right:35%;width:8px;height:8px;background:#ea580c;animation-delay:.7s"></div>
+      <div class="particle" style="top:55%;left:10%;width:10px;height:10px;background:#f97316;animation-delay:1.3s"></div>
+      <div class="particle" style="bottom:25%;left:25%;width:7px;height:7px;background:#fb923c;animation-delay:.4s"></div>
+      <div class="particle" style="bottom:35%;right:20%;width:9px;height:9px;background:#ea580c;animation-delay:1s"></div>
     </div>
 
-    <!-- â•â•â• INTRO HERO â•â•â• -->
+    <!-- --- INTRO HERO --- -->
     <Transition name="intro">
       <div v-if="showIntro" class="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 py-16 text-center">
 
@@ -27,13 +27,13 @@
 
         <!-- Headline -->
         <h1 class="font-bold tracking-tight leading-[1.08] mb-6 intro-headline">
-          <span class="block text-[clamp(2rem,5.5vw,3.5rem)] text-white">Da arte Ã  entrega.</span>
-          <span class="block text-[clamp(2rem,5.5vw,3.5rem)] bg-gradient-to-r from-violet-400 via-purple-400 to-indigo-400 bg-clip-text text-transparent">Controle total da produÃ§Ã£o.</span>
+          <span class="block text-[clamp(2rem,5.5vw,3.5rem)] text-white">Da arte à entrega.</span>
+          <span class="block text-[clamp(2rem,5.5vw,3.5rem)] bg-gradient-to-r from-orange-400 via-orange-400 to-orange-500 bg-clip-text text-transparent">Controle total da produção.</span>
         </h1>
 
         <!-- Sub -->
         <p class="text-base sm:text-lg max-w-xl mx-auto mb-8 leading-relaxed text-white/50 intro-sub">
-          Gerencie orÃ§amentos, ordens de serviÃ§o, produÃ§Ã£o e entregas â€” tudo em um sÃ³ lugar. O sistema que sua grÃ¡fica precisa.
+          Gerencie orçamentos, ordens de serviço, produção e entregas — tudo em um só lugar. O sistema que sua gráfica precisa.
         </p>
 
         <!-- Benefit pills -->
@@ -47,18 +47,18 @@
         <!-- CTAs -->
         <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12 intro-ctas">
           <button
-            class="group inline-flex items-center gap-2 text-base font-semibold px-10 py-4 rounded-full bg-gradient-to-r from-violet-500 to-indigo-600 text-white shadow-2xl shadow-violet-500/30 hover:shadow-violet-500/50 hover:scale-105 transition-all duration-200"
+            class="group inline-flex items-center gap-2 text-base font-semibold px-10 py-4 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-2xl shadow-orange-500/30 hover:shadow-orange-500/50 hover:scale-105 transition-all duration-200"
             @click="goTo('register')"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.58-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-6.463 0 4.493 4.493 0 006.463 0z"/></svg>
-            ComeÃ§ar agora
+            Começar agora
             <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
           </button>
           <button
             class="inline-flex items-center gap-2 text-base font-medium px-8 py-4 rounded-full border border-white/15 text-white/80 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-200"
             @click="goTo('login')"
           >
-            JÃ¡ tenho uma conta
+            Já tenho uma conta
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
           </button>
         </div>
@@ -67,7 +67,7 @@
         <div class="flex flex-wrap items-center justify-center gap-5 text-sm text-white/40 intro-proof">
           <div class="flex items-center gap-2">
             <div class="flex -space-x-2">
-              <div v-for="(c, i) in 4" :key="i" class="w-8 h-8 rounded-full border-2 border-[#0a0a0f] bg-gradient-to-br from-violet-500 to-indigo-600 flex items-center justify-center text-[10px] font-bold text-white">{{ ['G','R','P','V'][i] }}</div>
+              <div v-for="(c, i) in 4" :key="i" class="w-8 h-8 rounded-full border-2 border-[#0a0a0f] bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center text-[10px] font-bold text-white">{{ ['G','R','P','V'][i] }}</div>
             </div>
             <span class="font-medium">+200 empresas ativas</span>
           </div>
@@ -77,18 +77,18 @@
           </div>
           <div class="flex items-center gap-1.5">
             <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span>Sem cartÃ£o de crÃ©dito</span>
+            <span>Sem cartão de crédito</span>
           </div>
         </div>
       </div>
     </Transition>
 
-    <!-- â•â•â• FORMULÃRIO â•â•â• -->
+    <!-- --- FORMULÁRIO --- -->
     <Transition name="form">
       <div v-if="!showIntro" class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12">
-        <!-- BotÃ£o voltar -->
+        <!-- Botão voltar -->
         <button
-          class="absolute top-5 left-5 flex items-center gap-2 text-sm font-medium text-violet-400 hover:text-violet-300 transition-colors"
+          class="absolute top-5 left-5 flex items-center gap-2 text-sm font-medium text-orange-400 hover:text-orange-300 transition-colors"
           @click="showIntro = true"
         >
           <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18"/></svg>
@@ -117,11 +117,11 @@ function goTo(tab: 'login' | 'register') {
 }
 
 const benefits = [
-  { emoji: 'ðŸ“‹', text: 'OrÃ§amentos â†’ OS' },
-  { emoji: 'ðŸŽ¨', text: 'Kanban produÃ§Ã£o' },
-  { emoji: 'ðŸ“Š', text: 'Dashboard financeiro' },
-  { emoji: 'ðŸ‘¥', text: 'GestÃ£o de clientes' },
-  { emoji: 'ðŸšš', text: 'Controle de entregas' },
+  { emoji: '??', text: 'Orçamentos ? OS' },
+  { emoji: '??', text: 'Kanban produção' },
+  { emoji: '??', text: 'Dashboard financeiro' },
+  { emoji: '??', text: 'Gestão de clientes' },
+  { emoji: '??', text: 'Controle de entregas' },
 ]
 </script>
 
