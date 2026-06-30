@@ -3,7 +3,7 @@ import { createSupabaseClient } from '~/lib/supabase'
 // Rotas bloqueadas para funcionario (somente admin/gerente)
 const MANAGER_ROUTES = ['/contas-pagar', '/produtos', '/funcionarios']
 // Rotas públicas (sem login)
-const PUBLIC_ROUTES = ['/catalogo', '/loja', '/agendar', '/landing', '/orcamento-aprovacao']
+const PUBLIC_ROUTES = ['/catalogo', '/loja', '/agendar', '/landing', '/landing-pt', '/welcome', '/orcamento-aprovacao']
 
 const BLOCKED_ROUTE = '/assinatura-expirada'
 
