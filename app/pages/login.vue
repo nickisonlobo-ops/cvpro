@@ -27,13 +27,13 @@
 
         <!-- Headline -->
         <h1 class="font-bold tracking-tight leading-[1.08] mb-6 intro-headline">
-          <span class="block text-[clamp(2rem,5.5vw,3.5rem)] text-white">Da arte ‡ entrega.</span>
-          <span class="block text-[clamp(2rem,5.5vw,3.5rem)] bg-gradient-to-r from-orange-400 via-orange-400 to-orange-500 bg-clip-text text-transparent">Controle total da produÁ„o.</span>
+          <span class="block text-[clamp(2rem,5.5vw,3.5rem)] text-white">Da arte √† entrega.</span>
+          <span class="block text-[clamp(2rem,5.5vw,3.5rem)] bg-gradient-to-r from-orange-400 via-orange-400 to-orange-500 bg-clip-text text-transparent">Controle total da produ√ß√£o.</span>
         </h1>
 
         <!-- Sub -->
         <p class="text-base sm:text-lg max-w-xl mx-auto mb-8 leading-relaxed text-white/50 intro-sub">
-          Gerencie orÁamentos, ordens de serviÁo, produÁ„o e entregas ó tudo em um sÛ lugar. O sistema que sua gr·fica precisa.
+          Gerencie or√ßamentos, ordens de servi√ßo, produ√ß√£o e entregas ‚Äî tudo em um s√≥ lugar. O sistema que sua gr√°fica precisa.
         </p>
 
         <!-- Benefit pills -->
@@ -51,14 +51,14 @@
             @click="goTo('register')"
           >
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.58-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-6.463 0 4.493 4.493 0 006.463 0z"/></svg>
-            ComeÁar agora
+            Come√ßar agora
             <svg class="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
           </button>
           <button
             class="inline-flex items-center gap-2 text-base font-medium px-8 py-4 rounded-full border border-white/15 text-white/80 hover:text-white hover:border-white/30 hover:bg-white/5 transition-all duration-200"
             @click="goTo('login')"
           >
-            J· tenho uma conta
+            J√° tenho uma conta
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"/></svg>
           </button>
         </div>
@@ -77,16 +77,16 @@
           </div>
           <div class="flex items-center gap-1.5">
             <svg class="w-4 h-4 text-emerald-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-            <span>Sem cart„o de crÈdito</span>
+            <span>Sem cart√£o de cr√©dito</span>
           </div>
         </div>
       </div>
     </Transition>
 
-    <!-- --- FORMUL¡RIO --- -->
+    <!-- --- FORMUL√ÅRIO --- -->
     <Transition name="form">
       <div v-if="!showIntro" class="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12">
-        <!-- Bot„o voltar -->
+        <!-- Bot√£o voltar -->
         <button
           class="absolute top-5 left-5 flex items-center gap-2 text-sm font-medium text-orange-400 hover:text-orange-300 transition-colors"
           @click="showIntro = true"
@@ -117,11 +117,11 @@ function goTo(tab: 'login' | 'register') {
 }
 
 const benefits = [
-  { emoji: '??', text: 'OrÁamentos ? OS' },
-  { emoji: '??', text: 'Kanban produÁ„o' },
-  { emoji: '??', text: 'Dashboard financeiro' },
-  { emoji: '??', text: 'Gest„o de clientes' },
-  { emoji: '??', text: 'Controle de entregas' },
+  { emoji: 'üìã', text: 'Or√ßamentos ‚Üí OS' },
+  { emoji: 'üìä', text: 'Kanban produ√ß√£o' },
+  { emoji: 'üí∞', text: 'Dashboard financeiro' },
+  { emoji: 'üë•', text: 'Gest√£o de clientes' },
+  { emoji: 'üöö', text: 'Controle de entregas' },
 ]
 </script>
 
