@@ -272,23 +272,20 @@
           <thead>
             <tr class="bg-gray-50 border-b border-gray-100">
               <th class="text-left px-7 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">#</th>
+              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Conta / Cliente</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Tipo</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Descrição</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Valor</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Status</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Vencimento</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Pagamento</th>
               <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Categoria</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Forma Pgto</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Periodicidade</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Observação</th>
-              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Criado em</th>
+              <th class="text-left px-5 py-4 text-xs font-extrabold text-gray-400 uppercase tracking-widest">Forma</th>
               <th class="px-7 py-4 text-right text-xs font-extrabold text-gray-400 uppercase tracking-widest sm:sticky sm:right-0 bg-gray-50">Ações</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-50">
             <tr v-if="contasFiltradas.length === 0">
-              <td colspan="12" class="text-center py-20">
+              <td colspan="10" class="text-center py-20">
                 <div class="flex flex-col items-center gap-3">
                   <svg class="w-14 h-14 text-gray-300" fill="none" stroke="currentColor" stroke-width="1.25" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"/></svg>
                   <span class="text-base font-semibold text-gray-400">Nenhuma conta encontrada</span>
@@ -306,14 +303,15 @@
                   {{ conta.id }}
                 </span>
               </td>
-              <td class="px-5 py-4">
-                <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full" :class="(conta.tipo || 'pagar') === 'receber' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                  {{ (conta.tipo || 'pagar') === 'receber' ? '↑ Receita' : '↓ Despesa' }}
-                </span>
-              </td>
               <td class="px-5 py-4 whitespace-normal">
-                <div class="flex flex-col gap-1">
+                <div class="flex flex-col gap-0.5">
                   <span class="font-semibold text-gray-800 break-words">{{ conta.descricao }}</span>
+                  <span v-if="conta.parcela_numero && conta.total_parcelas" class="text-[10px] text-gray-400 font-medium">
+                    Parcela {{ conta.parcela_numero }}/{{ conta.total_parcelas }}
+                  </span>
+                  <span v-if="conta.cliente_nome" class="text-[10px] text-gray-400 font-medium">
+                    {{ conta.cliente_nome }}
+                  </span>
                   <span v-if="conta.origem === 'comissao'" class="inline-flex items-center gap-1 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-100 w-fit">
                     <svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     Comissão
@@ -321,14 +319,13 @@
                 </div>
               </td>
               <td class="px-5 py-4">
+                <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full" :class="(conta.tipo || 'pagar') === 'receber' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+                  {{ (conta.tipo || 'pagar') === 'receber' ? '↑ Receita' : '↓ Despesa' }}
+                </span>
+              </td>
+              <td class="px-5 py-4">
                 <span class="font-black tabular-nums" :class="(conta.tipo ?? 'pagar') === 'receber' ? 'text-emerald-600' : 'text-gray-900'">
                   {{ (conta.tipo ?? 'pagar') === 'receber' ? '+' : '' }}{{ formatCurrency(conta.valor) }}
-                </span>
-                <span v-if="conta.parcela_numero && conta.total_parcelas" class="block text-[10px] text-gray-400 font-medium mt-0.5">
-                  Parcela {{ conta.parcela_numero }}/{{ conta.total_parcelas }}
-                </span>
-                <span v-if="conta.cliente_nome" class="block text-[10px] text-gray-400 font-medium mt-0.5">
-                  {{ conta.cliente_nome }}
                 </span>
               </td>
               <td class="px-5 py-4 relative">
@@ -369,6 +366,15 @@
               </td>
               <td class="px-5 py-4">
                 <span class="font-medium text-gray-600 tabular-nums">{{ formatDate(conta.data_vencimento) }}</span>
+                <span v-if="(conta.status ?? 'pendente') === 'vencido' || ((conta.status ?? 'pendente') === 'pendente' && isOverdue(conta))" class="block text-[10px] font-semibold text-red-500 mt-0.5">
+                  Vencido há {{ diasDesde(conta.data_vencimento) }} dias
+                </span>
+                <span v-else-if="(conta.status ?? 'pendente') === 'pago'" class="block text-[10px] font-semibold text-emerald-500 mt-0.5">
+                  Venceu
+                </span>
+                <span v-else-if="(conta.status ?? 'pendente') === 'pendente'" class="block text-[10px] font-semibold text-gray-400 mt-0.5">
+                  Vence em {{ diasAte(conta.data_vencimento) }} dias
+                </span>
               </td>
               <td class="px-5 py-4">
                 <span v-if="conta.data_pagamento" class="font-medium text-emerald-600 tabular-nums">{{ formatDate(conta.data_pagamento) }}</span>
@@ -383,17 +389,6 @@
                 <span v-else class="text-gray-300">-</span>
               </td>
 
-              <td class="px-5 py-4">
-                <span class="inline-block text-xs font-semibold capitalize"
-                  :class="conta.periodicidade === 'mensal' ? 'bg-purple-50 text-purple-700 border border-purple-100 rounded-lg px-2.5 py-1' : 'text-gray-400'"
-                >
-                  {{ conta.periodicidade ?? 'avulsa' }}
-                </span>
-              </td>
-              <td class="px-5 py-4">
-                <span class="text-gray-400 text-xs max-w-[150px] block truncate" :title="conta.observacao ?? ''">{{ conta.observacao ?? '-' }}</span>
-              </td>
-              <td class="px-5 py-4 text-gray-400 text-xs tabular-nums">{{ formatDateTime(conta.created_at) }}</td>
               <td class="px-4 py-3 text-right sm:sticky sm:right-0 group-hover:bg-primary-5/60 transition-colors">
                 <div class="flex items-center justify-end gap-1">
                   <button
@@ -816,19 +811,47 @@ async function mudarStatus(conta: ContaPagar, novoStatus: string) {
   }
   mudandoStatusId.value = conta.id
   statusDropdownId.value = null
+
+  // Se muda para 'pago', lançar data_pagamento automaticamente (data de hoje)
+  const updateData: Record<string, any> = { status: novoStatus }
+  if (novoStatus === 'pago' && !conta.data_pagamento) {
+    updateData.data_pagamento = new Date().toISOString().split('T')[0]
+  }
+  // Se desfazer o pago (voltar para pendente/outro), limpar data_pagamento
+  if (novoStatus !== 'pago' && conta.status === 'pago') {
+    updateData.data_pagamento = null
+  }
+
   const { error: updateError } = await supabase
     .from('contas_pagar')
-    .update({ status: novoStatus })
+    .update(updateData)
     .eq('id', conta.id)
   mudandoStatusId.value = null
   if (!updateError) {
     conta.status = novoStatus
+    if (updateData.data_pagamento !== undefined) {
+      conta.data_pagamento = updateData.data_pagamento
+    }
   }
 }
 
 function formatDateTime(dt: string | null): string {
   if (!dt) return '-'
   return new Date(dt).toLocaleDateString('pt-BR')
+}
+
+function diasDesde(dateStr: string): number {
+  const d = new Date(dateStr + 'T12:00:00')
+  const hoje = new Date()
+  hoje.setHours(12, 0, 0, 0)
+  return Math.max(0, Math.floor((hoje.getTime() - d.getTime()) / (1000 * 60 * 60 * 24)))
+}
+
+function diasAte(dateStr: string): number {
+  const d = new Date(dateStr + 'T12:00:00')
+  const hoje = new Date()
+  hoje.setHours(12, 0, 0, 0)
+  return Math.max(0, Math.floor((d.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24)))
 }
 
 function statusClass(status: string | null): string {

@@ -505,22 +505,22 @@
       </Transition>
 
       <!-- ═══════════════════════════════════════════════════════ SEÇÃO: FINANCEIRO -->
-      <div class="mb-8">
-        <div class="flex items-center gap-2 px-1 mb-4">
+      <div class="mb-10">
+        <div class="flex items-center gap-2 px-1 mb-5">
           <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Financeiro</span>
           <div class="flex-1 h-px bg-primary-10" />
         </div>
 
         <!-- 2. FINANCIAL METRIC CARDS with sparklines -->
-        <div v-if="loading" class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-4">
-          <div v-for="i in 4" :key="i" class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm animate-pulse">
+        <div v-if="loading" class="grid grid-cols-2 md:grid-cols-4 2xl:grid-cols-7 gap-3 sm:gap-4">
+          <div v-for="i in 7" :key="i" class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm animate-pulse">
             <div class="h-4 w-24 bg-primary-10 rounded mb-3" />
             <div class="h-7 w-32 bg-primary-10 rounded mb-2" />
             <div class="h-3 w-20 bg-primary-5 rounded" />
           </div>
         </div>
 
-        <div v-else class="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4 mb-4">
+        <div v-else class="grid grid-cols-2 md:grid-cols-4 2xl:grid-cols-7 gap-3 sm:gap-4">
         <!-- Faturamento -->
         <div class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm">
           <div class="flex items-center gap-2.5 mb-2">
@@ -532,7 +532,7 @@
           <p class="text-xl sm:text-2xl font-black truncate" style="color: var(--color-card-texto)">{{ formatCurrency(financeiro.faturamento) }}</p>
           <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">receitas no período</p>
           <svg class="w-full h-8 mt-2" viewBox="0 0 100 30" preserveAspectRatio="none">
-            <polyline fill="none" stroke="#10b981" stroke-width="1.5" :points="sparklineFaturamento" />
+            <path fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" :d="sparklineFaturamento" />
           </svg>
         </div>
 
@@ -547,7 +547,7 @@
           <p class="text-xl sm:text-2xl font-black truncate" style="color: var(--color-card-texto)">{{ formatCurrency(financeiro.despesas) }}</p>
           <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">contas no período</p>
           <svg class="w-full h-8 mt-2" viewBox="0 0 100 30" preserveAspectRatio="none">
-            <polyline fill="none" stroke="#f97316" stroke-width="1.5" :points="sparklineDespesas" />
+            <path fill="none" stroke="#f97316" stroke-width="1.5" stroke-linecap="round" :d="sparklineDespesas" />
           </svg>
         </div>
 
@@ -562,7 +562,7 @@
           <p class="text-xl sm:text-2xl font-black truncate" style="color: var(--color-card-texto)">{{ formatCurrency(financeiro.lucroEstimado) }}</p>
           <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">faturamento - despesas</p>
           <svg class="w-full h-8 mt-2" viewBox="0 0 100 30" preserveAspectRatio="none">
-            <polyline fill="none" stroke="#059669" stroke-width="1.5" :points="sparklineLucro" />
+            <path fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" :d="sparklineLucro" />
           </svg>
         </div>
 
@@ -588,10 +588,7 @@
             {{ financeiro.contasVencidas > 0 ? formatCurrency(financeiro.valorContasVencidas) + ' em atraso' : 'tudo em dia ✅' }}
           </p>
         </div>
-      </div>
 
-      <!-- 2.5 PREVISÃO FINANCEIRA (por vencimento, apenas não pagas) -->
-      <div v-if="!loading" class="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
         <!-- A Receber -->
         <div class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm">
           <div class="flex items-center gap-2.5 mb-2">
@@ -631,10 +628,10 @@
       </div>
 
       <!-- ═══════════════════════════════════════════════════════ SEÇÃO: ORÇAMENTOS -->
-      <div class="mb-8">
+      <div class="mb-10">
       <!-- 3. PIPELINE DE ORÇAMENTOS — Horizontal inline section -->
       <div class="mb-0">
-        <div class="flex items-center gap-2 px-1 mb-3">
+        <div class="flex items-center gap-2 px-1 mb-4">
           <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Pipeline de Orçamentos</span>
           <div class="flex-1 h-px bg-primary-10" />
         </div>
@@ -701,10 +698,10 @@
       </div>
 
       <!-- ═══════════════════════════════════════════════════════ SEÇÃO: PRODUÇÃO -->
-      <div class="mb-8">
+      <div class="mb-10">
       <!-- 4. STATUS DE PRODUÇÃO — Cards with highlighted alert -->
       <div class="mb-0">
-        <div class="flex items-center gap-2 px-1 mb-3">
+        <div class="flex items-center gap-2 px-1 mb-4">
           <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Status de Produção</span>
           <div class="flex-1 h-px bg-primary-10" />
           <span v-if="producao.osAtrasadas > 0" class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/30">
@@ -718,52 +715,59 @@
 
         <div v-else class="grid grid-cols-2 xl:grid-cols-4 gap-3">
           <!-- OS em Produção -->
-          <div class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center gap-3">
-            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
-              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-5.1-5.1m0 0L11.42 4.97m-5.1 5.1H21M3 21h18"/></svg>
+          <div class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center gap-3 relative overflow-hidden">
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-blue-500 rounded-b-2xl"></div>
+            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-blue-50 border border-blue-200">
+              <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17l-5.1-5.1m0 0L11.42 4.97m-5.1 5.1H21M3 21h18"/></svg>
             </div>
             <div>
               <p class="text-2xl font-black" style="color: var(--color-card-texto)">{{ producao.osEmProducao }}</p>
-              <p class="text-[11px] font-semibold" :style="{ color: 'var(--color-primary)' }">OS em Produção</p>
+              <p class="text-[11px] font-semibold text-blue-600">OS em Produção</p>
+              <p class="text-[10px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.55">Ordens de Serviço ativas</p>
             </div>
           </div>
 
           <!-- OS Prontas -->
-          <div class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center gap-3">
-            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
-              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <div class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center gap-3 relative overflow-hidden">
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-green-500 rounded-b-2xl"></div>
+            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-green-50 border border-green-200">
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             </div>
             <div>
               <p class="text-2xl font-black" style="color: var(--color-card-texto)">{{ producao.osProntas }}</p>
-              <p class="text-[11px] font-semibold" :style="{ color: 'var(--color-primary)' }">OS Prontas</p>
+              <p class="text-[11px] font-semibold text-green-600">OS Prontas</p>
+              <p class="text-[10px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.55">Finalizadas e entregues</p>
             </div>
           </div>
 
           <!-- Processos Ativos -->
-          <div class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center gap-3">
-            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
-              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
+          <div class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center gap-3 relative overflow-hidden">
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-purple-500 rounded-b-2xl"></div>
+            <div class="shrink-0 w-10 h-10 rounded-full flex items-center justify-center bg-purple-50 border border-purple-200">
+              <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/></svg>
             </div>
             <div>
               <p class="text-2xl font-black" style="color: var(--color-card-texto)">{{ producao.processosAtivos }}</p>
-              <p class="text-[11px] font-semibold" :style="{ color: 'var(--color-primary)' }">Processos Ativos</p>
+              <p class="text-[11px] font-semibold text-purple-600">Processos Ativos</p>
+              <p class="text-[10px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.55">Processos em andamento</p>
             </div>
           </div>
 
           <!-- Alert card: OS com prazo vencido -->
-          <div v-if="producao.osAtrasadas > 0" class="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 shadow-sm flex items-center gap-3">
+          <div v-if="producao.osAtrasadas > 0" class="rounded-2xl bg-amber-500/10 border border-amber-500/30 p-4 shadow-sm flex items-center gap-3 relative overflow-hidden">
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-amber-500 rounded-b-2xl"></div>
             <div class="shrink-0 w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
               <svg class="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/></svg>
             </div>
             <div class="flex-1 min-w-0">
-              <p class="text-xs font-black text-amber-500">{{ producao.osAtrasadas }} OS com prazo vencido</p>
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 mt-1">
-                Urgente
-              </span>
+              <p class="text-2xl font-black text-amber-600">{{ producao.osAtrasadas }}</p>
+              <p class="text-[11px] font-semibold text-amber-600">OS com prazo vencido</p>
+              <p class="text-[10px] mt-0.5 text-amber-500">Requer atenção urgente</p>
             </div>
           </div>
           <!-- Placeholder when no OS atrasadas -->
-          <div v-else class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center justify-center">
+          <div v-else class="rounded-2xl bg-theme-card border border-primary-10 p-4 shadow-sm flex items-center justify-center relative overflow-hidden">
+            <div class="absolute bottom-0 left-0 right-0 h-1 bg-green-400 rounded-b-2xl"></div>
             <span class="text-xs font-semibold" style="color: var(--color-card-texto); opacity: 0.75">Sem atrasos ✅</span>
           </div>
         </div>
@@ -840,21 +844,32 @@ const pipelineTotal = computed(() =>
 )
 
 // ── Sparkline helpers ────────────────────────────────────────────────────────
-function buildSparklinePoints(values: number[]): string {
-  if (values.length === 0) return '0,15 100,15'
+function buildSparklinePath(values: number[]): string {
+  if (values.length === 0) return 'M 0,15 L 100,15'
   const max = Math.max(...values, 1)
   const step = 100 / Math.max(values.length - 1, 1)
-  return values.map((v, i) => `${i * step},${30 - (v / max) * 28}`).join(' ')
+  const pts = values.map((v, i) => ({ x: i * step, y: 28 - (v / max) * 26 }))
+  if (pts.length < 2) return `M ${pts[0].x},${pts[0].y}`
+  let d = `M ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`
+  for (let i = 1; i < pts.length; i++) {
+    const p0 = pts[i - 1]
+    const p1 = pts[i]
+    const dx = p1.x - p0.x
+    const cp1x = (p0.x + dx * 0.4).toFixed(1)
+    const cp2x = (p1.x - dx * 0.4).toFixed(1)
+    d += ` C ${cp1x},${p0.y.toFixed(1)} ${cp2x},${p1.y.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`
+  }
+  return d
 }
 
 const sparklineFaturamento = computed(() =>
-  buildSparklinePoints(evolucaoMensal.value.map(e => e.faturamento))
+  buildSparklinePath(evolucaoMensal.value.map(e => e.faturamento))
 )
 const sparklineDespesas = computed(() =>
-  buildSparklinePoints(evolucaoMensal.value.map(e => e.despesas))
+  buildSparklinePath(evolucaoMensal.value.map(e => e.despesas))
 )
 const sparklineLucro = computed(() =>
-  buildSparklinePoints(evolucaoMensal.value.map(e => e.faturamento - e.despesas))
+  buildSparklinePath(evolucaoMensal.value.map(e => e.faturamento - e.despesas))
 )
 
 watch(loading, (isLoading) => {
