@@ -149,27 +149,16 @@
 
       <!-- Tabs -->
       <div class="flex items-center gap-1 flex-wrap">
-        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === '' && filtros.status.length === 0 ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = ''; filtros.status = []">
-          Todas
-        </button>
-        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === 'receber' && filtros.status.length === 0 ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = 'receber'; filtros.status = []">
-          A receber
-        </button>
-        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === 'pagar' && filtros.status.length === 0 ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = 'pagar'; filtros.status = []">
-          A pagar
-        </button>
-        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.status.includes('pendente') ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = ''; filtros.status = ['pendente']">
-          Pendentes
-        </button>
-        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.status.includes('pago') ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = ''; filtros.status = ['pago']">
-          Pagas
-        </button>
-        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.status.includes('vencido') ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = ''; filtros.status = ['vencido']">
-          Vencidas
-        </button>
-        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5" :class="filtros.presetAtivo === 'Este mês' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="aplicarPresetEsteMes">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/></svg>
-          Este mês
+        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === '' && filtros.status.length === 0 ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = ''; filtros.status = []">Todas</button>
+        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === 'receber' && filtros.status.length === 1 && filtros.status[0] === 'pendente' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = 'receber'; filtros.status = ['pendente']">A receber</button>
+        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.tipo === 'pagar' && filtros.status.length === 1 && filtros.status[0] === 'pendente' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = 'pagar'; filtros.status = ['pendente']">A pagar</button>
+        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.status.length === 1 && filtros.status[0] === 'vencido' && filtros.tipo === '' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = ''; filtros.status = ['vencido']">Vencidas</button>
+        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.status.length === 1 && filtros.status[0] === 'pendente' && filtros.tipo === '' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = ''; filtros.status = ['pendente']">Pendentes</button>
+        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all" :class="filtros.status.length === 1 && filtros.status[0] === 'pago' && filtros.tipo === '' ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtros.tipo = ''; filtros.status = ['pago']">Pagas</button>
+        <button type="button" class="px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ml-auto border border-gray-200" :class="filtrosAbertos ? 'bg-gray-900 text-white border-gray-900' : 'text-gray-500 hover:text-gray-700 hover:bg-gray-100'" @click="filtrosAbertos = !filtrosAbertos">
+          Filtros avançados
+          <span v-if="filtrosAtivos > 0" class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full text-[10px] font-black" :class="filtrosAbertos ? 'bg-white text-gray-900' : 'bg-primary text-white'">{{ filtrosAtivos }}</span>
+          <svg class="w-3.5 h-3.5 transition-transform" :class="filtrosAbertos ? 'rotate-180' : ''" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
         </button>
       </div>
     </div>
@@ -774,10 +763,10 @@ const totalValor = computed(() =>
   contas.value.reduce((sum, c) => sum + c.valor, 0)
 )
 
-const totalDespesas = computed(() => contas.value.filter(c => (c.tipo || 'pagar') === 'pagar').reduce((sum, c) => sum + c.valor, 0))
-const totalReceitas = computed(() => contas.value.filter(c => (c.tipo || 'pagar') === 'receber').reduce((sum, c) => sum + c.valor, 0))
-const contasDespesas = computed(() => contas.value.filter(c => (c.tipo || 'pagar') === 'pagar').length)
-const contasReceitas = computed(() => contas.value.filter(c => (c.tipo || 'pagar') === 'receber').length)
+const totalDespesas = computed(() => contas.value.filter(c => (c.tipo || 'pagar') === 'pagar' && (c.status ?? 'pendente') === 'pendente').reduce((sum, c) => sum + c.valor, 0))
+const totalReceitas = computed(() => contas.value.filter(c => (c.tipo || 'pagar') === 'receber' && (c.status ?? 'pendente') === 'pendente').reduce((sum, c) => sum + c.valor, 0))
+const contasDespesas = computed(() => contas.value.filter(c => (c.tipo || 'pagar') === 'pagar' && (c.status ?? 'pendente') === 'pendente').length)
+const contasReceitas = computed(() => contas.value.filter(c => (c.tipo || 'pagar') === 'receber' && (c.status ?? 'pendente') === 'pendente').length)
 const saldoGeral = computed(() => totalReceitas.value - totalDespesas.value)
 
 function totalPorStatus(status: string): number {
@@ -857,6 +846,9 @@ const presetsDePeriodo = [
   { label: 'Esta semana', days: 6  },
   { label: 'Quinzenal',   days: 14 },
   { label: 'Este mês',    days: 29 },
+  { label: 'Bimestre',    days: 59 },
+  { label: 'Semestre',    days: 179 },
+  { label: 'Anual',       days: 364 },
 ]
 
 function aplicarPreset(preset: { label: string; days: number }) {
