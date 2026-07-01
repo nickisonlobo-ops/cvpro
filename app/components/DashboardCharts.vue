@@ -3,23 +3,114 @@
     <!-- Section divider -->
     <div class="h-px bg-primary-10 my-4" />
 
-    <!-- Evolução Mensal (full width area chart) -->
+    <!-- Evolução da Receita (full width SVG area chart — 12 meses) -->
     <div class="rounded-2xl border border-primary-10 shadow-sm bg-theme-card p-5 mb-5">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Evolução Mensal (últimos 6 meses)</h3>
-        <div class="flex items-center gap-3 text-[10px]" style="color: var(--color-card-texto); opacity: 0.8">
-          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-500" /> Faturamento</span>
-          <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-red-400" /> Despesas</span>
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h3 class="text-base font-black" style="color: var(--color-card-texto)">Evolução da Receita</h3>
+          <p class="text-xs mt-0.5" style="color: var(--color-card-texto); opacity: 0.55">Últimos 12 meses — valores mensais</p>
+        </div>
+        <div class="flex items-center gap-4 text-xs font-semibold" style="color: var(--color-card-texto); opacity: 0.7">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm bg-emerald-500"></span>
+            Receita
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm border-2 border-dashed border-emerald-300" style="background: rgba(110,231,183,0.15)"></span>
+            A Receber
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded-sm bg-red-400"></span>
+            Despesas
+          </div>
         </div>
       </div>
-      <ClientOnly>
-        <template v-if="evolucaoMensal.length > 0">
-          <Line :data="evolucaoChartData" :options="evolucaoChartOptions" class="max-h-[240px]" />
-        </template>
-        <template v-else>
-          <div class="flex items-center justify-center py-10 text-sm" style="color: var(--color-card-texto); opacity: 0.75">Sem dados de evolução</div>
-        </template>
-      </ClientOnly>
+
+      <div class="relative" @mouseleave="evolTooltip = null">
+        <svg viewBox="0 0 960 175" class="w-full" aria-hidden="true">
+          <defs>
+            <linearGradient id="dashAreaGradReceita" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#10b981" stop-opacity="0.22" />
+              <stop offset="100%" stop-color="#10b981" stop-opacity="0.02" />
+            </linearGradient>
+            <linearGradient id="dashAreaGradDespesa" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ef4444" stop-opacity="0.1" />
+              <stop offset="100%" stop-color="#ef4444" stop-opacity="0.01" />
+            </linearGradient>
+            <linearGradient id="dashAreaGradAReceber" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.15" />
+              <stop offset="100%" stop-color="#6ee7b7" stop-opacity="0.02" />
+            </linearGradient>
+          </defs>
+
+          <!-- Grid lines -->
+          <line v-for="(step, n) in evolYSteps" :key="`egl${n}`" x1="60" :y1="15 + n * (120 / (evolYSteps.length - 1))" x2="940" :y2="15 + n * (120 / (evolYSteps.length - 1))" stroke="var(--color-primary-10)" stroke-width="1" />
+
+          <!-- Y-axis labels -->
+          <text v-for="(step, n) in evolYSteps" :key="`eyl${n}`" x="56" :y="15 + n * (120 / (evolYSteps.length - 1)) + 4" text-anchor="end" font-size="9" fill="currentColor" style="opacity: 0.5">
+            {{ formatShort(step) }}
+          </text>
+
+          <!-- Area fills -->
+          <path v-if="evolPoints.length > 0" :d="evolAreaDespesas" fill="url(#dashAreaGradDespesa)" />
+          <path v-if="evolPoints.length > 0" :d="evolAreaAReceber" fill="url(#dashAreaGradAReceber)" />
+          <path v-if="evolPoints.length > 0" :d="evolAreaReceita" fill="url(#dashAreaGradReceita)" />
+
+          <!-- Expense line (solid) -->
+          <path v-if="evolPoints.length > 0" :d="evolLineDespesas" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" />
+
+          <!-- A Receber line (dashed, light green) -->
+          <path v-if="evolPoints.length > 0" :d="evolLineAReceber" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-dasharray="5,3" stroke-linecap="round" />
+
+          <!-- Revenue line -->
+          <path v-if="evolPoints.length > 0" :d="evolLineReceita" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+
+          <!-- Data point circles (a receber) -->
+          <circle v-for="(p, i) in evolPoints" :key="`epar${i}`" :cx="p.x" :cy="p.yAReceber" r="3" fill="#6ee7b7" stroke="white" stroke-width="1.5" />
+
+          <!-- Data point circles (revenue) -->
+          <circle v-for="(p, i) in evolPoints" :key="`ept${i}`" :cx="p.x" :cy="p.yReceita" r="3.5" fill="#10b981" stroke="white" stroke-width="2" />
+
+          <!-- Hover vertical line -->
+          <line v-if="evolTooltip !== null" :x1="evolPoints[evolTooltip].x" :y1="15" :x2="evolPoints[evolTooltip].x" :y2="135" stroke="#d1d5db" stroke-width="1" stroke-dasharray="3,2" />
+
+          <!-- Invisible hover zones -->
+          <rect v-for="(p, i) in evolPoints" :key="`ehz${i}`" :x="p.x - 40" y="0" width="80" height="175" fill="transparent" style="cursor: pointer" @mouseenter="evolTooltip = i" @mouseleave="evolTooltip = null" />
+
+          <!-- Month labels -->
+          <text v-for="(p, i) in evolPoints" :key="`epl${i}`" :x="p.x" y="162" text-anchor="middle" font-size="9" fill="currentColor" style="opacity: 0.5" font-weight="600">{{ p.label }}</text>
+
+          <!-- Baseline -->
+          <line x1="60" y1="135" x2="940" y2="135" stroke="var(--color-primary-10)" stroke-width="1.5" />
+        </svg>
+
+        <!-- Tooltip -->
+        <Transition name="fade">
+          <div
+            v-if="evolTooltip !== null"
+            class="absolute z-10 pointer-events-none rounded-xl shadow-lg border px-3 py-2.5 text-xs min-w-[140px]"
+            style="background: var(--color-card); border-color: var(--color-primary-10); color: var(--color-card-texto)"
+            :style="{ left: `${(evolPoints[evolTooltip].x / 960) * 100}%`, top: '0px', transform: 'translateX(-50%)' }"
+          >
+            <p class="font-bold mb-1.5 capitalize">{{ evolPoints[evolTooltip].label }}</p>
+            <div class="flex items-center gap-1.5 mb-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span style="opacity: 0.7">Receita:</span>
+              <span class="font-bold ml-auto">{{ formatCurrency(evolPoints[evolTooltip].receita) }}</span>
+            </div>
+            <div class="flex items-center gap-1.5 mb-1">
+              <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
+              <span style="opacity: 0.7">A Receber:</span>
+              <span class="font-bold ml-auto">{{ formatCurrency(evolPoints[evolTooltip].receitaAReceber) }}</span>
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-red-400"></span>
+              <span style="opacity: 0.7">Despesas:</span>
+              <span class="font-bold ml-auto">{{ formatCurrency(evolPoints[evolTooltip].despesas) }}</span>
+            </div>
+          </div>
+        </Transition>
+      </div>
     </div>
 
     <!-- Row 1: 3 columns — Faturamento vs Despesas | Pipeline Donut | Produção Donut -->
@@ -172,7 +263,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -186,7 +277,10 @@ import {
   Legend,
   Filler,
 } from 'chart.js'
-import { Bar, Doughnut, Line } from 'vue-chartjs'
+import { Bar, Doughnut } from 'vue-chartjs'
+import { createSupabaseClient } from '~/lib/supabase'
+import { useEmpresa } from '~/composables/useEmpresa'
+import { useRealtimeMulti } from '~/composables/useRealtime'
 
 import type {
   MetricasFinanceiras,
@@ -221,7 +315,227 @@ const props = defineProps<{
   periodoLabel: string
 }>()
 
-// ─── Totals ─────────────────────────────────────────────────────────────────
+// ─── Evolução da Receita (SVG Chart) — dados locais iguais ao financeiro ────
+
+const supabase = createSupabaseClient()
+const { empresaId, loadEmpresa } = useEmpresa()
+const evolTooltip = ref<number | null>(null)
+
+interface VendaLocal {
+  id: number
+  preco_veiculo: number | null
+  status: string
+  data_venda: string | null
+  vendas_itens: { preco_unitario: number; quantidade: number; valor_total: number | null }[]
+}
+interface ContaLocal {
+  id: number
+  valor: number
+  data_vencimento: string
+  data_pagamento: string | null
+  status: string | null
+  tipo: string
+}
+interface AgendamentoLocal {
+  id: number
+  data_hora: string | null
+  valor_total: number | null
+}
+interface OSLocal {
+  id: number
+  valor_total: number | null
+  status: string
+  data_entrega: string | null
+}
+
+const vendas = ref<VendaLocal[]>([])
+const contas = ref<ContaLocal[]>([])
+const agendamentos = ref<AgendamentoLocal[]>([])
+const ordensServico = ref<OSLocal[]>([])
+
+async function fetchEvolData() {
+  await loadEmpresa()
+  if (!empresaId.value) return
+
+  const [v, c, a, os] = await Promise.all([
+    supabase.from('vendas')
+      .select('id, preco_veiculo, status, data_venda, vendas_itens(preco_unitario, quantidade, valor_total)')
+      .eq('empresa_id', empresaId.value)
+      .eq('status', 'finalizada'),
+    supabase.from('contas_pagar')
+      .select('id, valor, data_vencimento, data_pagamento, status, tipo')
+      .eq('empresa_id', empresaId.value),
+    supabase.from('agendamentos')
+      .select('id, data_hora, valor_total')
+      .eq('empresa_id', empresaId.value)
+      .eq('status', 'concluido')
+      .not('valor_total', 'is', null)
+      .gt('valor_total', 0),
+    supabase.from('ordens_servico_adesivo')
+      .select('id, valor_total, status, data_entrega')
+      .eq('empresa_id', empresaId.value)
+      .eq('status', 'entregue')
+      .not('valor_total', 'is', null)
+      .gt('valor_total', 0),
+  ])
+
+  vendas.value = (v.data ?? []) as VendaLocal[]
+  contas.value = (c.data ?? []) as ContaLocal[]
+  agendamentos.value = (a.data ?? []) as AgendamentoLocal[]
+  ordensServico.value = (os.data ?? []) as OSLocal[]
+}
+
+onMounted(fetchEvolData)
+
+// Realtime: atualiza gráfico quando dados mudam
+useRealtimeMulti(['contas_pagar', 'vendas', 'agendamentos', 'ordens_servico_adesivo'], () => {
+  fetchEvolData()
+})
+
+function vendaTotalLocal(v: VendaLocal): number {
+  const itemsTotal = (v.vendas_itens ?? []).reduce((s, i) => s + (i.valor_total ?? i.preco_unitario * i.quantidade), 0)
+  return (v.preco_veiculo ?? 0) + itemsTotal
+}
+
+// Mesmo cálculo do financeiro.vue
+const monthlyData = computed(() => {
+  const now = new Date()
+  return Array.from({ length: 12 }, (_, idx) => {
+    const d = new Date(now.getFullYear(), now.getMonth() - (11 - idx), 1)
+    const year = d.getFullYear()
+    const month = d.getMonth() + 1
+    const label = d.toLocaleDateString('pt-BR', { month: 'short' })
+
+    const receitaVendas = vendas.value
+      .filter(v => {
+        if (!v.data_venda) return false
+        const dv = new Date(v.data_venda)
+        return dv.getFullYear() === year && dv.getMonth() + 1 === month
+      })
+      .reduce((s, v) => s + vendaTotalLocal(v), 0)
+
+    const receitaAgendamentos = agendamentos.value
+      .filter(a => {
+        if (!a.data_hora || !a.valor_total) return false
+        const da = new Date(a.data_hora)
+        return da.getFullYear() === year && da.getMonth() + 1 === month
+      })
+      .reduce((s, a) => s + (a.valor_total ?? 0), 0)
+
+    const receitaOS = ordensServico.value
+      .filter(os => {
+        if (!os.data_entrega || !os.valor_total) return false
+        const de = new Date(os.data_entrega)
+        return de.getFullYear() === year && de.getMonth() + 1 === month
+      })
+      .reduce((s, os) => s + (os.valor_total ?? 0), 0)
+
+    const receitaContas = contas.value
+      .filter(c => {
+        if ((c.tipo ?? 'pagar') !== 'receber') return false
+        if (c.status !== 'pago') return false
+        const dateStr = c.data_pagamento ?? c.data_vencimento
+        if (!dateStr) return false
+        const dp = new Date(dateStr + 'T12:00:00')
+        return dp.getFullYear() === year && dp.getMonth() + 1 === month
+      })
+      .reduce((s, c) => s + (c.valor ?? 0), 0)
+
+    const receita = receitaVendas + receitaAgendamentos + receitaOS + receitaContas
+
+    const isCurrentMonth = (year === now.getFullYear() && month === now.getMonth() + 1)
+    const receitaAReceber = contas.value
+      .filter(c => {
+        if ((c.tipo ?? 'pagar') !== 'receber') return false
+        if (c.status !== 'pendente') return false
+        if (!c.valor) return false
+        if (isCurrentMonth) return true
+        const dateStr = c.data_vencimento
+        if (!dateStr) return false
+        const dv = new Date(dateStr + 'T12:00:00')
+        return dv.getFullYear() === year && dv.getMonth() + 1 === month
+      })
+      .reduce((s, c) => s + (c.valor ?? 0), 0)
+
+    const despesas = contas.value
+      .filter(c => {
+        if ((c.tipo ?? 'pagar') === 'receber') return false
+        if (c.status === 'cancelado' || !c.data_vencimento) return false
+        const dv = new Date(c.data_vencimento + 'T12:00:00')
+        return dv.getFullYear() === year && dv.getMonth() + 1 === month
+      })
+      .reduce((s, c) => s + (c.valor ?? 0), 0)
+
+    return { label, receita, despesas, receitaAReceber }
+  })
+})
+
+function formatShort(val: number): string {
+  if (val >= 1_000_000) return `R$${(val / 1_000_000).toFixed(1)}M`
+  if (val >= 10_000) return `R$${(val / 1_000).toFixed(0)}k`
+  if (val >= 1_000) return `R$${(val / 1_000).toFixed(1)}k`
+  return `R$${val.toFixed(0)}`
+}
+
+function makeSmoothPathEvol(pts: { x: number; y: number }[]): string {
+  if (pts.length < 2) return ''
+  let d = `M ${pts[0].x.toFixed(2)},${pts[0].y.toFixed(2)}`
+  for (let i = 1; i < pts.length; i++) {
+    const p0 = pts[i - 1]
+    const p1 = pts[i]
+    const dx = p1.x - p0.x
+    const cp1x = (p0.x + dx * 0.4).toFixed(2)
+    const cp2x = (p1.x - dx * 0.4).toFixed(2)
+    d += ` C ${cp1x},${p0.y.toFixed(2)} ${cp2x},${p1.y.toFixed(2)} ${p1.x.toFixed(2)},${p1.y.toFixed(2)}`
+  }
+  return d
+}
+
+const evolRawMax = computed(() =>
+  Math.max(...monthlyData.value.flatMap(m => [m.receita, m.despesas, m.receitaAReceber]), 1)
+)
+const evolMaxVal = computed(() => Math.ceil(evolRawMax.value / 250) * 250 || 250)
+const evolYSteps = computed(() => {
+  const max = evolMaxVal.value
+  const step = max >= 2000 ? 500 : 250
+  const steps: number[] = []
+  for (let v = 0; v <= max; v += step) steps.push(v)
+  return steps.reverse()
+})
+
+const evolPoints = computed(() => {
+  const maxVal = evolMaxVal.value
+  return monthlyData.value.map((m, i) => ({
+    x: 60 + i * (880 / 11),
+    yReceita: 135 - (m.receita / maxVal) * 120,
+    yDespesas: 135 - (m.despesas / maxVal) * 120,
+    yAReceber: 135 - (m.receitaAReceber / maxVal) * 120,
+    label: m.label,
+    receita: m.receita,
+    despesas: m.despesas,
+    receitaAReceber: m.receitaAReceber,
+  }))
+})
+
+const evolLineReceita = computed(() => makeSmoothPathEvol(evolPoints.value.map(p => ({ x: p.x, y: p.yReceita }))))
+const evolLineDespesas = computed(() => makeSmoothPathEvol(evolPoints.value.map(p => ({ x: p.x, y: p.yDespesas }))))
+const evolLineAReceber = computed(() => makeSmoothPathEvol(evolPoints.value.map(p => ({ x: p.x, y: p.yAReceber }))))
+
+const evolAreaReceita = computed(() => {
+  const pts = evolPoints.value
+  if (!pts.length) return ''
+  return `${makeSmoothPathEvol(pts.map(p => ({ x: p.x, y: p.yReceita })))} L ${pts[pts.length - 1].x.toFixed(2)},135 L ${pts[0].x.toFixed(2)},135 Z`
+})
+const evolAreaDespesas = computed(() => {
+  const pts = evolPoints.value
+  if (!pts.length) return ''
+  return `${makeSmoothPathEvol(pts.map(p => ({ x: p.x, y: p.yDespesas })))} L ${pts[pts.length - 1].x.toFixed(2)},135 L ${pts[0].x.toFixed(2)},135 Z`
+})
+const evolAreaAReceber = computed(() => {
+  const pts = evolPoints.value
+  if (!pts.length) return ''
+  return `${makeSmoothPathEvol(pts.map(p => ({ x: p.x, y: p.yAReceber })))} L ${pts[pts.length - 1].x.toFixed(2)},135 L ${pts[0].x.toFixed(2)},135 Z`
+})
 
 const pipelineTotalVal = computed(() =>
   props.pipeline.rascunho + props.pipeline.enviado + props.pipeline.aprovado + props.pipeline.rejeitado + props.pipeline.vencido
@@ -495,79 +809,6 @@ const topClientesOptions = computed(() => {
       border: { display: false },
     },
     y: {
-      grid: { display: false },
-      border: { display: false },
-      ticks: { font: { size: 11, weight: 'bold' as const }, color: textColor },
-    },
-  },
-}
-})
-
-// ─── Evolução Mensal (Line/Area Chart) ──────────────────────────────────────
-
-const evolucaoChartData = computed(() => ({
-  labels: props.evolucaoMensal.map((e) => e.mes),
-  datasets: [
-    {
-      label: 'Faturamento',
-      data: props.evolucaoMensal.map((e) => e.faturamento),
-      borderColor: '#10b981',
-      backgroundColor: 'rgba(16, 185, 129, 0.1)',
-      fill: true,
-      tension: 0.4,
-      pointRadius: 0,
-      pointHoverRadius: 6,
-      pointHoverBackgroundColor: '#10b981',
-      pointHoverBorderColor: '#fff',
-      pointHoverBorderWidth: 2,
-      borderWidth: 2.5,
-    },
-    {
-      label: 'Despesas',
-      data: props.evolucaoMensal.map((e) => e.despesas),
-      borderColor: '#ef4444',
-      backgroundColor: 'rgba(239, 68, 68, 0.08)',
-      fill: true,
-      tension: 0.4,
-      pointRadius: 0,
-      pointHoverRadius: 6,
-      pointHoverBackgroundColor: '#ef4444',
-      pointHoverBorderColor: '#fff',
-      pointHoverBorderWidth: 2,
-      borderWidth: 2.5,
-    },
-  ],
-}))
-
-const evolucaoChartOptions = computed(() => {
-  const textColor = typeof document !== 'undefined'
-    ? getComputedStyle(document.documentElement).getPropertyValue('--color-card-texto').trim() || '#9ca3af'
-    : '#9ca3af'
-  return {
-  responsive: true,
-  maintainAspectRatio: false,
-  animation: { duration: 800, easing: 'easeOutQuart' as const },
-  plugins: {
-    legend: {
-      display: true,
-      position: 'top' as const,
-      labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 11, weight: 'bold' as const }, color: textColor },
-    },
-    tooltip: {
-      ...premiumTooltip,
-      callbacks: {
-        label: (ctx: any) => `${ctx.dataset.label}: ${props.formatCurrency(ctx.raw)}`,
-      },
-    },
-  },
-  scales: {
-    y: {
-      beginAtZero: true,
-      grid: { color: 'rgba(128,128,128,0.08)' },
-      border: { display: false },
-      ticks: { font: { size: 10 }, color: textColor },
-    },
-    x: {
       grid: { display: false },
       border: { display: false },
       ticks: { font: { size: 11, weight: 'bold' as const }, color: textColor },

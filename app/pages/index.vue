@@ -523,7 +523,7 @@
             <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Faturamento</span>
           </div>
           <p class="text-xl sm:text-2xl font-black truncate" style="color: var(--color-card-texto)">{{ formatCurrency(financeiro.faturamento) }}</p>
-          <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">orçamentos aprovados</p>
+          <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">receitas no período</p>
           <svg class="w-full h-8 mt-2" viewBox="0 0 100 30" preserveAspectRatio="none">
             <polyline fill="none" stroke="#10b981" stroke-width="1.5" :points="sparklineFaturamento" />
           </svg>
@@ -580,6 +580,45 @@
           <p class="text-[11px] mt-0.5" :class="financeiro.contasVencidas > 0 ? 'text-red-500' : ''" :style="financeiro.contasVencidas > 0 ? {} : { color: 'var(--color-card-texto)', opacity: 0.75 }">
             {{ financeiro.contasVencidas > 0 ? formatCurrency(financeiro.valorContasVencidas) + ' em atraso' : 'tudo em dia ✅' }}
           </p>
+        </div>
+      </div>
+
+      <!-- 2.5 PREVISÃO FINANCEIRA (por vencimento, apenas não pagas) -->
+      <div v-if="!loading" class="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 mb-6">
+        <!-- A Receber -->
+        <div class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">A Receber</span>
+          </div>
+          <p class="text-xl sm:text-2xl font-black text-green-600 truncate">{{ formatCurrency(previsao.aReceber) }}</p>
+          <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">{{ previsao.qtdReceber }} conta(s) pendente(s)</p>
+        </div>
+
+        <!-- A Pagar -->
+        <div class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z"/></svg>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">A Pagar</span>
+          </div>
+          <p class="text-xl sm:text-2xl font-black text-red-500 truncate">{{ formatCurrency(previsao.aPagar) }}</p>
+          <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">{{ previsao.qtdPagar }} conta(s) pendente(s)</p>
+        </div>
+
+        <!-- Saldo Previsto -->
+        <div class="rounded-2xl bg-theme-card border border-primary-10 p-5 shadow-sm">
+          <div class="flex items-center gap-2.5 mb-2">
+            <div class="w-10 h-10 rounded-full flex items-center justify-center" :style="{ background: 'var(--color-primary-5)', border: '1px solid var(--color-primary-10)' }">
+              <svg class="w-5 h-5" :style="{ color: 'var(--color-primary)' }" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/></svg>
+            </div>
+            <span class="text-[10px] font-black uppercase tracking-widest" style="color: var(--color-card-texto); opacity: 0.75">Saldo Previsto</span>
+          </div>
+          <p class="text-xl sm:text-2xl font-black truncate" :class="previsao.saldo >= 0 ? 'text-green-600' : 'text-red-500'">{{ formatCurrency(previsao.saldo) }}</p>
+          <p class="text-[11px] mt-0.5" style="color: var(--color-card-texto); opacity: 0.75">receber - pagar (não pagas)</p>
         </div>
       </div>
 
@@ -775,7 +814,7 @@ const { empresaId, userPerfil, loadEmpresa } = useEmpresa()
 const { formatCurrency } = useLocale()
 
 // ── Dashboard Admin Composable ──────────────────────────────────────────────
-const { periodoFiltro, periodoCustom, periodoLabel, periodoRange, loading, financeiro, pipeline, producao, atividades: atividadesDashboard, alertas, topClientes, evolucaoMensal, comparativo, ticketMedio, proximosVencimentos, refresh } = useDashboardAdmin()
+const { periodoFiltro, periodoCustom, periodoLabel, periodoRange, loading, financeiro, previsao, pipeline, producao, atividades: atividadesDashboard, alertas, topClientes, evolucaoMensal, comparativo, ticketMedio, proximosVencimentos, refresh } = useDashboardAdmin()
 
 // ── Loading timeout: botão "Tentar novamente" após 10s ──────────────────────
 const loadingTimeout = ref(false)

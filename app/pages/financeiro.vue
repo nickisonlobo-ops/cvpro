@@ -305,69 +305,147 @@
               Receita
             </div>
             <div class="flex items-center gap-1.5">
-              <span class="w-3 h-3 rounded-sm border-2 border-dashed border-red-400 bg-red-50"></span>
+              <span class="w-3 h-3 rounded-sm border-2 border-dashed border-emerald-300 bg-emerald-50"></span>
+              A Receber
+            </div>
+            <div class="flex items-center gap-1.5">
+              <span class="w-3 h-3 rounded-sm bg-red-400"></span>
               Despesas
             </div>
           </div>
         </div>
 
-        <svg viewBox="0 0 760 175" class="w-full" style="max-height:175px" aria-hidden="true">
-          <defs>
-            <linearGradient id="areaGradReceita" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#10b981" stop-opacity="0.22" />
-              <stop offset="100%" stop-color="#10b981" stop-opacity="0.02" />
-            </linearGradient>
-            <linearGradient id="areaGradDespesa" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#ef4444" stop-opacity="0.1" />
-              <stop offset="100%" stop-color="#ef4444" stop-opacity="0.01" />
-            </linearGradient>
-          </defs>
+        <div class="relative" @mouseleave="lineTooltip = null">
+          <svg viewBox="0 0 960 175" class="w-full" aria-hidden="true">
+            <defs>
+              <linearGradient id="areaGradReceita" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#10b981" stop-opacity="0.22" />
+                <stop offset="100%" stop-color="#10b981" stop-opacity="0.02" />
+              </linearGradient>
+              <linearGradient id="areaGradDespesa" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ef4444" stop-opacity="0.1" />
+                <stop offset="100%" stop-color="#ef4444" stop-opacity="0.01" />
+              </linearGradient>
+              <linearGradient id="areaGradAReceber" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#6ee7b7" stop-opacity="0.15" />
+                <stop offset="100%" stop-color="#6ee7b7" stop-opacity="0.02" />
+              </linearGradient>
+            </defs>
 
-          <!-- Grid lines -->
-          <line v-for="n in 4" :key="`lgl${n}`" x1="60" :y1="15 + (n - 1) * 40" x2="740" :y2="15 + (n - 1) * 40" stroke="#f3f4f6" stroke-width="1" />
+            <!-- Grid lines -->
+            <line v-for="(step, n) in lineYSteps" :key="`lgl${n}`" x1="60" :y1="15 + n * (120 / (lineYSteps.length - 1))" x2="940" :y2="15 + n * (120 / (lineYSteps.length - 1))" stroke="#f3f4f6" stroke-width="1" />
 
-          <!-- Y-axis labels -->
-          <text v-for="n in 4" :key="`lyl${n}`" x="56" :y="15 + (n - 1) * 40 + 4" text-anchor="end" font-size="8.5" fill="#9ca3af">
-            {{ formatCurrencyShort(lineMaxVal * (1 - (n - 1) / 3)) }}
-          </text>
+            <!-- Y-axis labels -->
+            <text v-for="(step, n) in lineYSteps" :key="`lyl${n}`" x="56" :y="15 + n * (120 / (lineYSteps.length - 1)) + 4" text-anchor="end" font-size="9" fill="#9ca3af">
+              {{ formatCurrencyShort(step) }}
+            </text>
 
-          <!-- Area fills -->
-          <path v-if="lineChartPoints.length > 0" :d="areaPathDespesas" fill="url(#areaGradDespesa)" />
-          <path v-if="lineChartPoints.length > 0" :d="areaPathReceita" fill="url(#areaGradReceita)" />
+            <!-- Area fills -->
+            <path v-if="lineChartPoints.length > 0" :d="areaPathDespesas" fill="url(#areaGradDespesa)" />
+            <path v-if="lineChartPoints.length > 0" :d="areaPathAReceber" fill="url(#areaGradAReceber)" />
+            <path v-if="lineChartPoints.length > 0" :d="areaPathReceita" fill="url(#areaGradReceita)" />
 
-          <!-- Expense line -->
-          <path v-if="lineChartPoints.length > 0" :d="lineDespesasPath" fill="none" stroke="#f87171" stroke-width="1.5" stroke-dasharray="5,3" stroke-linecap="round" />
+            <!-- Expense line (solid) -->
+            <path v-if="lineChartPoints.length > 0" :d="lineDespesasPath" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" />
 
-          <!-- Revenue line -->
-          <path v-if="lineChartPoints.length > 0" :d="lineReceitaPath" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            <!-- A Receber line (dashed, light green) -->
+            <path v-if="lineChartPoints.length > 0" :d="lineAReceberPath" fill="none" stroke="#6ee7b7" stroke-width="2" stroke-dasharray="5,3" stroke-linecap="round" />
 
-          <!-- Data point circles (revenue) -->
-          <circle
-            v-for="(p, i) in lineChartPoints"
-            :key="`pt${i}`"
-            :cx="p.x"
-            :cy="p.yReceita"
-            r="3.5"
-            fill="#10b981"
-            stroke="white"
-            stroke-width="2"
-          />
+            <!-- Revenue line -->
+            <path v-if="lineChartPoints.length > 0" :d="lineReceitaPath" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
 
-          <!-- Month labels -->
-          <text
-            v-for="(p, i) in lineChartPoints"
-            :key="`ptl${i}`"
-            :x="p.x"
-            y="162"
-            text-anchor="middle"
-            font-size="9"
-            fill="#9ca3af"
-            font-weight="600"
-          >{{ p.label }}</text>
+            <!-- Data point circles (a receber) -->
+            <circle
+              v-for="(p, i) in lineChartPoints"
+              :key="`ptar${i}`"
+              :cx="p.x"
+              :cy="p.yAReceber"
+              r="3"
+              fill="#6ee7b7"
+              stroke="white"
+              stroke-width="1.5"
+            />
 
-          <!-- Baseline -->
-          <line x1="60" y1="135" x2="740" y2="135" stroke="#e5e7eb" stroke-width="1.5" />
-        </svg>
+            <!-- Data point circles (revenue) -->
+            <circle
+              v-for="(p, i) in lineChartPoints"
+              :key="`pt${i}`"
+              :cx="p.x"
+              :cy="p.yReceita"
+              r="3.5"
+              fill="#10b981"
+              stroke="white"
+              stroke-width="2"
+            />
+
+            <!-- Hover vertical line indicator -->
+            <line
+              v-if="lineTooltip !== null"
+              :x1="lineChartPoints[lineTooltip].x"
+              :y1="15"
+              :x2="lineChartPoints[lineTooltip].x"
+              :y2="135"
+              stroke="#d1d5db"
+              stroke-width="1"
+              stroke-dasharray="3,2"
+            />
+
+            <!-- Invisible hover zones per month -->
+            <rect
+              v-for="(p, i) in lineChartPoints"
+              :key="`hz${i}`"
+              :x="p.x - 40"
+              y="0"
+              width="80"
+              height="175"
+              fill="transparent"
+              style="cursor: pointer"
+              @mouseenter="lineTooltip = i"
+              @mouseleave="lineTooltip = null"
+            />
+
+            <!-- Month labels -->
+            <text
+              v-for="(p, i) in lineChartPoints"
+              :key="`ptl${i}`"
+              :x="p.x"
+              y="162"
+              text-anchor="middle"
+              font-size="9"
+              fill="#9ca3af"
+              font-weight="600"
+            >{{ p.label }}</text>
+
+            <!-- Baseline -->
+            <line x1="60" y1="135" x2="940" y2="135" stroke="#e5e7eb" stroke-width="1.5" />
+          </svg>
+
+          <!-- Tooltip -->
+          <Transition name="fade">
+            <div
+              v-if="lineTooltip !== null"
+              class="absolute z-10 pointer-events-none bg-white rounded-xl shadow-lg border border-gray-200 px-3 py-2.5 text-xs min-w-[140px]"
+              :style="{ left: `${(lineChartPoints[lineTooltip].x / 960) * 100}%`, top: '0px', transform: 'translateX(-50%)' }"
+            >
+              <p class="font-bold text-gray-700 mb-1.5 capitalize">{{ lineChartPoints[lineTooltip].label }}</p>
+              <div class="flex items-center gap-1.5 mb-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span class="text-gray-500">Receita:</span>
+                <span class="font-bold text-gray-800 ml-auto">{{ formatCurrency(lineChartPoints[lineTooltip].receita) }}</span>
+              </div>
+              <div class="flex items-center gap-1.5 mb-1">
+                <span class="w-2 h-2 rounded-full bg-emerald-300"></span>
+                <span class="text-gray-500">A Receber:</span>
+                <span class="font-bold text-gray-800 ml-auto">{{ formatCurrency(lineChartPoints[lineTooltip].receitaAReceber) }}</span>
+              </div>
+              <div class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-red-400"></span>
+                <span class="text-gray-500">Despesas:</span>
+                <span class="font-bold text-gray-800 ml-auto">{{ formatCurrency(lineChartPoints[lineTooltip].despesas) }}</span>
+              </div>
+            </div>
+          </Transition>
+        </div>
       </div>
 
       <!-- ══════════════════════════════════════════════════════ BOTTOM ROW -->
@@ -597,6 +675,7 @@ const contas = ref<ContaPagar[]>([])
 const agendamentos = ref<Agendamento[]>([])
 const ordensServico = ref<OrdemServicoFinanceiro[]>([])
 const loading = ref(true)
+const lineTooltip = ref<number | null>(null)
 
 // ── Constantes visuais ────────────────────────────────────────────────────────
 const DONUT_COLORS = ['#0ea5e9', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#ec4899', '#14b8a6', '#f97316']
@@ -609,7 +688,8 @@ function formatCurrencyShort(val: number): string {
   const { locale } = useLocale()
   const sym = locale.value.simboloMoeda
   if (val >= 1_000_000) return `${sym}${(val / 1_000_000).toFixed(1)}M`
-  if (val >= 1_000) return `${sym}${(val / 1_000).toFixed(0)}k`
+  if (val >= 10_000) return `${sym}${(val / 1_000).toFixed(0)}k`
+  if (val >= 1_000) return `${sym}${(val / 1_000).toFixed(1)}k`
   return `${sym}${val.toFixed(0)}`
 }
 
@@ -686,6 +766,27 @@ const monthlyData = computed(() => {
 
     const receita = receitaVendas + receitaAgendamentos + receitaOS + receitaContas
 
+    // Receita a Receber: contas tipo='receber', status pendente
+    // Mostra no mês atual o total acumulado de todas receitas pendentes (futuras incluídas)
+    // Para meses passados, mostra receitas pendentes que venceram nesse mês
+    const isCurrentMonth = (year === now.getFullYear() && month === now.getMonth() + 1)
+    const receitaAReceber = contas.value
+      .filter(c => {
+        if ((c.tipo ?? 'pagar') !== 'receber') return false
+        if (c.status !== 'pendente') return false
+        if (!c.valor) return false
+        if (isCurrentMonth) {
+          // No mês atual: acumula todas receitas pendentes (vencimento atual ou futuro)
+          return true
+        }
+        // Meses passados: filtra pelo mês de vencimento
+        const dateStr = c.data_vencimento
+        if (!dateStr) return false
+        const dv = new Date(dateStr + 'T12:00:00')
+        return dv.getFullYear() === year && dv.getMonth() + 1 === month
+      })
+      .reduce((s, c) => s + (c.valor ?? 0), 0)
+
     const despesas = contas.value
       .filter(c => {
         if ((c.tipo ?? 'pagar') === 'receber') return false // Não conta recebíveis como despesa
@@ -695,7 +796,7 @@ const monthlyData = computed(() => {
       })
       .reduce((s, c) => s + (c.valor ?? 0), 0)
 
-    return { year, month, label, receita, despesas, lucro: receita - despesas }
+    return { year, month, label, receita, despesas, receitaAReceber, lucro: receita - despesas }
   })
 })
 
@@ -871,20 +972,37 @@ function barH(val: number): number {
 }
 
 // ── Line / Area Chart ─────────────────────────────────────────────────────────
-const lineMaxVal = computed(() =>
-  Math.max(...monthlyData.value.flatMap(m => [m.receita, m.despesas]), 1)
+const lineRawMax = computed(() =>
+  Math.max(...monthlyData.value.flatMap(m => [m.receita, m.despesas, m.receitaAReceber]), 1)
 )
+// Arredonda para cima ao próximo múltiplo de 250
+const lineMaxVal = computed(() =>
+  Math.ceil(lineRawMax.value / 250) * 250 || 250
+)
+// Steps dinâmicos para o eixo Y (evita muitas linhas)
+const lineYSteps = computed(() => {
+  const max = lineMaxVal.value
+  // Step de 500 se max >= 2000, senão 250
+  const step = max >= 2000 ? 500 : 250
+  const steps: number[] = []
+  for (let v = 0; v <= max; v += step) {
+    steps.push(v)
+  }
+  return steps.reverse() // do maior para o menor (topo → base)
+})
 
 const lineChartPoints = computed(() => {
   const pts = monthlyData.value
   const maxVal = lineMaxVal.value
   return pts.map((m, i) => ({
-    x: 60 + i * (680 / 11),
+    x: 60 + i * (880 / 11),
     yReceita: 135 - (m.receita / maxVal) * 120,
     yDespesas: 135 - (m.despesas / maxVal) * 120,
+    yAReceber: 135 - (m.receitaAReceber / maxVal) * 120,
     label: m.label,
     receita: m.receita,
     despesas: m.despesas,
+    receitaAReceber: m.receitaAReceber,
   }))
 })
 
@@ -893,6 +1011,9 @@ const lineReceitaPath = computed(() =>
 )
 const lineDespesasPath = computed(() =>
   makeSmoothPath(lineChartPoints.value.map(p => ({ x: p.x, y: p.yDespesas })))
+)
+const lineAReceberPath = computed(() =>
+  makeSmoothPath(lineChartPoints.value.map(p => ({ x: p.x, y: p.yAReceber })))
 )
 const areaPathReceita = computed(() => {
   const pts = lineChartPoints.value
@@ -904,6 +1025,12 @@ const areaPathDespesas = computed(() => {
   const pts = lineChartPoints.value
   if (!pts.length) return ''
   const line = makeSmoothPath(pts.map(p => ({ x: p.x, y: p.yDespesas })))
+  return `${line} L ${pts[pts.length - 1].x.toFixed(2)},135 L ${pts[0].x.toFixed(2)},135 Z`
+})
+const areaPathAReceber = computed(() => {
+  const pts = lineChartPoints.value
+  if (!pts.length) return ''
+  const line = makeSmoothPath(pts.map(p => ({ x: p.x, y: p.yAReceber })))
   return `${line} L ${pts[pts.length - 1].x.toFixed(2)},135 L ${pts[0].x.toFixed(2)},135 Z`
 })
 
