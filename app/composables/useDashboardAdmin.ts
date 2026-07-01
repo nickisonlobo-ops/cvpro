@@ -537,101 +537,113 @@ export function useDashboardAdmin(): DashboardAdminState {
   async function fetchEvolucaoMensal(): Promise<void> {
     const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
     const hoje = new Date()
-    const resultados: EvolucaoMensal[] = []
 
-    for (let i = 11; i >= 0; i--) {
-      const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1)
-      const fimD = new Date(d.getFullYear(), d.getMonth() + 1, 0)
-      const inicioMes = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-01`
-      const fimMes = `${fimD.getFullYear()}-${String(fimD.getMonth() + 1).padStart(2, '0')}-${String(fimD.getDate()).padStart(2, '0')}`
+    // Calcular range de 12 meses
+    const primeiroMes = new Date(hoje.getFullYear(), hoje.getMonth() - 11, 1)
+    const inicioRange = `${primeiroMes.getFullYear()}-${String(primeiroMes.getMonth() + 1).padStart(2, '0')}-01`
+    const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0)
+    const fimRange = `${ultimoDia.getFullYear()}-${String(ultimoDia.getMonth() + 1).padStart(2, '0')}-${String(ultimoDia.getDate()).padStart(2, '0')}`
 
-      // RECEITA: Vendas finalizadas no mês
-      const { data: vendasMes } = await supabase
-        .from('vendas')
-        .select('preco_veiculo, vendas_itens(preco_unitario, quantidade, valor_total)')
+    // 4 queries em paralelo (em vez de ~72 sequenciais)
+    const [vendasRes, contasRes, agendRes, osRes] = await Promise.all([
+      supabase.from('vendas')
+        .select('preco_veiculo, data_venda, vendas_itens(preco_unitario, quantidade, valor_total)')
         .eq('empresa_id', empresaId.value)
         .eq('status', 'finalizada')
-        .gte('data_venda', inicioMes)
-        .lte('data_venda', fimMes)
-
-      const receitaVendas = (vendasMes ?? []).reduce((sum, v: any) => {
-        const itemsTotal = (v.vendas_itens ?? []).reduce((s: number, it: any) => s + (it.valor_total ?? it.preco_unitario * it.quantidade), 0)
-        return sum + (v.preco_veiculo ?? 0) + itemsTotal
-      }, 0)
-
-      // RECEITA: Agendamentos concluídos no mês
-      const { data: agendMes } = await supabase
-        .from('agendamentos')
-        .select('valor_total')
+        .gte('data_venda', inicioRange)
+        .lte('data_venda', fimRange),
+      supabase.from('contas_pagar')
+        .select('valor, data_vencimento, data_pagamento, status, tipo')
+        .eq('empresa_id', empresaId.value),
+      supabase.from('agendamentos')
+        .select('data_hora, valor_total')
         .eq('empresa_id', empresaId.value)
         .eq('status', 'concluido')
         .not('valor_total', 'is', null)
         .gt('valor_total', 0)
-        .gte('data_hora', inicioMes)
-        .lte('data_hora', fimMes + 'T23:59:59')
-
-      const receitaAgendamentos = (agendMes ?? []).reduce((sum, a) => sum + (a.valor_total ?? 0), 0)
-
-      // RECEITA: OS entregues no mês
-      const { data: osEntreguesMes } = await supabase
-        .from('ordens_servico_adesivo')
-        .select('valor_total')
+        .gte('data_hora', inicioRange)
+        .lte('data_hora', fimRange + 'T23:59:59'),
+      supabase.from('ordens_servico_adesivo')
+        .select('valor_total, data_entrega')
         .eq('empresa_id', empresaId.value)
         .eq('status', 'entregue')
-        .gte('data_entrega', inicioMes)
-        .lte('data_entrega', fimMes)
+        .not('valor_total', 'is', null)
+        .gt('valor_total', 0)
+        .gte('data_entrega', inicioRange)
+        .lte('data_entrega', fimRange),
+    ])
 
-      const receitaOS = (osEntreguesMes ?? []).reduce((sum, o) => sum + (o.valor_total ?? 0), 0)
+    const vendasData = vendasRes.data ?? []
+    const contasData = contasRes.data ?? []
+    const agendData = agendRes.data ?? []
+    const osData = osRes.data ?? []
 
-      // RECEITA: Contas a receber pagas no mês
-      const { data: contasReceberMes } = await supabase
-        .from('contas_pagar')
-        .select('valor')
-        .eq('empresa_id', empresaId.value)
-        .eq('tipo', 'receber')
-        .eq('status', 'pago')
-        .gte('data_vencimento', inicioMes)
-        .lte('data_vencimento', fimMes)
+    // Processar em memória por mês
+    const resultados: EvolucaoMensal[] = []
+    for (let i = 11; i >= 0; i--) {
+      const d = new Date(hoje.getFullYear(), hoje.getMonth() - i, 1)
+      const year = d.getFullYear()
+      const month = d.getMonth() + 1
 
-      const receitaContas = (contasReceberMes ?? []).reduce((sum, c) => sum + (c.valor ?? 0), 0)
+      const receitaVendas = vendasData
+        .filter((v: any) => {
+          if (!v.data_venda) return false
+          const dv = new Date(v.data_venda)
+          return dv.getFullYear() === year && dv.getMonth() + 1 === month
+        })
+        .reduce((sum, v: any) => {
+          const itemsTotal = (v.vendas_itens ?? []).reduce((s: number, it: any) => s + (it.valor_total ?? it.preco_unitario * it.quantidade), 0)
+          return sum + (v.preco_veiculo ?? 0) + itemsTotal
+        }, 0)
+
+      const receitaAgendamentos = agendData
+        .filter((a: any) => {
+          if (!a.data_hora) return false
+          const da = new Date(a.data_hora)
+          return da.getFullYear() === year && da.getMonth() + 1 === month
+        })
+        .reduce((sum, a: any) => sum + (a.valor_total ?? 0), 0)
+
+      const receitaOS = osData
+        .filter((os: any) => {
+          if (!os.data_entrega) return false
+          const de = new Date(os.data_entrega)
+          return de.getFullYear() === year && de.getMonth() + 1 === month
+        })
+        .reduce((sum, os: any) => sum + (os.valor_total ?? 0), 0)
+
+      const receitaContas = contasData
+        .filter((c: any) => {
+          if ((c.tipo ?? 'pagar') !== 'receber' || c.status !== 'pago') return false
+          const dateStr = c.data_pagamento ?? c.data_vencimento
+          if (!dateStr) return false
+          const dp = new Date(dateStr + 'T12:00:00')
+          return dp.getFullYear() === year && dp.getMonth() + 1 === month
+        })
+        .reduce((sum, c: any) => sum + (c.valor ?? 0), 0)
 
       const faturamento = receitaVendas + receitaAgendamentos + receitaOS + receitaContas
 
-      // DESPESAS: contas (tipo ≠ receber, status ≠ cancelado) no mês
-      const { data: contasMes } = await supabase
-        .from('contas_pagar')
-        .select('valor')
-        .eq('empresa_id', empresaId.value)
-        .neq('tipo', 'receber')
-        .neq('status', 'cancelado')
-        .gte('data_vencimento', inicioMes)
-        .lte('data_vencimento', fimMes)
+      const despesas = contasData
+        .filter((c: any) => {
+          if ((c.tipo ?? 'pagar') === 'receber') return false
+          if (c.status === 'cancelado' || !c.data_vencimento) return false
+          const dv = new Date(c.data_vencimento + 'T12:00:00')
+          return dv.getFullYear() === year && dv.getMonth() + 1 === month
+        })
+        .reduce((sum, c: any) => sum + (c.valor ?? 0), 0)
 
-      const despesas = (contasMes ?? []).reduce((sum, c) => sum + (c.valor ?? 0), 0)
-
-      // RECEITA A RECEBER: contas tipo='receber', status='pendente'
-      // No mês atual acumula todas pendentes, nos anteriores filtra por vencimento
       const isCurrentMonth = (i === 0)
-      let receitaAReceber = 0
-      if (isCurrentMonth) {
-        const { data: pendentesAll } = await supabase
-          .from('contas_pagar')
-          .select('valor')
-          .eq('empresa_id', empresaId.value)
-          .eq('tipo', 'receber')
-          .eq('status', 'pendente')
-        receitaAReceber = (pendentesAll ?? []).reduce((sum, c) => sum + (c.valor ?? 0), 0)
-      } else {
-        const { data: pendentesMes } = await supabase
-          .from('contas_pagar')
-          .select('valor')
-          .eq('empresa_id', empresaId.value)
-          .eq('tipo', 'receber')
-          .eq('status', 'pendente')
-          .gte('data_vencimento', inicioMes)
-          .lte('data_vencimento', fimMes)
-        receitaAReceber = (pendentesMes ?? []).reduce((sum, c) => sum + (c.valor ?? 0), 0)
-      }
+      const receitaAReceber = contasData
+        .filter((c: any) => {
+          if ((c.tipo ?? 'pagar') !== 'receber' || c.status !== 'pendente' || !c.valor) return false
+          if (isCurrentMonth) return true
+          const dateStr = c.data_vencimento
+          if (!dateStr) return false
+          const dv = new Date(dateStr + 'T12:00:00')
+          return dv.getFullYear() === year && dv.getMonth() + 1 === month
+        })
+        .reduce((sum, c: any) => sum + (c.valor ?? 0), 0)
 
       resultados.push({
         mes: mesesNomes[d.getMonth()],
